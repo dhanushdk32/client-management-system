@@ -90,7 +90,9 @@
         </div>
     </div>
 </div>
+@endsection
 
+@push('modals')
 <!-- Create Ticket Modal -->
 <div class="modal fade" id="createTicketModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -125,4 +127,4 @@
         </form>
     </div>
 </div>
-@endsection
+@endpush

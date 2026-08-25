@@ -57,49 +57,6 @@
                                 </button>
                             </td>
                         </tr>
-
-                        <!-- Modal for Service Details -->
-                        <div class="modal fade" id="serviceModal{{ $service->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header border-bottom-0 pb-0">
-                                        <h5 class="modal-title fw-bold">{{ $service->service_name }}</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body pt-4">
-                                        <table class="table table-borderless">
-                                            <tr>
-                                                <td class="text-muted w-50">Status</td>
-                                                <td class="fw-medium">: 
-                                                    <span class="badge bg-{{ $service->status == 'Active' ? 'success' : ($service->status == 'Pending' ? 'warning' : 'primary') }}-subtle text-{{ $service->status == 'Active' ? 'success' : ($service->status == 'Pending' ? 'warning' : 'primary') }} px-2 py-1">{{ $service->status }}</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-muted">Start Date</td>
-                                                <td class="fw-medium">: {{ $service->start_date ? $service->start_date->format('d M Y') : 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-muted">End Date</td>
-                                                <td class="fw-medium">: {{ $service->end_date ? $service->end_date->format('d M Y') : 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-muted">Assigned Team</td>
-                                                <td class="fw-medium">: {{ $service->assigned_team ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-muted" colspan="2">Description</td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2" class="fw-medium border rounded bg-light p-3">{{ $service->description ?? 'No description available.' }}</td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                    <div class="modal-footer border-top-0 pt-0">
-                                        <button type="button" class="btn btn-secondary rounded-3 px-4" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     @empty
                         <tr>
                             <td colspan="5" class="text-center text-muted py-4">No services assigned yet.</td>
@@ -111,3 +68,50 @@
     </div>
 </div>
 @endsection
+
+@push('modals')
+    @foreach($services as $service)
+        <!-- Modal for Service Details -->
+        <div class="modal fade" id="serviceModal{{ $service->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom-0 pb-0">
+                        <h5 class="modal-title fw-bold">{{ $service->service_name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body pt-4">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td class="text-muted w-50">Status</td>
+                                <td class="fw-medium">: 
+                                    <span class="badge bg-{{ $service->status == 'Active' ? 'success' : ($service->status == 'Pending' ? 'warning' : 'primary') }}-subtle text-{{ $service->status == 'Active' ? 'success' : ($service->status == 'Pending' ? 'warning' : 'primary') }} px-2 py-1">{{ $service->status }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Start Date</td>
+                                <td class="fw-medium">: {{ $service->start_date ? $service->start_date->format('d M Y') : 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">End Date</td>
+                                <td class="fw-medium">: {{ $service->end_date ? $service->end_date->format('d M Y') : 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Assigned Team</td>
+                                <td class="fw-medium">: {{ $service->assigned_team ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted" colspan="2">Description</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="fw-medium border rounded bg-light p-3">{{ $service->description ?? 'No description available.' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modal-footer border-top-0 pt-0">
+                        <button type="button" class="btn btn-secondary rounded-3 px-4" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+@endpush

@@ -20,7 +20,7 @@
             </div>
         @endif
 
-        <form action="{{ isset($client) ? route('admin.clients.update', $client) : route('admin.clients.store') }}" method="POST">
+        <form action="{{ isset($client) ? route('admin.clients.update', $client) : route('admin.clients.store') }}" method="POST" autocomplete="off">
             @csrf
             @if(isset($client))
                 @method('PUT')
@@ -93,7 +93,7 @@
                 <!-- Email -->
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Email</label>
-                    <input type="email" name="client_email" class="form-control bg-light" placeholder="Enter email" value="{{ old('client_email', $client->client_email ?? '') }}" required>
+                    <input type="email" name="client_email" id="clientEmailInput" class="form-control bg-light" placeholder="Enter email" value="{{ old('client_email', $client->client_email ?? '') }}" required autocomplete="off">
                 </div>
 
                 <!-- Primary Contact -->
@@ -111,6 +111,29 @@
 
             </div>
 
+            <h5 class="fw-bold mb-4 mt-5 text-primary border-bottom border-2 border-primary pb-2 d-inline-block">Account Login & Password</h5>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-muted">
+                        {{ isset($client) ? 'Reset Client Password (Optional)' : 'Initial Password (Optional)' }}
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-key text-muted"></i></span>
+                        <input type="password" name="password" id="clientPasswordField" class="form-control border-start-0 border-end-0 ps-0" placeholder="{{ isset($client) ? 'Leave blank to keep existing password' : 'Leave blank to auto-generate password' }}" minlength="6" autocomplete="new-password">
+                        <span class="input-group-text bg-light border-start-0" id="toggleClientPassword" style="cursor: pointer;" title="Show/Hide Password">
+                            <i class="fa-regular fa-eye text-muted"></i>
+                        </span>
+                        <button type="button" class="btn btn-outline-secondary px-3" id="generatePasswordBtn" title="Generate Random Password">
+                            <i class="fa-solid fa-dice me-1"></i> Auto-Generate
+                        </button>
+                    </div>
+                    <div class="form-text small text-muted">
+                        {{ isset($client) ? 'If left blank, the client\'s current password will not be modified.' : 'If left blank, a secure 10-character password will be auto-generated and emailed to the client.' }}
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex justify-content-end gap-3 mt-5">
                 <a href="{{ route('admin.clients.index') }}" class="btn btn-light px-4 border rounded-3 fw-semibold text-muted">Cancel</a>
                 <button type="submit" class="btn btn-primary px-5 rounded-3 fw-semibold">Save Client</button>
@@ -118,4 +141,59 @@
         </form>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const emailField = document.getElementById('clientEmailInput');
+        const passwordField = document.getElementById('clientPasswordField');
+        const toggleBtn = document.getElementById('toggleClientPassword');
+        const generateBtn = document.getElementById('generatePasswordBtn');
+
+        // Prevent browser password manager from auto-filling admin email/password on create form
+        @if(!isset($client))
+            setTimeout(() => {
+                if (emailField && emailField.value.includes('admin')) {
+                    emailField.value = '';
+                }
+                if (passwordField && !passwordField.value.includes('{{ old('password') }}')) {
+                    passwordField.value = '';
+                }
+            }, 100);
+        @endif
+
+        if (toggleBtn && passwordField) {
+            toggleBtn.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    passwordField.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        }
+
+        if (generateBtn && passwordField) {
+            generateBtn.addEventListener('click', function() {
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*';
+                let randomPassword = '';
+                for (let i = 0; i < 10; i++) {
+                    randomPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                passwordField.value = randomPassword;
+                passwordField.type = 'text';
+                const icon = toggleBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                }
+            });
+        }
+    });
+</script>
+@endpush
 @endsection

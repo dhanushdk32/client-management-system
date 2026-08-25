@@ -29,6 +29,11 @@ class Client extends Model
         'country',
         'primary_contact',
         'secondary_contact',
+        'joined_date',
+    ];
+
+    protected $casts = [
+        'joined_date' => 'datetime',
     ];
 
     public function users()

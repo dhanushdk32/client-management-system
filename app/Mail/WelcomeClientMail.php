@@ -22,7 +22,9 @@ class WelcomeClientMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Welcome to Client Management System')
-                    ->view('emails.welcome_client');
+        return $this->subject('Account Credentials - Client Management Portal')
+                    ->replyTo(config('mail.from.address'), config('mail.from.name'))
+                    ->view('emails.welcome_client')
+                    ->text('emails.welcome_client_plain');
     }
 }

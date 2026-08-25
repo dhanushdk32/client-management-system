@@ -44,6 +44,7 @@ class AdminClientController extends Controller
             'primary_contact' => 'required|string|max:11',
             'secondary_contact' => 'nullable|string|max:255',
             'client_status' => 'required|in:Active,Inactive',
+            'password' => 'nullable|string|min:6',
         ]);
 
         $data = $request->all();
@@ -57,11 +58,14 @@ class AdminClientController extends Controller
         }
         
         $data['entity_id'] = $data['entity_id'] ?? 1;
+        $data['joined_date'] = now();
 
         $client = Client::create($data);
 
-        // Auto-generate a secure password and create a ClientUser for login
-        $plainPassword = \Illuminate\Support\Str::random(10);
+        // Use custom password if provided by admin, otherwise auto-generate secure 10-char password
+        $plainPassword = $request->filled('password') 
+            ? $request->password 
+            : \Illuminate\Support\Str::random(10);
         
         $clientUser = \App\Models\ClientUser::create([
             'client_id' => $client->client_id,
@@ -106,6 +110,7 @@ class AdminClientController extends Controller
             'client_name' => 'required|string|max:50',
             'client_email' => 'required|email|max:50|unique:client_users,email,'.$client->client_id.',client_id',
             'client_status' => 'required|in:Active,Inactive',
+            'password' => 'nullable|string|min:6',
         ]);
 
         $data = $request->all();
@@ -122,11 +127,17 @@ class AdminClientController extends Controller
         // Sync changes to ClientUser if they exist
         $clientUser = \App\Models\ClientUser::where('client_id', $client->client_id)->first();
         if ($clientUser) {
-            $clientUser->update([
+            $userUpdateData = [
                 'name' => $data['client_name'],
                 'email' => $data['client_email'],
                 'status' => $data['client_status'],
-            ]);
+            ];
+
+            if ($request->filled('password')) {
+                $userUpdateData['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+            }
+
+            $clientUser->update($userUpdateData);
         }
 
         return redirect()->route('admin.clients.index')->with('success', 'Client updated successfully.');

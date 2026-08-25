@@ -82,6 +82,7 @@
         </div>
     </div>
 </div>
+@endsection
 
 @push('modals')
 @foreach($documents as $doc)
@@ -115,5 +116,3 @@
     </div>
 @endforeach
 @endpush
-
-@endsection

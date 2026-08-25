@@ -16,23 +16,46 @@ class ClientProfileController extends Controller
 
     public function update(Request $request)
     {
-        $client = Auth::guard('client')->user()->client;
+        $user = Auth::guard('client')->user();
+        $client = $user->client;
 
-        // Clients can only update specific contact fields
         $request->validate([
-            'primary_contact' => 'nullable|string|max:11',
-            'secondary_contact' => 'nullable|string|max:255',
+            'client_company' => 'required|string|max:100',
+            'industry' => 'nullable|string|max:255',
+            'company_size' => 'nullable|string|max:100',
             'website' => 'nullable|string|max:255',
+            'client_gst' => 'nullable|string|max:30',
+            'client_name' => 'required|string|max:50',
+            'client_email' => 'required|email|max:50|unique:client_users,email,'.$user->id,
+            'primary_contact' => 'required|string|max:11',
+            'secondary_contact' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:100',
             'state' => 'nullable|string|max:100',
             'country' => 'nullable|string|max:100',
         ]);
 
-        $client->update($request->only([
-            'primary_contact', 'secondary_contact', 'website', 'city', 'state', 'country'
-        ]));
+        $data = $request->only([
+            'client_company', 'industry', 'company_size', 'website', 'client_gst',
+            'client_name', 'client_email',
+            'primary_contact', 'secondary_contact', 'city', 'state', 'country'
+        ]);
 
-        return back()->with('success', 'Profile updated successfully.');
+        // Default empty strings for nullable non-null DB columns
+        foreach (['client_gst', 'industry', 'company_size', 'website', 'secondary_contact', 'city', 'state', 'country'] as $field) {
+            if (!isset($data[$field]) || is_null($data[$field])) {
+                $data[$field] = '';
+            }
+        }
+
+        $client->update($data);
+
+        // Sync name and email with login account
+        $user->update([
+            'name' => $data['client_name'],
+            'email' => $data['client_email'],
+        ]);
+
+        return back()->with('success', 'Profile and company information updated successfully.');
     }
     public function settings()
     {
