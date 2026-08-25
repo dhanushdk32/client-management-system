@@ -126,12 +126,19 @@ class ForgotPasswordController extends Controller
         if ($isClient) {
             $isClient->password = Hash::make($request->password);
             $isClient->save();
+
+            try {
+                \Illuminate\Support\Facades\Mail::to($isClient->email)
+                    ->send(new \App\Mail\PasswordChangedMail($isClient));
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to send password reset confirmation email: ' . $e->getMessage());
+            }
         }
 
         // Cleanup
         Otp::where('email', $email)->delete();
         session()->forget(['reset_email', 'otp_verified']);
 
-        return redirect()->route('login')->with('success', 'Your password has been reset successfully. You can now log in.');
+        return redirect()->route('login')->with('success', 'Your password has been reset successfully and a confirmation email has been sent. You can now log in.');
     }
 }

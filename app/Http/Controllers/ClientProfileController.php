@@ -79,6 +79,14 @@ class ClientProfileController extends Controller
             'password' => \Illuminate\Support\Facades\Hash::make($request->new_password)
         ]);
 
-        return back()->with('success', 'Password updated successfully.');
+        // Send confirmation email
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)
+                ->send(new \App\Mail\PasswordChangedMail($user));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send password changed confirmation email: ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Password updated successfully and confirmation email sent.');
     }
 }
