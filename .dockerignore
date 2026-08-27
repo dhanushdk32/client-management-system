@@ -1,0 +1,15 @@
+.git
+.gitignore
+.env
+.env.backup
+.env.production
+node_modules
+vendor
+storage/*.key
+storage/logs/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/framework/cache/*
+tests
+README.md
+*.sql
