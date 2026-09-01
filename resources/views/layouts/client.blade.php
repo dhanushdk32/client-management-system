@@ -3,248 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Client Portal')</title>
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <title>@yield('title', 'RORIRI - Client Portal')</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- Custom CSS -->
+    <!-- Google Fonts: Plus Jakarta Sans / Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --roriri-blue: #0284c7;
+            --roriri-blue-dark: #0369a1;
+            --roriri-blue-light: #e0f2fe;
+            --sidebar-bg: #ffffff;
+            --body-bg: #f8fafc;
+            --text-dark: #1e293b;
+        }
+
         body {
-            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6fb;
-            color: #333;
-            overflow-x: hidden;
-        }
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background-color: #3b5998; /* Reverted to the beautiful blue */
-            color: #fff;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        .sidebar-header {
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            font-size: 20px;
-            font-weight: 700;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .sidebar-header i {
-            margin-right: 10px;
-            color: #fff;
-        }
-        .nav-links {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0;
-        }
-        .nav-links li {
-            padding: 5px 20px;
-        }
-        .nav-links a {
-            display: flex;
-            align-items: center;
-            color: #d1dbff;
-            text-decoration: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            transition: all 0.2s;
-            font-size: 14px;
-        }
-        .nav-links a:hover, .nav-links a.active {
-            background-color: #2b457e;
-            color: #fff;
-        }
-        .nav-links i {
-            margin-right: 15px;
-            width: 20px;
-            text-align: center;
-        }
-        
-        /* Main Content */
-        .main-content {
-            margin-left: 250px;
-            padding: 0;
-            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            margin: 0;
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
         }
-        
-        /* Header */
-        .top-header {
-            background: #fff;
-            padding: 15px 30px;
+
+        .roriri-topbar {
+            height: 68px;
+            background-color: #ffffff;
             border-bottom: 1px solid #e2e8f0;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 1050;
         }
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0;
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
-        .user-profile {
+
+        .brand-logo {
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
+            text-decoration: none;
         }
 
-        /* Content Area */
-        .content-area {
-            padding: 30px;
-            flex: 1;
-            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        
-        /* Cards */
-        .card {
-            border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-            margin-bottom: 24px;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        .brand-logo-text {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0284c7;
+            letter-spacing: 0.5px;
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
         }
 
-        .stat-card {
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
+        .user-profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 8px;
         }
-        .stat-title {
-            font-size: 14px;
-            color: #3b5998;
-            font-weight: 600;
-        }
-        .stat-value {
-            font-size: 28px;
+
+        .user-avatar-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: #e0f2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0284c7;
             font-weight: 700;
-            margin: 10px 0;
-            color: #3b5998;
+            font-size: 14px;
         }
 
-        /* Table Rows */
-        .table-hover tbody tr {
+        .app-container {
+            display: flex;
+            flex: 1;
+        }
+
+        .roriri-sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 0;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .sidebar-menu .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
             transition: all 0.2s ease;
         }
-        .table-hover tbody tr:hover {
+
+        .sidebar-menu .menu-link:hover {
+            color: var(--roriri-blue);
             background-color: #f8fafc;
-            transform: scale(1.002);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
-        /* Buttons & Links */
-        .btn {
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        .sidebar-menu .menu-link.active {
+            color: var(--roriri-blue);
+            background-color: var(--roriri-blue-light);
+            font-weight: 600;
         }
-        .btn:active {
-            transform: scale(0.95);
+
+        .main-workspace {
+            flex: 1;
+            padding: 24px 30px;
+            overflow-y: auto;
         }
-        
-        /* Sidebar Links Animation */
-        .nav-links li {
-            animation: slideInRight 0.4s ease forwards;
-            opacity: 0;
+
+        .card {
+            border: 1px solid #f1f5f9;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.02);
+            background-color: #ffffff;
+            margin-bottom: 24px;
         }
-        .nav-links li:nth-child(1) { animation-delay: 0.1s; }
-        .nav-links li:nth-child(2) { animation-delay: 0.15s; }
-        .nav-links li:nth-child(3) { animation-delay: 0.2s; }
-        .nav-links li:nth-child(4) { animation-delay: 0.25s; }
-        .nav-links li:nth-child(5) { animation-delay: 0.3s; }
-        .nav-links li:nth-child(6) { animation-delay: 0.35s; }
-        .nav-links li:nth-child(7) { animation-delay: 0.4s; }
+
+        .btn-primary {
+            background-color: #0284c7;
+            border-color: #0284c7;
+        }
+
+        .btn-primary:hover {
+            background-color: #0369a1;
+            border-color: #0369a1;
+        }
+
+        .text-primary {
+            color: #0284c7 !important;
+        }
+
+        .roriri-footer {
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+        }
     </style>
+    @yield('styles')
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <i class="fa-solid fa-shield-halved"></i>
-            Client Portal
-        </div>
-        <ul class="nav-links">
-            <li><a href="{{ route('client.dashboard') }}" class="{{ request()->routeIs('client.dashboard') ? 'active' : '' }}"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
-            <li><a href="{{ route('client.profile') }}" class="{{ request()->routeIs('client.profile') ? 'active' : '' }}"><i class="fa-regular fa-user"></i> My Profile</a></li>
-            <li><a href="{{ route('client.services.index') }}" class="{{ request()->routeIs('client.services.*') ? 'active' : '' }}"><i class="fa-solid fa-briefcase"></i> My Services</a></li>
-            <li><a href="{{ route('client.documents.index') }}" class="{{ request()->routeIs('client.documents.*') ? 'active' : '' }}"><i class="fa-solid fa-file-lines"></i> Documents</a></li>
-            <li><a href="{{ route('client.tickets.index') }}" class="{{ request()->routeIs('client.tickets.*') ? 'active' : '' }}"><i class="fa-solid fa-ticket"></i> Requests</a></li>
-            <li><a href="{{ route('client.notifications.index') }}" class="{{ request()->routeIs('client.notifications.*') ? 'active' : '' }}"><i class="fa-regular fa-bell"></i> Notifications</a></li>
-            <li><a href="{{ route('client.activity.index') }}" class="{{ request()->routeIs('client.activity.*') ? 'active' : '' }}"><i class="fa-solid fa-clock-rotate-left"></i> Activity</a></li>
-            <li><a href="{{ route('client.settings') }}" class="{{ request()->routeIs('client.settings.*') ? 'active' : '' }}"><i class="fa-solid fa-gear"></i> Settings</a></li>
-        </ul>
-        <div style="position: absolute; bottom: 20px; width: 100%; padding: 0 20px;">
-            <button type="button" class="btn btn-link text-decoration-none text-light p-0" style="font-size: 14px;" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
-            </button>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Header -->
-        <div class="top-header">
-            <h2 class="header-title">@yield('page_title', 'Welcome')</h2>
-            <div class="user-profile">
-                <span class="fw-medium">{{ Auth::guard('client')->user()->name ?? 'Client' }}</span>
-                <i class="fa-solid fa-circle-user fa-2x text-primary"></i>
-            </div>
-        </div>
-
-        <!-- Content -->
-        <div class="content-area">
-            @yield('content')
-        </div>
-    </div>
-
-    <!-- Logout Modal -->
-    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="fa-solid fa-arrow-right-from-bracket text-danger" style="font-size: 3rem;"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">Ready to Leave?</h5>
-                    <p class="text-muted small mb-4">Are you sure you want to log out of the portal?</p>
-                    <div class="d-flex justify-content-center gap-2">
-                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">No</button>
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-danger px-4">Confirm</button>
-                        </form>
-                    </div>
+    <!-- RORIRI Topbar -->
+    <header class="roriri-topbar">
+        <div class="brand-section">
+            <a href="{{ route('client.dashboard') }}" class="brand-logo">
+                <div class="brand-logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="5" r="3" fill="#ef4444" />
+                        <circle cx="19" cy="12" r="3" fill="#f59e0b" />
+                        <circle cx="12" cy="19" r="3" fill="#10b981" />
+                        <circle cx="5" cy="12" r="3" fill="#0284c7" />
+                        <circle cx="12" cy="12" r="2.5" fill="#3b82f6" />
+                    </svg>
                 </div>
+                <h1 class="brand-logo-text">RORIRI</h1>
+            </a>
+            <span class="badge bg-primary-subtle text-primary border rounded-pill px-3 py-1 fw-semibold">Client Portal</span>
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <div class="dropdown">
+                <a href="#" class="user-profile-badge" data-bs-toggle="dropdown">
+                    <div class="user-avatar-circle">
+                        {{ strtoupper(substr(Auth::guard('client')->user()->name ?? 'CL', 0, 2)) }}
+                    </div>
+                    <div class="d-flex flex-column text-start">
+                        <span class="fw-bold text-dark small">{{ Auth::guard('client')->user()->name ?? 'Client User' }}</span>
+                        <span class="text-muted" style="font-size: 11px;">{{ Auth::guard('client')->user()->client->client_company ?? 'Client Organization' }}</span>
+                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2 rounded-3">
+                    <li><a class="dropdown-item py-2 rounded-2" href="{{ route('client.profile') }}"><i class="fa-solid fa-building me-2 text-muted"></i> Company Profile</a></li>
+                    <li><a class="dropdown-item py-2 rounded-2" href="{{ route('client.settings') }}"><i class="fa-solid fa-gear me-2 text-muted"></i> Account Settings</a></li>
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
+                        <form action="{{ route('logout') }}" method="POST" class="m-0">
+                            @csrf
+                            <button type="submit" class="dropdown-item py-2 rounded-2 text-danger">
+                                <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
+    </header>
+
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="roriri-sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="{{ route('client.dashboard') }}" class="menu-link {{ request()->routeIs('client.dashboard') ? 'active' : '' }}">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('client.services.index') }}" class="menu-link {{ request()->routeIs('client.services.*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>My Subscribed Services</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('client.documents.index') }}" class="menu-link {{ request()->routeIs('client.documents.*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span>Document Vault</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('client.tickets.index') }}" class="menu-link {{ request()->routeIs('client.tickets.*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-ticket"></i>
+                        <span>Support Requests</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('client.profile') }}" class="menu-link {{ request()->routeIs('client.profile') ? 'active' : '' }}">
+                        <i class="fa-solid fa-building"></i>
+                        <span>Company Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('client.settings') }}" class="menu-link {{ request()->routeIs('client.settings*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="p-3 border-top mt-auto">
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-danger w-100 btn-sm rounded-3 py-2">
+                        <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Workspace -->
+        <main class="main-workspace">
+            @yield('content')
+        </main>
     </div>
 
-    <!-- Modals Stack -->
-    @stack('modals')
+    <!-- RORIRI Footer -->
+    <footer class="roriri-footer">
+        Copyright &copy; 2026. All right reserved.
+    </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     @yield('scripts')
+    @stack('scripts')
 </body>
 </html>

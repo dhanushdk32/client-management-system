@@ -3,278 +3,641 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Dashboard - Client Portal')</title>
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <!-- Bootstrap 5 CSS -->
+    <title>@yield('title', 'RORIRI - Admin Management')</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- Custom CSS -->
+    <!-- Google Fonts: Plus Jakarta Sans / Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
+        :root {
+            --roriri-blue: #0284c7;
+            --roriri-blue-dark: #0369a1;
+            --roriri-blue-light: #e0f2fe;
+            --sidebar-bg: #ffffff;
+            --body-bg: #f8fafc;
+            --card-border: #f1f5f9;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
         body {
-            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6fb;
-            color: #333;
-            overflow-x: hidden;
-        }
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background-color: #1e293b;
-            color: #fff;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        .sidebar-header {
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            font-size: 20px;
-            font-weight: 700;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .sidebar-header i {
-            margin-right: 10px;
-            color: #3b82f6;
-        }
-        .nav-links {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0;
-        }
-        .nav-links li {
-            padding: 5px 20px;
-        }
-        .nav-links a {
-            display: flex;
-            align-items: center;
-            color: #cbd5e1;
-            text-decoration: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            transition: all 0.2s;
-            font-size: 14px;
-        }
-        .nav-links a:hover, .nav-links a.active {
-            background-color: #3b82f6;
-            color: #fff;
-        }
-        .nav-links i {
-            margin-right: 15px;
-            width: 20px;
-            text-align: center;
-        }
-        
-        /* Main Content */
-        .main-content {
-            margin-left: 250px;
-            padding: 0;
-            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            margin: 0;
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        
-        /* Header */
-        .top-header {
-            background: #fff;
-            padding: 15px 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+
+        /* Top Header Navbar */
+        .roriri-topbar {
+            height: 68px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 1050;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0;
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 250px;
         }
-        .user-profile {
+
+        .brand-logo {
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-        .user-profile img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-        }
-        .user-name {
-            font-size: 14px;
-            font-weight: 500;
+            text-decoration: none;
         }
 
-        /* Content Area */
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        .brand-logo-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
+
+        .brand-logo-text {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0284c7;
+            letter-spacing: 0.5px;
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
         }
-        
-        .content-area {
-            padding: 30px;
-            flex: 1;
-            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        
-        /* Cards */
-        .card {
+
+        .sidebar-toggle-btn {
+            background: none;
             border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            margin-bottom: 24px;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            font-size: 18px;
+            color: #0284c7;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+
+        .sidebar-toggle-btn:hover {
+            background-color: #f1f5f9;
         }
-        
-        .stat-card {
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
         }
-        .stat-title {
-            font-size: 13px;
-            color: #64748b;
-            font-weight: 600;
-            text-transform: uppercase;
+
+        .topbar-icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            background: #ffffff;
+            border: 1px solid transparent;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 16px;
         }
-        .stat-value {
-            font-size: 28px;
+
+        .topbar-icon-btn:hover {
+            background: #f1f5f9;
+            color: #0284c7;
+        }
+
+        .user-profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .user-profile-badge:hover {
+            background: #f8fafc;
+        }
+
+        .user-profile-badge img, .user-avatar-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0284c7;
             font-weight: 700;
-            margin: 10px 0;
-            color: #0f172a;
+            font-size: 14px;
         }
-        .stat-trend {
-            font-size: 13px;
+
+        .user-info-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .user-info-text .user-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .user-info-text .user-role {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* App Wrapper */
+        .app-container {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        /* Sidebar Styling */
+        .roriri-sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 0;
+            transition: width 0.3s ease, transform 0.3s ease;
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+
+        .roriri-sidebar.collapsed {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+            border: none;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .sidebar-menu .menu-item {
+            margin-bottom: 2px;
+        }
+
+        .sidebar-menu .menu-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 13.5px;
             font-weight: 500;
-        }
-        .stat-trend.positive { color: #10b981; }
-        .stat-trend.negative { color: #ef4444; }
-        
-        .stat-card.blue .stat-value { color: #3b82f6; }
-        .stat-card.green .stat-value { color: #10b981; }
-        .stat-card.orange .stat-value { color: #f59e0b; }
-        .stat-card.red .stat-value { color: #ef4444; }
-        
-        /* Table Rows */
-        .table-hover tbody tr {
             transition: all 0.2s ease;
         }
-        .table-hover tbody tr:hover {
+
+        .sidebar-menu .menu-link:hover {
+            color: var(--roriri-blue);
             background-color: #f8fafc;
-            transform: scale(1.002);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
-        /* Buttons & Links */
-        .btn {
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        .sidebar-menu .menu-link.active {
+            color: var(--roriri-blue);
+            background-color: var(--roriri-blue-light);
+            font-weight: 600;
         }
-        .btn:active {
-            transform: scale(0.95);
-        }
-        
-        /* Sidebar Links Animation */
-        .nav-links li {
-            animation: slideInRight 0.4s ease forwards;
-            opacity: 0;
-        }
-        .nav-links li:nth-child(1) { animation-delay: 0.1s; }
-        .nav-links li:nth-child(2) { animation-delay: 0.15s; }
-        .nav-links li:nth-child(3) { animation-delay: 0.2s; }
-        .nav-links li:nth-child(4) { animation-delay: 0.25s; }
-        .nav-links li:nth-child(5) { animation-delay: 0.3s; }
-        .nav-links li:nth-child(6) { animation-delay: 0.35s; }
-        .nav-links li:nth-child(7) { animation-delay: 0.4s; }
-        .nav-links li:nth-child(8) { animation-delay: 0.45s; }
 
+        .menu-link-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-link-content i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .menu-link.active .menu-link-content i {
+            color: var(--roriri-blue);
+        }
+
+        /* Submenu / Entity Tree */
+        .submenu {
+            list-style: none;
+            padding-left: 28px;
+            margin: 4px 0 8px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .submenu .submenu-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 12px;
+            border-radius: 8px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 12.5px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .submenu .submenu-link:hover {
+            color: var(--roriri-blue);
+            background-color: #f1f5f9;
+        }
+
+        .submenu .submenu-link.active {
+            color: var(--roriri-blue);
+            font-weight: 600;
+            background-color: #f0f9ff;
+        }
+
+        .submenu-link i {
+            font-size: 13px;
+            width: 16px;
+            text-align: center;
+        }
+
+        .menu-category-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #94a3b8;
+            padding: 12px 14px 4px 14px;
+            margin-top: 6px;
+        }
+
+        /* Main Workspace Content */
+        .main-workspace {
+            flex: 1;
+            padding: 24px 30px;
+            background-color: var(--body-bg);
+            overflow-y: auto;
+        }
+
+        /* Metric Cards from Screenshot */
+        .stat-card-roriri {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            height: 100%;
+        }
+
+        .stat-card-roriri:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        .stat-card-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .stat-card-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+            font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Color variations from screenshot */
+        .bg-icon-yellow { background-color: #fffbeb; color: #d97706; }
+        .bg-icon-cyan { background-color: #e0f2fe; color: #0284c7; }
+        .bg-icon-amber { background-color: #fefce8; color: #ca8a04; }
+        .bg-icon-blue { background-color: #eff6ff; color: #2563eb; }
+        .bg-icon-teal { background-color: #f0fdf4; color: #16a34a; }
+        .bg-icon-green { background-color: #dcfce7; color: #16a34a; }
+        .bg-icon-red { background-color: #fef2f2; color: #ef4444; }
+        .bg-icon-purple { background-color: #f5f3ff; color: #7c3aed; }
+
+        /* Standard Cards */
+        .card {
+            border: 1px solid #f1f5f9;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+            background-color: #ffffff;
+            margin-bottom: 24px;
+        }
+
+        .btn-primary {
+            background-color: #0284c7;
+            border-color: #0284c7;
+        }
+
+        .btn-primary:hover {
+            background-color: #0369a1;
+            border-color: #0369a1;
+        }
+
+        .text-primary {
+            color: #0284c7 !important;
+        }
+
+        /* Footer */
+        .roriri-footer {
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+        }
     </style>
+    @yield('styles')
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <i class="fa-solid fa-shield-halved"></i>
-            Admin Portal
-        </div>
-        <ul class="nav-links">
-            <li><a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
-            <li><a href="{{ route('admin.clients.index') }}" class="{{ request()->routeIs('admin.clients.*') ? 'active' : '' }}"><i class="fa-solid fa-users"></i> Clients</a></li>
-            <li><a href="{{ route('admin.staff.index') }}" class="{{ request()->routeIs('admin.staff.*') ? 'active' : '' }}"><i class="fa-solid fa-user-gear"></i> Staff Team</a></li>
-
-            <li><a href="{{ route('admin.services.index') }}" class="{{ request()->routeIs('admin.services.*') ? 'active' : '' }}"><i class="fa-solid fa-briefcase"></i> Services</a></li>
-            <li><a href="{{ route('admin.documents.index') }}" class="{{ request()->routeIs('admin.documents.*') ? 'active' : '' }}"><i class="fa-solid fa-file-lines"></i> Documents</a></li>
-            <li><a href="{{ route('admin.tickets.index') }}" class="{{ request()->routeIs('admin.tickets.*') ? 'active' : '' }}"><i class="fa-solid fa-ticket"></i> Requests / Tickets</a></li>
-            <li><a href="{{ route('admin.notifications.index') }}" class="{{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}"><i class="fa-regular fa-bell"></i> Notifications</a></li>
-            <li><a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"><i class="fa-solid fa-chart-line"></i> Reports</a></li>
-            <li><a href="{{ route('admin.activity.index') }}" class="{{ request()->routeIs('admin.activity.*') ? 'active' : '' }}"><i class="fa-solid fa-clock-rotate-left"></i> Activity Logs</a></li>
-            <li><a href="{{ route('admin.settings.index') }}" class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"><i class="fa-solid fa-gear"></i> Settings</a></li>
-        </ul>
-        <div style="position: absolute; bottom: 20px; width: 100%; padding: 0 20px;">
-            <button type="button" class="btn btn-link text-decoration-none text-light p-0" style="font-size: 14px;" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+    <!-- RORIRI Topbar -->
+    <header class="roriri-topbar">
+        <div class="brand-section">
+            <a href="{{ route('admin.dashboard') }}" class="brand-logo">
+                <div class="brand-logo-icon">
+                    <!-- Stylized RORIRI Flower Logo -->
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="5" r="3" fill="#ef4444" />
+                        <circle cx="19" cy="12" r="3" fill="#f59e0b" />
+                        <circle cx="12" cy="19" r="3" fill="#10b981" />
+                        <circle cx="5" cy="12" r="3" fill="#0284c7" />
+                        <circle cx="12" cy="12" r="2.5" fill="#3b82f6" />
+                    </svg>
+                </div>
+                <h1 class="brand-logo-text">RORIRI</h1>
+            </a>
+            <button class="sidebar-toggle-btn" id="sidebarToggle" title="Toggle Navigation">
+                <i class="fa-solid fa-bars"></i>
             </button>
         </div>
-    </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Header -->
-        <div class="top-header">
-            <h2 class="header-title">@yield('page_title', 'Dashboard')</h2>
-            <div class="user-profile">
-                <span class="user-name">{{ Auth::guard('admin')->user()->name ?? 'Admin' }}</span>
-                <i class="fa-solid fa-circle-user fa-2x text-muted"></i>
-            </div>
-        </div>
+        <div class="topbar-right">
+            <!-- Theme Toggle Icon -->
+            <a href="#" class="topbar-icon-btn" title="Toggle Theme" id="themeToggleBtn">
+                <i class="fa-regular fa-moon"></i>
+            </a>
 
-        <!-- Content -->
-        <div class="content-area">
-            @yield('content')
-        </div>
-    </div>
+            <!-- Quick App Grid Icon -->
+            <a href="#" class="topbar-icon-btn" title="Quick Navigation" data-bs-toggle="dropdown">
+                <i class="fa-solid fa-table-cells-large"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2 rounded-3" style="width: 240px;">
+                <li><a class="dropdown-item py-2 rounded-2" href="{{ route('admin.clients.index') }}"><i class="fa-solid fa-users text-primary me-2"></i> Client Management</a></li>
+                <li><a class="dropdown-item py-2 rounded-2" href="{{ route('admin.staff.index') }}"><i class="fa-solid fa-user-gear text-info me-2"></i> Staff Team</a></li>
+                <li><a class="dropdown-item py-2 rounded-2" href="{{ route('admin.tickets.index') }}"><i class="fa-solid fa-ticket text-warning me-2"></i> Support Desk</a></li>
+                <li><a class="dropdown-item py-2 rounded-2" href="{{ route('admin.reports.index') }}"><i class="fa-solid fa-chart-line text-success me-2"></i> Analytics & Reports</a></li>
+            </ul>
 
-    <!-- Logout Modal -->
-    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="fa-solid fa-arrow-right-from-bracket text-danger" style="font-size: 3rem;"></i>
+            <!-- Admin Profile -->
+            <div class="dropdown">
+                <a href="#" class="user-profile-badge" data-bs-toggle="dropdown">
+                    <div class="user-avatar-circle">
+                        <i class="fa-solid fa-user-shield"></i>
                     </div>
-                    <h5 class="fw-bold mb-3">Ready to Leave?</h5>
-                    <p class="text-muted small mb-4">Are you sure you want to log out of the system?</p>
-                    <div class="d-flex justify-content-center gap-2">
-                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">No</button>
-                        <form action="{{ route('logout') }}" method="POST">
+                    <div class="user-info-text">
+                        <span class="user-name">{{ Auth::guard('admin')->user()->name ?? 'Admin' }}</span>
+                        <span class="user-role">Admin</span>
+                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2 rounded-3">
+                    <li><a class="dropdown-item py-2 rounded-2" href="{{ route('admin.settings.index') }}"><i class="fa-solid fa-gear me-2 text-muted"></i> Account Settings</a></li>
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
+                        <form action="{{ route('logout') }}" method="POST" class="m-0">
                             @csrf
-                            <button type="submit" class="btn btn-danger px-4">Confirm</button>
+                            <button type="submit" class="dropdown-item py-2 rounded-2 text-danger">
+                                <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                            </button>
                         </form>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
         </div>
+    </header>
+
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- RORIRI White Sidebar -->
+        <aside class="roriri-sidebar" id="roririSidebar">
+            <ul class="sidebar-menu">
+                <!-- Dashboard -->
+                <li class="menu-item">
+                    <a href="{{ route('admin.dashboard') }}" class="menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                        <div class="menu-link-content">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Dashboard</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Expandable Entity Section from Screenshot -->
+                <li class="menu-item">
+                    <a class="menu-link active" data-bs-toggle="collapse" href="#entityMenu" role="button" aria-expanded="true">
+                        <div class="menu-link-content">
+                            <i class="fa-solid fa-shapes text-primary"></i>
+                            <span class="text-primary fw-semibold">Entity</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down small text-primary"></i>
+                    </a>
+                    <div class="collapse show" id="entityMenu">
+                        <ul class="submenu">
+                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link active"><i class="fa-solid fa-laptop-code"></i> Roriri Software Solution</a></li>
+                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-code"></i> NexGen IT Academy</a></li>
+                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-building-columns"></i> NexGen IT College</a></li>
+                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-globe"></i> Nexemy</a></li>
+                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-book-bookmark"></i> Riya IAS Academy</a></li>
+                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-crosshairs"></i> Riya NEET Academy</a></li>
+                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-star"></i> Riya Consultancy</a></li>
+                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-house-chimney"></i> Rithish Farms</a></li>
+                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-heart"></i> Roriri Foundation</a></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <div class="menu-category-title">Management Modules</div>
+
+                <!-- Clients -->
+                <li class="menu-item">
+                    <a href="{{ route('admin.clients.index') }}" class="menu-link {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}">
+                        <div class="menu-link-content">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Clients</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Staff Team -->
+                <li class="menu-item">
+                    <a href="{{ route('admin.staff.index') }}" class="menu-link {{ request()->routeIs('admin.staff.*') ? 'active' : '' }}">
+                        <div class="menu-link-content">
+                            <i class="fa-solid fa-user-gear"></i>
+                            <span>Staff Team</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Services -->
+                <li class="menu-item">
+                    <a href="{{ route('admin.services.index') }}" class="menu-link {{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
+                        <div class="menu-link-content">
+                            <i class="fa-solid fa-briefcase"></i>
+                            <span>Services</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Documents -->
+                <li class="menu-item">
+                    <a href="{{ route('admin.documents.index') }}" class="menu-link {{ request()->routeIs('admin.documents.*') ? 'active' : '' }}">
+                        <div class="menu-link-content">
+                            <i class="fa-solid fa-file-lines"></i>
+                            <span>Documents</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Support Requests -->
+                <li class="menu-item">
+                    <a href="{{ route('admin.tickets.index') }}" class="menu-link {{ request()->routeIs('admin.tickets.*') ? 'active' : '' }}">
+                        <div class="menu-link-content">
+                            <i class="fa-solid fa-ticket"></i>
+                            <span>Requests / Tickets</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Notifications -->
+                <li class="menu-item">
+                    <a href="{{ route('admin.notifications.index') }}" class="menu-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
+                        <div class="menu-link-content">
+                            <i class="fa-regular fa-bell"></i>
+                            <span>Notifications</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Reports -->
+                <li class="menu-item">
+                    <a href="{{ route('admin.reports.index') }}" class="menu-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
+                        <div class="menu-link-content">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Reports</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Activity Logs -->
+                <li class="menu-item">
+                    <a href="{{ route('admin.activity.index') }}" class="menu-link {{ request()->routeIs('admin.activity.*') ? 'active' : '' }}">
+                        <div class="menu-link-content">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                            <span>Activity Logs</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Settings -->
+                <li class="menu-item">
+                    <a href="{{ route('admin.settings.index') }}" class="menu-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                        <div class="menu-link-content">
+                            <i class="fa-solid fa-gear"></i>
+                            <span>Settings</span>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="p-3 border-top mt-auto">
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-danger w-100 btn-sm rounded-3 py-2">
+                        <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="main-workspace">
+            @yield('content')
+        </main>
     </div>
 
-    <!-- Modals Stack -->
-    @stack('modals')
+    <!-- RORIRI Footer from Screenshot -->
+    <footer class="roriri-footer">
+        Copyright &copy; 2026. All right reserved.
+    </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('roririSidebar');
+
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                });
+            }
+        });
+    </script>
     @yield('scripts')
     @stack('scripts')
 </body>
