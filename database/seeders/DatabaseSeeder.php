@@ -10,6 +10,8 @@ use App\Models\Client;
 use App\Models\ClientUser;
 use App\Models\ClientService;
 use App\Models\SupportTicket;
+use App\Models\ClientDocument;
+use App\Models\Notification;
 
 class DatabaseSeeder extends Seeder
 {
@@ -39,7 +41,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 3. Client Records from Database
+        // 3. Complete Original Clients Data
         $clientsData = [
             [
                 'client_id' => 6,
@@ -55,7 +57,8 @@ class DatabaseSeeder extends Seeder
                 'secondary_contact' => '',
                 'client_gst' => '',
                 'client_status' => 'Active',
-                'joined_date' => now(),
+                'joined_date' => '2026-08-24 16:20:25',
+                'client_created_date' => '2024-11-16 10:35:29',
             ],
             [
                 'client_id' => 7,
@@ -71,7 +74,8 @@ class DatabaseSeeder extends Seeder
                 'secondary_contact' => '',
                 'client_gst' => '',
                 'client_status' => 'Active',
-                'joined_date' => now(),
+                'joined_date' => '2026-08-24 16:20:25',
+                'client_created_date' => '2024-11-29 09:15:02',
             ],
             [
                 'client_id' => 8,
@@ -87,7 +91,8 @@ class DatabaseSeeder extends Seeder
                 'secondary_contact' => '',
                 'client_gst' => '',
                 'client_status' => 'Active',
-                'joined_date' => now(),
+                'joined_date' => '2026-08-24 16:20:25',
+                'client_created_date' => '2024-12-05 02:06:50',
             ],
             [
                 'client_id' => 13,
@@ -103,7 +108,8 @@ class DatabaseSeeder extends Seeder
                 'secondary_contact' => '',
                 'client_gst' => '',
                 'client_status' => 'Active',
-                'joined_date' => now(),
+                'joined_date' => '2026-08-24 11:02:58',
+                'client_created_date' => '2026-08-24 11:02:58',
             ],
             [
                 'client_id' => 14,
@@ -120,12 +126,14 @@ class DatabaseSeeder extends Seeder
                 'client_gst' => 'GSTIN33AAACD1234F1Z5',
                 'client_status' => 'Active',
                 'joined_date' => now(),
+                'client_created_date' => now(),
             ]
         ];
 
         foreach ($clientsData as $c) {
             $createdClient = Client::updateOrCreate(['client_id' => $c['client_id']], $c);
             
+            // Client User Account for Login
             ClientUser::updateOrCreate(
                 ['email' => $c['client_email']],
                 [
@@ -141,27 +149,57 @@ class DatabaseSeeder extends Seeder
             $staff->assignedClients()->syncWithoutDetaching([$createdClient->client_id]);
         }
 
-        // Sample Service
+        // 4. Client Services
         ClientService::updateOrCreate(
             ['client_id' => 13, 'service_name' => 'Cloud Infrastructure & API Development'],
             [
                 'description' => 'Dedicated cloud architecture and microservices deployment.',
-                'cost' => 2500.00,
+                'status' => 'Active',
                 'start_date' => now()->subMonths(2),
                 'end_date' => now()->addMonths(10),
                 'assigned_team' => 'DevOps & Backend',
-                'status' => 'Active',
             ]
         );
 
-        // Sample Ticket
-        SupportTicket::updateOrCreate(
-            ['client_id' => 13, 'subject' => 'UI Enhancements & Dark Theme Integration'],
+        ClientService::updateOrCreate(
+            ['client_id' => 6, 'service_name' => 'Matrimonial Mobile Application'],
             [
-                'description' => 'I want to improve my project UI and add modern responsive components.',
+                'description' => 'Cross-platform Flutter app development and backend setup.',
+                'status' => 'Active',
+                'start_date' => now()->subMonths(1),
+                'end_date' => now()->addMonths(5),
+                'assigned_team' => 'Mobile Dev Team',
+            ]
+        );
+
+        // 5. Original Support Tickets
+        SupportTicket::updateOrCreate(
+            ['client_id' => 13, 'subject' => 'for update my ui'],
+            [
+                'description' => 'i want improve my projects ui , add more styles',
                 'status' => 'In Progress',
                 'priority' => 'Medium',
                 'assigned_staff_id' => $staff->id,
+            ]
+        );
+
+        // 6. Original Client Documents
+        ClientDocument::updateOrCreate(
+            ['client_id' => 13, 'file_name' => 'pan_card.png'],
+            [
+                'file_type' => 'image/png',
+                'document_type' => 'Identity Proof',
+                'file_path' => 'documents/clients/13/pan_card.png',
+                'verification_status' => 'Pending',
+            ]
+        );
+
+        // 7. Notifications
+        Notification::updateOrCreate(
+            ['client_id' => 13, 'title' => 'Document Uploaded'],
+            [
+                'message' => 'Your document "pan card" has been successfully uploaded and is pending verification.',
+                'is_read' => false,
             ]
         );
     }

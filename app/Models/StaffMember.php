@@ -44,4 +44,9 @@ class StaffMember extends Authenticatable
     {
         return $this->hasMany(SupportTicket::class, 'assigned_staff_id');
     }
+
+    public function documents()
+    {
+        return $this->hasMany(StaffDocument::class, 'staff_id');
+    }
 }

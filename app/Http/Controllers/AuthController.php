@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use App\Models\PortalAdmin;
 use App\Models\StaffMember;
 use App\Models\ClientUser;
 use App\Models\Otp;
@@ -15,23 +16,24 @@ use Carbon\Carbon;
 class AuthController extends Controller
 {
     /* =========================================================================
-       CLIENT AUTHENTICATION
+       UNIFIED SINGLE LOGIN
        ========================================================================= */
-    public function showClientLogin()
+    public function showLogin()
     {
-        if (Auth::guard('client')->check()) {
-            return redirect()->route('client.dashboard');
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
         }
         if (Auth::guard('staff')->check()) {
             return redirect()->route('staff.dashboard');
         }
-        if (Auth::guard('admin')->check()) {
-            return redirect()->route('admin.dashboard');
+        if (Auth::guard('client')->check()) {
+            return redirect()->route('client.dashboard');
         }
-        return view('auth.client-login');
+
+        return view('auth.login');
     }
 
-    public function clientLogin(Request $request)
+    public function login(Request $request)
     {
         $request->validate([
             'email' => 'required|string|email',
@@ -42,147 +44,93 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => $request->password,
         ];
-        
         $remember = $request->has('remember');
 
-        // Check if account exists and status
-        $clientUser = ClientUser::where('email', $request->email)->first();
-        if ($clientUser && in_array(strtolower($clientUser->status), ['pending activation', 'pending'])) {
-            return redirect()->route('account.activate', ['email' => $request->email])
-                ->with('error', 'Your account is pending activation. Please verify your OTP to set a password.');
+        // 1. Try Admin Login
+        $admin = PortalAdmin::where('email', $request->email)->first();
+        if ($admin) {
+            if (Auth::guard('admin')->attempt($credentials, $remember)) {
+                $request->session()->regenerate();
+                return redirect()->intended(route('admin.dashboard'));
+            }
         }
 
-        if (Auth::guard('client')->attempt($credentials, $remember)) {
-            $request->session()->regenerate();
-            return redirect()->route('client.dashboard');
-        }
-
-        return redirect()->route('client.login')->withErrors([
-            'email' => 'Incorrect client email or password.',
-        ])->onlyInput('email');
-    }
-
-    /* =========================================================================
-       STAFF AUTHENTICATION
-       ========================================================================= */
-    public function showStaffLogin()
-    {
-        if (Auth::guard('staff')->check()) {
-            return redirect()->route('staff.dashboard');
-        }
-        if (Auth::guard('admin')->check()) {
-            return redirect()->route('admin.dashboard');
-        }
-        if (Auth::guard('client')->check()) {
-            return redirect()->route('client.dashboard');
-        }
-        return view('auth.staff-login');
-    }
-
-    public function staffLogin(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password,
-        ];
-        
-        $remember = $request->has('remember');
-
+        // 2. Try Staff Member Login
         $staff = StaffMember::where('email', $request->email)->first();
-        if ($staff && $staff->status === 'Pending Activation') {
-            return redirect()->route('account.activate', ['email' => $request->email])
-                ->with('error', 'Your staff account is pending activation. Please verify your OTP to create a password.');
+        if ($staff) {
+            if ($staff->status === 'Inactive') {
+                return back()->withErrors([
+                    'email' => 'This staff account has been deactivated. Please contact an administrator.',
+                ])->onlyInput('email');
+            }
+            if ($staff->status === 'Pending Activation') {
+                return redirect()->route('account.activate', ['email' => $request->email])
+                    ->with('error', 'Your staff account is pending activation. Please verify your OTP to create a password.');
+            }
+            if (Auth::guard('staff')->attempt($credentials, $remember)) {
+                $request->session()->regenerate();
+                $staff->update(['last_login_at' => now()]);
+                return redirect()->intended(route('staff.dashboard'));
+            }
         }
 
-        if ($staff && $staff->status === 'Inactive') {
-            return redirect()->route('staff.login')->withErrors([
-                'email' => 'This staff account has been deactivated. Please contact an administrator.',
-            ])->onlyInput('email');
+        // 3. Try Client User Login
+        $clientUser = ClientUser::where('email', $request->email)->first();
+        if ($clientUser) {
+            if (in_array(strtolower($clientUser->status), ['inactive', 'suspended'])) {
+                return back()->withErrors([
+                    'email' => 'This client account is inactive. Please contact your account manager.',
+                ])->onlyInput('email');
+            }
+            if (in_array(strtolower($clientUser->status), ['pending activation', 'pending'])) {
+                return redirect()->route('account.activate', ['email' => $request->email])
+                    ->with('error', 'Your client account is pending activation. Please verify your OTP to set a password.');
+            }
+            if (Auth::guard('client')->attempt($credentials, $remember)) {
+                $request->session()->regenerate();
+                return redirect()->intended(route('client.dashboard'));
+            }
         }
 
-        if (Auth::guard('staff')->attempt($credentials, $remember)) {
-            $request->session()->regenerate();
-            Auth::guard('staff')->user()->update(['last_login_at' => now()]);
-            return redirect()->route('staff.dashboard');
-        }
-
-        return redirect()->route('staff.login')->withErrors([
-            'email' => 'Incorrect staff email or password.',
+        // Generic failure message
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
     }
 
     /* =========================================================================
-       ADMIN AUTHENTICATION
-       ========================================================================= */
-    public function showAdminLogin()
-    {
-        if (Auth::guard('admin')->check()) {
-            return redirect()->route('admin.dashboard');
-        }
-        if (Auth::guard('staff')->check()) {
-            return redirect()->route('staff.dashboard');
-        }
-        if (Auth::guard('client')->check()) {
-            return redirect()->route('client.dashboard');
-        }
-        return view('auth.admin-login');
-    }
-
-    public function adminLogin(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password,
-        ];
-        
-        $remember = $request->has('remember');
-
-        if (Auth::guard('admin')->attempt($credentials, $remember)) {
-            $request->session()->regenerate();
-            return redirect()->route('admin.dashboard');
-        }
-
-        return redirect()->route('admin.login')->withErrors([
-            'email' => 'Incorrect admin credentials or password.',
-        ])->onlyInput('email');
-    }
-
-    /* =========================================================================
-       LOGOUT (GUARD AWARE)
+       LOGOUT (ALL GUARDS)
        ========================================================================= */
     public function logout(Request $request)
     {
-        $redirectRoute = 'client.login';
-
         if (Auth::guard('admin')->check()) {
             Auth::guard('admin')->logout();
-            $redirectRoute = 'admin.login';
-        } elseif (Auth::guard('staff')->check()) {
+        }
+        if (Auth::guard('staff')->check()) {
             Auth::guard('staff')->logout();
-            $redirectRoute = 'staff.login';
-        } elseif (Auth::guard('client')->check()) {
+        }
+        if (Auth::guard('client')->check()) {
             Auth::guard('client')->logout();
-            $redirectRoute = 'client.login';
         }
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route($redirectRoute);
+        return redirect()->route('login')->with('success', 'You have been safely logged out.');
     }
 
     /* =========================================================================
-       OTP ACTIVATION & PASSWORD CREATION (FOR BOTH STAFF & CLIENTS)
+       COMPATIBILITY ALIASES (FOR LEGACY / SPECIFIC LINKS)
+       ========================================================================= */
+    public function showClientLogin() { return redirect()->route('login'); }
+    public function showStaffLogin() { return redirect()->route('login'); }
+    public function showAdminLogin() { return redirect()->route('login'); }
+    public function clientLogin(Request $request) { return $this->login($request); }
+    public function staffLogin(Request $request) { return $this->login($request); }
+    public function adminLogin(Request $request) { return $this->login($request); }
+
+    /* =========================================================================
+       OTP ACTIVATION & PASSWORD CREATION
        ========================================================================= */
     public function showActivationForm(Request $request)
     {
@@ -210,7 +158,6 @@ class AuthController extends Controller
             return back()->with('error', 'This activation OTP code has expired. Please request a new one.');
         }
 
-        // Store in session for password creation step
         session([
             'activation_email' => $request->email,
             'activation_verified' => true,
@@ -241,7 +188,6 @@ class AuthController extends Controller
         }
 
         $accountType = 'User';
-        $loginUrl = route('client.login');
         $userName = '';
 
         // Check if Staff Member
@@ -252,7 +198,6 @@ class AuthController extends Controller
                 'status' => 'Active',
             ]);
             $accountType = 'Staff Team Member (' . $staff->designation . ')';
-            $loginUrl = route('staff.login');
             $userName = $staff->name;
         }
 
@@ -264,7 +209,6 @@ class AuthController extends Controller
                 'status' => 'Active',
             ]);
             $accountType = 'Client Account (' . ($clientUser->client->client_company ?? 'Client Portal') . ')';
-            $loginUrl = route('client.login');
             $userName = $clientUser->name;
         }
 
@@ -273,7 +217,7 @@ class AuthController extends Controller
             Mail::to($email)->send(new \App\Mail\PasswordSetupSuccessMail(
                 $userName ?: 'Portal User',
                 $email,
-                $loginUrl,
+                route('login'),
                 $accountType
             ));
         } catch (\Exception $e) {
@@ -284,6 +228,6 @@ class AuthController extends Controller
         Otp::where('email', $email)->delete();
         session()->forget(['activation_email', 'activation_verified']);
 
-        return redirect($loginUrl)->with('success', 'Your account has been activated and your password is set! You can now log in.');
+        return redirect()->route('login')->with('success', 'Your account has been activated and your password is set! You can now log in.');
     }
 }

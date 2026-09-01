@@ -18,27 +18,19 @@ Route::get('/', function () {
 });
 
 // ==========================================
-// Multi-Login Routes (Client, Staff, Admin)
+// Unified Single Login Route
 // ==========================================
-
-// Client Login
-Route::get('/login/client', [AuthController::class, 'showClientLogin'])->name('client.login');
-Route::post('/login/client', [AuthController::class, 'clientLogin']);
-
-// Staff Login
-Route::get('/login/staff', [AuthController::class, 'showStaffLogin'])->name('staff.login');
-Route::post('/login/staff', [AuthController::class, 'staffLogin'])->name('staff.login.submit');
-
-// Admin Login
-Route::get('/login/admin', [AuthController::class, 'showAdminLogin'])->name('admin.login');
-Route::post('/login/admin', [AuthController::class, 'adminLogin']);
-
-// General /login fallback
-Route::get('/login', function () {
-    return redirect()->route('client.login');
-})->name('login');
-
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Aliases for compatibility
+Route::get('/login/client', [AuthController::class, 'showLogin'])->name('client.login');
+Route::post('/login/client', [AuthController::class, 'login']);
+Route::get('/login/staff', [AuthController::class, 'showLogin'])->name('staff.login');
+Route::post('/login/staff', [AuthController::class, 'login']);
+Route::get('/login/admin', [AuthController::class, 'showLogin'])->name('admin.login');
+Route::post('/login/admin', [AuthController::class, 'login']);
 
 // ==========================================
 // 2-Step OTP Account Activation & Password Setup
@@ -114,6 +106,12 @@ Route::middleware(['auth:staff'])->prefix('staff')->name('staff.')->group(functi
     Route::get('/clients/create', [App\Http\Controllers\StaffClientController::class, 'create'])->name('clients.create');
     Route::post('/clients', [App\Http\Controllers\StaffClientController::class, 'store'])->name('clients.store');
     Route::get('/clients/{client}', [App\Http\Controllers\StaffClientController::class, 'show'])->name('clients.show');
+    
+    // Employee Document Uploads (Staff uploads Resume, Experience, ID Proofs)
+    Route::get('/documents', [App\Http\Controllers\StaffDocumentController::class, 'index'])->name('documents.index');
+    Route::post('/documents', [App\Http\Controllers\StaffDocumentController::class, 'store'])->name('documents.store');
+    Route::get('/documents/{id}/download', [App\Http\Controllers\StaffDocumentController::class, 'download'])->name('documents.download');
+    Route::delete('/documents/{id}', [App\Http\Controllers\StaffDocumentController::class, 'destroy'])->name('documents.destroy');
     
     // Support Ticket Desk
     Route::get('/tickets', [App\Http\Controllers\StaffTicketController::class, 'index'])->name('tickets.index');

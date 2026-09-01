@@ -65,14 +65,6 @@
             text-decoration: none;
         }
 
-        .brand-logo-icon {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
         .brand-logo-text {
             font-size: 22px;
             font-weight: 800;
@@ -140,7 +132,7 @@
             background: #f8fafc;
         }
 
-        .user-profile-badge img, .user-avatar-circle {
+        .user-avatar-circle {
             width: 38px;
             height: 38px;
             border-radius: 50%;
@@ -216,12 +208,12 @@
         .sidebar-menu .menu-link {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 12px;
             padding: 10px 14px;
             border-radius: 10px;
             color: #475569;
             text-decoration: none;
-            font-size: 13.5px;
+            font-size: 14px;
             font-weight: 500;
             transition: all 0.2s ease;
         }
@@ -237,71 +229,37 @@
             font-weight: 600;
         }
 
-        .menu-link-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .menu-link-content i {
+        .sidebar-menu .menu-link i {
             font-size: 16px;
             width: 20px;
             text-align: center;
             color: #64748b;
         }
 
-        .menu-link.active .menu-link-content i {
+        .sidebar-menu .menu-link.active i {
             color: var(--roriri-blue);
         }
 
-        /* Submenu / Entity Tree */
-        .submenu {
-            list-style: none;
-            padding-left: 28px;
-            margin: 4px 0 8px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
-        .submenu .submenu-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 7px 12px;
-            border-radius: 8px;
-            color: #64748b;
-            text-decoration: none;
-            font-size: 12.5px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .submenu .submenu-link:hover {
-            color: var(--roriri-blue);
-            background-color: #f1f5f9;
-        }
-
-        .submenu .submenu-link.active {
-            color: var(--roriri-blue);
-            font-weight: 600;
-            background-color: #f0f9ff;
-        }
-
-        .submenu-link i {
-            font-size: 13px;
-            width: 16px;
-            text-align: center;
-        }
-
-        .menu-category-title {
-            font-size: 11px;
+        .menu-category-header {
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: #94a3b8;
-            padding: 12px 14px 4px 14px;
-            margin-top: 6px;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            padding: 14px 14px 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-category-badge {
+            background-color: #0284c7;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 5px;
+            border-radius: 4px;
+            letter-spacing: 0;
         }
 
         /* Main Workspace Content */
@@ -312,7 +270,62 @@
             overflow-y: auto;
         }
 
-        /* Metric Cards from Screenshot */
+        /* Active Entity Tab Header (from Screenshot 2) */
+        .active-entity-tab-pill {
+            background-color: #9bd39b;
+            border-radius: 10px;
+            padding: 6px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+        }
+
+        .active-tab-logo-circle {
+            width: 22px;
+            height: 22px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        .active-tab-logo-circle img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        .active-tab-text {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .active-tab-close {
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+            cursor: pointer;
+            padding: 0 2px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .active-tab-close:hover {
+            opacity: 1;
+        }
+
+        /* Metric Cards */
         .stat-card-roriri {
             background: #ffffff;
             border-radius: 16px;
@@ -358,7 +371,6 @@
             flex-shrink: 0;
         }
 
-        /* Color variations from screenshot */
         .bg-icon-yellow { background-color: #fffbeb; color: #d97706; }
         .bg-icon-cyan { background-color: #e0f2fe; color: #0284c7; }
         .bg-icon-amber { background-color: #fefce8; color: #ca8a04; }
@@ -368,7 +380,6 @@
         .bg-icon-red { background-color: #fef2f2; color: #ef4444; }
         .bg-icon-purple { background-color: #f5f3ff; color: #7c3aed; }
 
-        /* Standard Cards */
         .card {
             border: 1px solid #f1f5f9;
             border-radius: 16px;
@@ -391,59 +402,26 @@
             color: #0284c7 !important;
         }
 
-        /* Active Entity Tab Header (from Screenshot 2) */
-        .active-entity-tab-pill {
-            background-color: #9bd39b;
+        /* Red Logout Button */
+        .sidebar-logout-btn {
+            border: 1.5px solid #ef4444;
+            color: #ef4444;
+            background: #ffffff;
+            font-weight: 600;
             border-radius: 10px;
-            padding: 6px 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            margin-bottom: 20px;
-        }
-
-        .active-tab-logo-circle {
-            width: 22px;
-            height: 22px;
-            background-color: #ffffff;
-            border-radius: 50%;
+            padding: 10px 16px;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            gap: 8px;
+            transition: all 0.2s ease;
         }
 
-        .active-tab-logo-circle img {
-            width: 16px;
-            height: 16px;
-            object-fit: contain;
-        }
-
-        .active-tab-text {
-            font-size: 13.5px;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .active-tab-close {
-            background: none;
-            border: none;
-            font-size: 15px;
-            font-weight: 700;
-            color: #1e293b;
-            cursor: pointer;
-            padding: 0 2px;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            opacity: 0.8;
-            transition: opacity 0.2s;
-        }
-
-        .active-tab-close:hover {
-            opacity: 1;
+        .sidebar-logout-btn:hover {
+            background-color: #fef2f2;
+            color: #dc2626;
+            border-color: #dc2626;
         }
 
         /* Footer */
@@ -520,141 +498,102 @@
 
     <!-- App Container -->
     <div class="app-container">
-        <!-- RORIRI White Sidebar -->
+        <!-- RORIRI Clean Sidebar matching Screenshot -->
         <aside class="roriri-sidebar" id="roririSidebar">
             <ul class="sidebar-menu">
                 <!-- Dashboard -->
                 <li class="menu-item">
                     <a href="{{ route('admin.dashboard') }}" class="menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                        <div class="menu-link-content">
-                            <i class="fa-solid fa-house"></i>
-                            <span>Dashboard</span>
-                        </div>
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
                     </a>
                 </li>
 
-                <!-- Expandable Entity Section from Screenshot -->
-                <li class="menu-item">
-                    <a class="menu-link active" data-bs-toggle="collapse" href="#entityMenu" role="button" aria-expanded="true">
-                        <div class="menu-link-content">
-                            <i class="fa-solid fa-shapes text-primary"></i>
-                            <span class="text-primary fw-semibold">Entity</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down small text-primary"></i>
-                    </a>
-                    <div class="collapse show" id="entityMenu">
-                        <ul class="submenu">
-                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link active"><i class="fa-solid fa-laptop-code"></i> Roriri Software Solution</a></li>
-                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-code"></i> NexGen IT Academy</a></li>
-                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-building-columns"></i> NexGen IT College</a></li>
-                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-globe"></i> Nexemy</a></li>
-                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-book-bookmark"></i> Riya IAS Academy</a></li>
-                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-crosshairs"></i> Riya NEET Academy</a></li>
-                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-star"></i> Riya Consultancy</a></li>
-                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-house-chimney"></i> Rithish Farms</a></li>
-                            <li><a href="{{ route('admin.clients.index') }}" class="submenu-link"><i class="fa-solid fa-heart"></i> Roriri Foundation</a></li>
-                        </ul>
-                    </div>
-                </li>
-
-                <div class="menu-category-title">Management Modules</div>
+                <!-- Management Modules Header -->
+                <div class="menu-category-header">
+                    <span class="menu-category-badge">M</span>
+                    <span>MANAGEMENT MODULES</span>
+                </div>
 
                 <!-- Clients -->
                 <li class="menu-item">
                     <a href="{{ route('admin.clients.index') }}" class="menu-link {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}">
-                        <div class="menu-link-content">
-                            <i class="fa-solid fa-users"></i>
-                            <span>Clients</span>
-                        </div>
+                        <i class="fa-solid fa-users"></i>
+                        <span>Clients</span>
                     </a>
                 </li>
 
                 <!-- Staff Team -->
                 <li class="menu-item">
                     <a href="{{ route('admin.staff.index') }}" class="menu-link {{ request()->routeIs('admin.staff.*') ? 'active' : '' }}">
-                        <div class="menu-link-content">
-                            <i class="fa-solid fa-user-gear"></i>
-                            <span>Staff Team</span>
-                        </div>
+                        <i class="fa-solid fa-user-gear"></i>
+                        <span>Staff Team</span>
                     </a>
                 </li>
 
                 <!-- Services -->
                 <li class="menu-item">
                     <a href="{{ route('admin.services.index') }}" class="menu-link {{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
-                        <div class="menu-link-content">
-                            <i class="fa-solid fa-briefcase"></i>
-                            <span>Services</span>
-                        </div>
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>Services</span>
                     </a>
                 </li>
 
                 <!-- Documents -->
                 <li class="menu-item">
                     <a href="{{ route('admin.documents.index') }}" class="menu-link {{ request()->routeIs('admin.documents.*') ? 'active' : '' }}">
-                        <div class="menu-link-content">
-                            <i class="fa-solid fa-file-lines"></i>
-                            <span>Documents</span>
-                        </div>
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span>Documents</span>
                     </a>
                 </li>
 
-                <!-- Support Requests -->
+                <!-- Support Requests / Tickets -->
                 <li class="menu-item">
                     <a href="{{ route('admin.tickets.index') }}" class="menu-link {{ request()->routeIs('admin.tickets.*') ? 'active' : '' }}">
-                        <div class="menu-link-content">
-                            <i class="fa-solid fa-ticket"></i>
-                            <span>Requests / Tickets</span>
-                        </div>
+                        <i class="fa-solid fa-ticket"></i>
+                        <span>Requests / Tickets</span>
                     </a>
                 </li>
 
                 <!-- Notifications -->
                 <li class="menu-item">
                     <a href="{{ route('admin.notifications.index') }}" class="menu-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
-                        <div class="menu-link-content">
-                            <i class="fa-regular fa-bell"></i>
-                            <span>Notifications</span>
-                        </div>
+                        <i class="fa-regular fa-bell"></i>
+                        <span>Notifications</span>
                     </a>
                 </li>
 
                 <!-- Reports -->
                 <li class="menu-item">
                     <a href="{{ route('admin.reports.index') }}" class="menu-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
-                        <div class="menu-link-content">
-                            <i class="fa-solid fa-chart-line"></i>
-                            <span>Reports</span>
-                        </div>
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Reports</span>
                     </a>
                 </li>
 
                 <!-- Activity Logs -->
                 <li class="menu-item">
                     <a href="{{ route('admin.activity.index') }}" class="menu-link {{ request()->routeIs('admin.activity.*') ? 'active' : '' }}">
-                        <div class="menu-link-content">
-                            <i class="fa-solid fa-clock-rotate-left"></i>
-                            <span>Activity Logs</span>
-                        </div>
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>Activity Logs</span>
                     </a>
                 </li>
 
                 <!-- Settings -->
                 <li class="menu-item">
                     <a href="{{ route('admin.settings.index') }}" class="menu-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-                        <div class="menu-link-content">
-                            <i class="fa-solid fa-gear"></i>
-                            <span>Settings</span>
-                        </div>
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
                     </a>
                 </li>
             </ul>
 
+            <!-- Clean Logout Button matching Screenshot -->
             <div class="p-3 border-top mt-auto">
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-outline-danger w-100 btn-sm rounded-3 py-2">
-                        <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                    <button type="submit" class="sidebar-logout-btn">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </button>
                 </form>
             </div>
@@ -675,7 +614,7 @@
         </main>
     </div>
 
-    <!-- RORIRI Footer from Screenshot -->
+    <!-- RORIRI Footer -->
     <footer class="roriri-footer">
         Copyright &copy; 2026. All right reserved.
     </footer>
@@ -697,5 +636,6 @@
     </script>
     @yield('scripts')
     @stack('scripts')
+    @stack('modals')
 </body>
 </html>

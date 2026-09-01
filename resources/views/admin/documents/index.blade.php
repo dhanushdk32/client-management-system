@@ -1,107 +1,197 @@
 @extends('layouts.admin')
 
-@section('title', 'Documents - Admin Portal')
-@section('page_title', 'Client Documents Management')
+@section('title', 'Document Vault - Admin Management')
+@section('page_title', 'Centralized Document Vault')
 
 @section('content')
 <div class="card">
     <div class="card-body p-4">
-        <h5 class="fw-bold mb-4">Uploaded Documents</h5>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h5 class="fw-bold mb-1 text-primary border-bottom border-2 border-primary pb-2 d-inline-block">Centralized Document Vault</h5>
+                <p class="text-muted small mb-0">View, download, and verify all documents submitted by **Clients** and **Staff Employees** (Resumes, Experience, ID Proofs, GST).</p>
+            </div>
+        </div>
 
         @if(session('success'))
-            <div class="alert alert-success py-2">{{ session('success') }}</div>
+            <div class="alert alert-success py-2 px-3 small rounded-3 mb-4">
+                <i class="fa-solid fa-circle-check me-1"></i> {{ session('success') }}
+            </div>
         @endif
         @if(session('error'))
-            <div class="alert alert-danger py-2">{{ session('error') }}</div>
-        @endif
-        @if($errors->any())
-            <div class="alert alert-danger py-2">
-                <ul class="mb-0 ps-3">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+            <div class="alert alert-danger py-2 px-3 small rounded-3 mb-4">
+                <i class="fa-solid fa-circle-exclamation me-1"></i> {{ session('error') }}
             </div>
         @endif
 
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Client</th>
-                        <th>Document Details</th>
-                        <th>Status</th>
-                        <th>Uploaded Date</th>
-                        <th class="text-end">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($documents as $doc)
-                        <tr>
-                            <td>
-                                <div class="fw-medium">{{ $doc->client->client_company ?? 'N/A' }}</div>
-                                <div class="small text-muted">ID: CL{{ sprintf('%03d', $doc->client_id) }}</div>
-                            </td>
-                            <td>
-                                <div class="fw-medium">{{ $doc->document_name }}</div>
-                                <div class="small text-muted">{{ $doc->document_type }}</div>
-                            </td>
-                            <td>
-                                @if($doc->status == 'Verified')
-                                    <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 border border-success-subtle"><i class="fa-solid fa-check-circle me-1"></i> Verified</span>
-                                @elseif($doc->status == 'Rejected')
-                                    <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-1 border border-danger-subtle"><i class="fa-solid fa-circle-xmark me-1"></i> Rejected</span>
-                                @else
-                                    <span class="badge bg-warning-subtle text-warning rounded-pill px-3 py-1 border border-warning-subtle"><i class="fa-solid fa-clock me-1"></i> Pending</span>
-                                @endif
-                            </td>
-                            <td class="small">{{ \Carbon\Carbon::parse($doc->created_at)->format('d M Y h:i A') }}</td>
-                            <td class="text-end">
-                                <a href="{{ route('admin.documents.download', $doc->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-2" title="Download">
-                                    <i class="fa-solid fa-download"></i>
-                                </a>
-                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#statusModal{{ $doc->id }}">
-                                    <i class="fa-solid fa-pen"></i> Update
-                                </button>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-5">
-                                <i class="fa-solid fa-folder-open fa-3x mb-3 text-light"></i>
-                                <p class="mb-0">No documents uploaded yet.</p>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+        <!-- Document Tabs: Client Documents vs Staff Documents -->
+        <ul class="nav nav-pills mb-4 gap-2" id="docTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {{ $activeTab !== 'staff' ? 'active' : '' }} fw-semibold px-4 py-2 rounded-pill" id="client-docs-tab" data-bs-toggle="pill" data-bs-target="#clientDocsPane" type="button" role="tab">
+                    <i class="fa-solid fa-building me-2"></i> Client Documents ({{ $clientDocuments->total() }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {{ $activeTab === 'staff' ? 'active' : '' }} fw-semibold px-4 py-2 rounded-pill" id="staff-docs-tab" data-bs-toggle="pill" data-bs-target="#staffDocsPane" type="button" role="tab">
+                    <i class="fa-solid fa-user-tie me-2"></i> Staff Employee Documents ({{ $staffDocuments->total() }})
+                </button>
+            </li>
+        </ul>
 
-        <div class="mt-4">
-            {{ $documents->links('pagination::bootstrap-5') }}
+        <div class="tab-content" id="docTabsContent">
+            <!-- TAB 1: CLIENT DOCUMENTS -->
+            <div class="tab-pane fade {{ $activeTab !== 'staff' ? 'show active' : '' }}" id="clientDocsPane" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr class="small text-muted">
+                                <th>Client / Company</th>
+                                <th>Document Title</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Uploaded Date</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($clientDocuments as $doc)
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold text-dark">{{ $doc->client->client_company ?? 'N/A' }}</div>
+                                        <span class="text-muted small">ID: #CL{{ sprintf('%03d', $doc->client_id) }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold text-dark">{{ $doc->document_name }}</div>
+                                        <span class="text-muted small" style="font-size: 11px;">
+                                            <i class="fa-solid fa-file me-1 text-primary"></i> {{ basename($doc->file_path) }}
+                                        </span>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border">{{ $doc->document_type }}</span></td>
+                                    <td>
+                                        @if($doc->status == 'Verified')
+                                            <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 border border-success-subtle"><i class="fa-solid fa-check-circle me-1"></i> Verified</span>
+                                        @elseif($doc->status == 'Rejected')
+                                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-1 border border-danger-subtle"><i class="fa-solid fa-circle-xmark me-1"></i> Rejected</span>
+                                        @else
+                                            <span class="badge bg-warning-subtle text-warning rounded-pill px-3 py-1 border border-warning-subtle"><i class="fa-solid fa-clock me-1"></i> Pending</span>
+                                        @endif
+                                    </td>
+                                    <td class="small text-muted">{{ $doc->created_at ? $doc->created_at->format('d M Y, h:i A') : 'N/A' }}</td>
+                                    <td class="text-end">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <a href="{{ route('admin.documents.download', $doc->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Download">
+                                                <i class="fa-solid fa-download"></i> Download
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#clientStatusModal{{ $doc->id }}">
+                                                <i class="fa-solid fa-pen"></i> Review
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <i class="fa-solid fa-folder-open fa-3x mb-2 text-muted opacity-50"></i>
+                                        <p class="mb-0">No client documents uploaded yet.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    {{ $clientDocuments->appends(['tab' => 'clients'])->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
+
+            <!-- TAB 2: STAFF EMPLOYEE DOCUMENTS (Resumes, Experience, ID Proofs) -->
+            <div class="tab-pane fade {{ $activeTab === 'staff' ? 'show active' : '' }}" id="staffDocsPane" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr class="small text-muted">
+                                <th>Staff Member</th>
+                                <th>Document Title</th>
+                                <th>Classification</th>
+                                <th>Status</th>
+                                <th>Uploaded Date</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($staffDocuments as $doc)
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold text-dark">{{ $doc->staff->name ?? 'Staff User' }}</div>
+                                        <span class="text-muted small">{{ $doc->staff->designation ?? 'Team Member' }} ({{ $doc->staff->department ?? 'General' }})</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold text-dark">{{ $doc->document_name }}</div>
+                                        <span class="text-muted small" style="font-size: 11px;">
+                                            <i class="fa-solid fa-file-pdf me-1 text-danger"></i> {{ basename($doc->file_path) }}
+                                        </span>
+                                    </td>
+                                    <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">{{ $doc->document_type }}</span></td>
+                                    <td>
+                                        @if($doc->status == 'Verified')
+                                            <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 border border-success-subtle"><i class="fa-solid fa-check-circle me-1"></i> Verified</span>
+                                        @elseif($doc->status == 'Rejected')
+                                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-1 border border-danger-subtle"><i class="fa-solid fa-circle-xmark me-1"></i> Rejected</span>
+                                        @else
+                                            <span class="badge bg-warning-subtle text-warning rounded-pill px-3 py-1 border border-warning-subtle"><i class="fa-solid fa-clock me-1"></i> Pending Review</span>
+                                        @endif
+                                    </td>
+                                    <td class="small text-muted">{{ $doc->created_at ? $doc->created_at->format('d M Y, h:i A') : 'N/A' }}</td>
+                                    <td class="text-end">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <a href="{{ route('admin.documents.download', ['id' => $doc->id, 'type' => 'staff']) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Download">
+                                                <i class="fa-solid fa-download"></i> Download
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#staffStatusModal{{ $doc->id }}">
+                                                <i class="fa-solid fa-pen"></i> Review
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <i class="fa-solid fa-user-graduate fa-3x mb-2 text-muted opacity-50"></i>
+                                        <p class="mb-0">No staff employee documents (Resumes, Experience letters) uploaded yet.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    {{ $staffDocuments->appends(['tab' => 'staff'])->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
         </div>
     </div>
 </div>
 @endsection
 
 @push('modals')
-@foreach($documents as $doc)
-    <!-- Modal for Status Update -->
-    <div class="modal fade" id="statusModal{{ $doc->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+<!-- Client Document Review Modals -->
+@foreach($clientDocuments as $doc)
+    <div class="modal fade" id="clientStatusModal{{ $doc->id }}" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <form action="{{ route('admin.documents.update', $doc->id) }}" method="POST" class="modal-content">
                 @csrf
                 @method('PUT')
+                <input type="hidden" name="type" value="client">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold">Update Document Status</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title fw-bold">Review Client Document</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-3">Update status for <strong>{{ $doc->document_name }}</strong> belonging to <strong>{{ $doc->client->client_company ?? 'N/A' }}</strong>.</p>
+                    <p class="mb-3">Updating status for <strong>{{ $doc->document_name }}</strong> uploaded by <strong>{{ $doc->client->client_company ?? 'Client' }}</strong>.</p>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Status</label>
+                        <label class="form-label fw-semibold small text-muted">Verification Decision</label>
                         <select name="status" class="form-select" required>
-                            <option value="Pending" {{ $doc->status == 'Pending' ? 'selected' : '' }}>Pending (Awaiting Verification)</option>
+                            <option value="Pending" {{ $doc->status == 'Pending' ? 'selected' : '' }}>Pending (Under Review)</option>
                             <option value="Verified" {{ $doc->status == 'Verified' ? 'selected' : '' }}>Verified (Approved)</option>
                             <option value="Rejected" {{ $doc->status == 'Rejected' ? 'selected' : '' }}>Rejected (Action Required)</option>
                         </select>
@@ -109,7 +199,39 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary px-4">Update Status</button>
+                    <button type="submit" class="btn btn-primary px-4">Save Decision</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endforeach
+
+<!-- Staff Employee Document Review Modals -->
+@foreach($staffDocuments as $doc)
+    <div class="modal fade" id="staffStatusModal{{ $doc->id }}" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ route('admin.documents.update', $doc->id) }}" method="POST" class="modal-content">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="type" value="staff">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Review Staff Employee Document</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">Updating status for <strong>{{ $doc->document_name }}</strong> ({{ $doc->document_type }}) submitted by employee <strong>{{ $doc->staff->name ?? 'Staff' }}</strong>.</p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-muted">HR Verification Decision</label>
+                        <select name="status" class="form-select" required>
+                            <option value="Pending" {{ $doc->status == 'Pending' ? 'selected' : '' }}>Pending (Under HR Review)</option>
+                            <option value="Verified" {{ $doc->status == 'Verified' ? 'selected' : '' }}>Verified (Approved & Archived)</option>
+                            <option value="Rejected" {{ $doc->status == 'Rejected' ? 'selected' : '' }}>Rejected (Resubmission Requested)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary px-4">Save HR Decision</button>
                 </div>
             </form>
         </div>

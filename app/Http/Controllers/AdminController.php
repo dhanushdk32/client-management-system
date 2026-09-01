@@ -4,24 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Client;
+use App\Models\StaffMember;
+use App\Models\ClientService;
+use App\Models\SupportTicket;
+use App\Models\ClientDocument;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
+        // Real Application Metrics
         $totalClients = Client::count();
         $activeClients = Client::where('client_status', 'Active')->count();
         $inactiveClients = Client::where('client_status', 'Inactive')->count();
         $pendingClients = Client::where('client_status', 'Pending')->count();
 
+        $totalStaff = StaffMember::count();
+        $activeStaff = StaffMember::where('status', 'Active')->count();
+
+        $totalServices = ClientService::count();
+        $activeServices = ClientService::where('status', 'Active')->count();
+
+        $totalTickets = SupportTicket::count();
+        $openTickets = SupportTicket::whereIn('status', ['Open', 'In Progress'])->count();
+        $resolvedTickets = SupportTicket::where('status', 'Resolved')->count();
+
+        $totalDocuments = ClientDocument::count();
+
         $currentMonth = \Carbon\Carbon::now()->month;
         $currentYear = \Carbon\Carbon::now()->year;
 
-        $totalThisMonth = Client::whereMonth('client_created_date', $currentMonth)->whereYear('client_created_date', $currentYear)->count();
-        $activeThisMonth = Client::where('client_status', 'Active')->whereMonth('client_created_date', $currentMonth)->whereYear('client_created_date', $currentYear)->count();
-        $inactiveThisMonth = Client::where('client_status', 'Inactive')->whereMonth('client_created_date', $currentMonth)->whereYear('client_created_date', $currentYear)->count();
-        $pendingThisMonth = Client::where('client_status', 'Pending')->whereMonth('client_created_date', $currentMonth)->whereYear('client_created_date', $currentYear)->count();
+        $newClientsThisMonth = Client::whereMonth('client_created_date', $currentMonth)->whereYear('client_created_date', $currentYear)->count();
 
         // Chart Data (New Clients grouped by year)
         $driver = DB::connection()->getDriverName();
@@ -49,28 +63,38 @@ class AdminController extends Controller
                 ?? 0;
             $chartData[] = $count;
         }
-        
-        $chartTitle = "New Clients (Yearly Overview)";
 
-        // Fetch recent activities (from activity_logs, assuming we will create the model soon, for now use DB facade)
+        // Recent Activity Logs
         $recentActivities = DB::table('activity_logs')
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
+
+        // Recent Clients
+        $recentClients = Client::latest('client_id')->limit(5)->get();
+
+        // Recent Tickets
+        $recentTickets = SupportTicket::with('client')->latest('id')->limit(5)->get();
 
         return view('admin.dashboard', compact(
             'totalClients',
             'activeClients',
             'inactiveClients',
             'pendingClients',
-            'totalThisMonth',
-            'activeThisMonth',
-            'inactiveThisMonth',
-            'pendingThisMonth',
+            'totalStaff',
+            'activeStaff',
+            'totalServices',
+            'activeServices',
+            'totalTickets',
+            'openTickets',
+            'resolvedTickets',
+            'totalDocuments',
+            'newClientsThisMonth',
             'recentActivities',
+            'recentClients',
+            'recentTickets',
             'chartLabels',
-            'chartData',
-            'chartTitle'
+            'chartData'
         ));
     }
 }
