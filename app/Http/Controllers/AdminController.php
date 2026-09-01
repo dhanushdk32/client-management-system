@@ -24,8 +24,13 @@ class AdminController extends Controller
         $pendingThisMonth = Client::where('client_status', 'Pending')->whereMonth('client_created_date', $currentMonth)->whereYear('client_created_date', $currentYear)->count();
 
         // Chart Data (New Clients grouped by year)
+        $driver = DB::connection()->getDriverName();
+        $yearExpression = $driver === 'sqlite' 
+            ? "strftime('%Y', client_created_date)" 
+            : "YEAR(client_created_date)";
+
         $chartRawData = DB::table('client_tbl')
-            ->select(DB::raw('YEAR(client_created_date) as year'), DB::raw('count(*) as count'))
+            ->select(DB::raw("{$yearExpression} as year"), DB::raw('count(*) as count'))
             ->groupBy('year')
             ->orderBy('year', 'asc')
             ->get();
@@ -33,13 +38,15 @@ class AdminController extends Controller
         $chartLabels = [];
         $chartData = [];
         
-        $currentYearValue = \Carbon\Carbon::now()->year;
-        $minYearDB = DB::table('client_tbl')->min(DB::raw('YEAR(client_created_date)')) ?? $currentYearValue;
-        $startYear = min($minYearDB, $currentYearValue - 4); // show at least last 5 years
+        $currentYearValue = (int) \Carbon\Carbon::now()->year;
+        $minYearDB = DB::table('client_tbl')->min(DB::raw($yearExpression)) ?? $currentYearValue;
+        $startYear = min((int)$minYearDB, $currentYearValue - 4); // show at least last 5 years
         
         for ($y = $startYear; $y <= $currentYearValue; $y++) {
             $chartLabels[] = (string)$y;
-            $count = $chartRawData->where('year', $y)->first()->count ?? 0;
+            $count = $chartRawData->where('year', (string)$y)->first()->count 
+                ?? $chartRawData->where('year', $y)->first()->count 
+                ?? 0;
             $chartData[] = $count;
         }
         
