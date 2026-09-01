@@ -1,17 +1,15 @@
-Welcome to IT Portal - Account Activation
+RORIRI Account Verification Code
 
 Hello {{ $name }},
 
-An account has been created for you as a {{ $accountType }} on the Client Management System.
+An account is being provisioned for you as {{ $accountType }} on the RORIRI Portal.
 
-Your 6-Digit Activation OTP Code is:
-----------------------------------------
+Your 6-Digit Verification OTP Code is:
 {{ $otpCode }}
-----------------------------------------
-(This code is valid for 15 minutes)
 
-To activate your account and set your password, visit:
-{{ route('account.activate', ['email' => $email]) }}
+(Valid for 5 minutes only)
+
+Please provide this code to your administrator to complete your account setup.
 
 Thank you,
-IT Management Team
+RORIRI Operations Team

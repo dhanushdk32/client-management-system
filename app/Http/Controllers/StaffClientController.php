@@ -61,13 +61,13 @@ class StaffClientController extends Controller
             ], 422);
         }
 
-        // Generate 6-digit OTP
+        // Generate 6-digit OTP (Valid for 5 minutes)
         $otpCode = (string) rand(100000, 999999);
         Otp::updateOrCreate(
             ['email' => $request->email],
             [
                 'otp_code' => $otpCode,
-                'expires_at' => Carbon::now()->addMinutes(30),
+                'expires_at' => Carbon::now()->addMinutes(5),
             ]
         );
 

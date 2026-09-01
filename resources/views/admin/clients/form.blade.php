@@ -91,7 +91,7 @@
                         @if(!isset($client))
                             <button type="button" id="btnSendOtp" class="btn btn-outline-primary fw-semibold px-3">
                                 <span id="sendOtpSpinner" class="spinner-border spinner-border-sm d-none me-1"></span>
-                                <i class="fa-solid fa-paper-plane me-1"></i> Send OTP to Email
+                                <i class="fa-solid fa-paper-plane me-1"></i> Send OTP
                             </button>
                         @endif
                     </div>
@@ -110,34 +110,41 @@
             </div>
 
             @if(!isset($client))
-                <!-- OTP & Password Section for New Client -->
+                <!-- OTP & Manual Password Section for New Client -->
                 <div id="verificationSection" class="p-4 rounded-3 mb-4 border border-primary-subtle bg-light">
-                    <h6 class="fw-bold mb-2 text-primary">
-                        <i class="fa-solid fa-shield-halved me-1"></i> Email Verification & Password Setup
-                    </h6>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold mb-0 text-primary">
+                            <i class="fa-solid fa-shield-halved me-1"></i> Email Verification & Password Setup
+                        </h6>
+                        <span class="badge bg-warning-subtle text-dark border border-warning">
+                            <i class="fa-regular fa-clock me-1"></i> OTP Valid for 5 Minutes
+                        </span>
+                    </div>
                     <p class="text-muted small mb-3">
-                        Click <strong>"Send OTP to Email"</strong> above. A welcome email containing a 6-digit OTP code will be sent to the client. Enter the OTP code below and set their password.
+                        Click <strong>"Send OTP"</strong> above. A 6-digit code will be sent to the client email. Enter the OTP code below and set the password manually.
                     </p>
 
                     <div class="row g-4">
                         <div class="col-md-5">
-                            <label class="form-label fw-semibold small text-muted">Enter 6-Digit OTP Code <span class="text-danger">*</span></label>
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label fw-semibold small text-muted mb-0">Enter 6-Digit OTP Code <span class="text-danger">*</span></label>
+                                <button type="button" id="btnResendClientOtp" class="btn btn-link p-0 text-primary small text-decoration-none fw-semibold">
+                                    <i class="fa-solid fa-rotate-right me-1"></i> Resend OTP
+                                </button>
+                            </div>
                             <input type="text" name="otp" id="otpCodeField" class="form-control bg-white text-center fw-bold fs-5 tracking-wider" placeholder="• • • • • •" maxlength="6" pattern="\d{6}">
                             <div class="form-text small text-muted">Received on the client's email</div>
                         </div>
 
                         <div class="col-md-7">
-                            <label class="form-label fw-semibold small text-muted">Create Client Password <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold small text-muted">Set Client Password <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input type="password" name="password" id="clientPasswordField" class="form-control bg-white" placeholder="Minimum 6 characters" minlength="6">
+                                <input type="password" name="password" id="clientPasswordField" class="form-control bg-white" placeholder="Type your custom password (min 6 chars)" minlength="6">
                                 <button type="button" class="btn btn-outline-secondary" id="btnTogglePassword">
                                     <i class="fa-regular fa-eye"></i>
                                 </button>
-                                <button type="button" class="btn btn-outline-primary fw-semibold" id="btnGeneratePassword">
-                                    <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Auto-Generate
-                                </button>
                             </div>
-                            <div class="form-text small text-muted">This password will be automatically emailed to the client along with their login link upon confirmation.</div>
+                            <div class="form-text small text-muted">Admin manually assigns the password. The client receives their confirmation email with login link upon account creation.</div>
                         </div>
                     </div>
                 </div>
@@ -165,6 +172,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const btnSendOtp = document.getElementById('btnSendOtp');
+        const btnResendOtp = document.getElementById('btnResendClientOtp');
         const spinner = document.getElementById('sendOtpSpinner');
         const otpStatusMessage = document.getElementById('otpStatusMessage');
         const emailInput = document.getElementById('clientEmail');
@@ -173,54 +181,61 @@
         
         const passField = document.getElementById('clientPasswordField');
         const btnTogglePass = document.getElementById('btnTogglePassword');
-        const btnGenPass = document.getElementById('btnGeneratePassword');
 
-        if (btnSendOtp) {
-            btnSendOtp.addEventListener('click', function() {
-                const email = emailInput.value.trim();
-                const name = nameInput.value.trim() || 'Client';
-                const company = companyInput.value.trim() || 'Company';
+        function triggerSendClientOtp() {
+            const email = emailInput.value.trim();
+            const name = nameInput.value.trim() || 'Client';
+            const company = companyInput.value.trim() || 'Company';
 
-                if (!email) {
-                    alert('Please enter a valid Client Email Address first.');
-                    emailInput.focus();
-                    return;
+            if (!email) {
+                alert('Please enter a valid Client Email Address first.');
+                emailInput.focus();
+                return;
+            }
+
+            if (btnSendOtp) btnSendOtp.disabled = true;
+            if (btnResendOtp) btnResendOtp.disabled = true;
+            if (spinner) spinner.classList.remove('d-none');
+            otpStatusMessage.innerHTML = '<span class="text-muted"><i class="fa-solid fa-spinner fa-spin me-1"></i> Sending OTP code...</span>';
+
+            fetch("{{ route('admin.clients.send-otp') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    name: name,
+                    company: company
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (btnSendOtp) {
+                    btnSendOtp.disabled = false;
+                    btnSendOtp.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i> Resend OTP';
                 }
-
-                btnSendOtp.disabled = true;
-                spinner.classList.remove('d-none');
-                otpStatusMessage.innerHTML = '<span class="text-muted"><i class="fa-solid fa-spinner fa-spin me-1"></i> Sending welcome email with OTP...</span>';
-
-                fetch("{{ route('admin.clients.send-otp') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        name: name,
-                        company: company
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    btnSendOtp.disabled = false;
-                    spinner.classList.add('d-none');
-                    if (data.success) {
-                        otpStatusMessage.innerHTML = '<span class="text-success fw-semibold"><i class="fa-solid fa-circle-check me-1"></i> ' + data.message + '</span>';
-                        document.getElementById('otpCodeField').focus();
-                    } else {
-                        otpStatusMessage.innerHTML = '<span class="text-danger fw-semibold"><i class="fa-solid fa-circle-xmark me-1"></i> ' + (data.message || 'Failed to send OTP') + '</span>';
-                    }
-                })
-                .catch(err => {
-                    btnSendOtp.disabled = false;
-                    spinner.classList.add('d-none');
-                    otpStatusMessage.innerHTML = '<span class="text-danger fw-semibold">Error connecting to server.</span>';
-                });
+                if (btnResendOtp) btnResendOtp.disabled = false;
+                if (spinner) spinner.classList.add('d-none');
+                
+                if (data.success) {
+                    otpStatusMessage.innerHTML = '<span class="text-success fw-semibold"><i class="fa-solid fa-circle-check me-1"></i> OTP code sent to ' + email + ' (Valid for 5 minutes).</span>';
+                    document.getElementById('otpCodeField').focus();
+                } else {
+                    otpStatusMessage.innerHTML = '<span class="text-danger fw-semibold"><i class="fa-solid fa-circle-xmark me-1"></i> ' + (data.message || 'Failed to send OTP') + '</span>';
+                }
+            })
+            .catch(err => {
+                if (btnSendOtp) btnSendOtp.disabled = false;
+                if (btnResendOtp) btnResendOtp.disabled = false;
+                if (spinner) spinner.classList.add('d-none');
+                otpStatusMessage.innerHTML = '<span class="text-danger fw-semibold">Error connecting to server.</span>';
             });
         }
+
+        if (btnSendOtp) btnSendOtp.addEventListener('click', triggerSendClientOtp);
+        if (btnResendOtp) btnResendOtp.addEventListener('click', triggerSendClientOtp);
 
         if (btnTogglePass && passField) {
             btnTogglePass.addEventListener('click', function() {
@@ -229,23 +244,6 @@
                 passField.type = isPassword ? 'text' : 'password';
                 icon.classList.toggle('fa-eye', !isPassword);
                 icon.classList.toggle('fa-eye-slash', isPassword);
-            });
-        }
-
-        if (btnGenPass && passField) {
-            btnGenPass.addEventListener('click', function() {
-                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
-                let randomPass = '';
-                for (let i = 0; i < 10; i++) {
-                    randomPass += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                passField.value = randomPass;
-                passField.type = 'text';
-                const icon = btnTogglePass.querySelector('i');
-                if (icon) {
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                }
             });
         }
     });
