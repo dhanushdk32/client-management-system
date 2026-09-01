@@ -11,6 +11,7 @@ class SupportTicket extends Model
     protected $fillable = [
         'client_id',
         'created_by',
+        'assigned_staff_id',
         'subject',
         'description',
         'status',
@@ -20,6 +21,11 @@ class SupportTicket extends Model
     public function client()
     {
         return $this->belongsTo(Client::class, 'client_id', 'client_id');
+    }
+
+    public function assignedStaff()
+    {
+        return $this->belongsTo(StaffMember::class, 'assigned_staff_id');
     }
 
     public function replies()

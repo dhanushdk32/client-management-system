@@ -62,29 +62,49 @@ class AdminClientController extends Controller
 
         $client = Client::create($data);
 
-        // Use custom password if provided by admin, otherwise auto-generate secure 10-char password
-        $plainPassword = $request->filled('password') 
-            ? $request->password 
-            : \Illuminate\Support\Str::random(10);
+        // If admin provided a specific password, set it immediately
+        $hasPassword = $request->filled('password');
+        $plainPassword = $hasPassword ? $request->password : null;
         
         $clientUser = \App\Models\ClientUser::create([
             'client_id' => $client->client_id,
             'name' => $client->client_name,
             'email' => $client->client_email,
-            'password' => \Illuminate\Support\Facades\Hash::make($plainPassword),
+            'password' => $hasPassword ? \Illuminate\Support\Facades\Hash::make($plainPassword) : null,
             'role' => 'Admin', // Primary client admin
-            'status' => 'Active',
+            'status' => $hasPassword ? 'Active' : 'Pending Activation',
         ]);
 
-        // Send Welcome Email
+        // Generate 6-digit OTP code for welcome activation
+        $otpCode = (string) rand(100000, 999999);
+        \App\Models\Otp::updateOrCreate(
+            ['email' => $client->client_email],
+            [
+                'otp_code' => $otpCode,
+                'expires_at' => \Carbon\Carbon::now()->addHours(24),
+            ]
+        );
+
+        // Send Welcome Activation Email
         try {
-            \Illuminate\Support\Facades\Mail::to($clientUser->email)
-                ->send(new \App\Mail\WelcomeClientMail($client, $plainPassword));
+            if ($hasPassword) {
+                \Illuminate\Support\Facades\Mail::to($clientUser->email)
+                    ->send(new \App\Mail\WelcomeClientMail($client, $plainPassword));
+            } else {
+                \Illuminate\Support\Facades\Mail::to($clientUser->email)
+                    ->send(new \App\Mail\WelcomeActivationOtpMail(
+                        $client->client_name,
+                        $client->client_email,
+                        'Client Portal',
+                        $otpCode,
+                        $client->client_company
+                    ));
+            }
             
-            return redirect()->route('admin.clients.index')->with('success', 'Client created successfully and welcome email sent.');
+            return redirect()->route('admin.clients.index')->with('success', 'Client created successfully and welcome activation email sent.');
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Failed to send welcome email: ' . $e->getMessage());
-            return redirect()->route('admin.clients.index')->with('success', 'Client created successfully, but welcome email could not be sent (SMTP error).');
+            return redirect()->route('admin.clients.index')->with('success', 'Client created successfully, but email notification failed (SMTP error).');
         }
     }
 

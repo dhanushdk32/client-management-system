@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($request->is('admin') || $request->is('admin/*')) {
                     return route('admin.login');
                 }
+                if ($request->is('staff') || $request->is('staff/*')) {
+                    return route('staff.login');
+                }
                 return route('client.login');
             }
         );

@@ -211,6 +211,7 @@
         <ul class="nav-links">
             <li><a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
             <li><a href="{{ route('admin.clients.index') }}" class="{{ request()->routeIs('admin.clients.*') ? 'active' : '' }}"><i class="fa-solid fa-users"></i> Clients</a></li>
+            <li><a href="{{ route('admin.staff.index') }}" class="{{ request()->routeIs('admin.staff.*') ? 'active' : '' }}"><i class="fa-solid fa-user-gear"></i> Staff Team</a></li>
 
             <li><a href="{{ route('admin.services.index') }}" class="{{ request()->routeIs('admin.services.*') ? 'active' : '' }}"><i class="fa-solid fa-briefcase"></i> Services</a></li>
             <li><a href="{{ route('admin.documents.index') }}" class="{{ request()->routeIs('admin.documents.*') ? 'active' : '' }}"><i class="fa-solid fa-file-lines"></i> Documents</a></li>

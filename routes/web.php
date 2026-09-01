@@ -1,11 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
     if (Auth::guard('admin')->check()) {
         return redirect()->route('admin.dashboard');
+    }
+    if (Auth::guard('staff')->check()) {
+        return redirect()->route('staff.dashboard');
     }
     if (Auth::guard('client')->check()) {
         return redirect()->route('client.dashboard');
@@ -13,11 +17,19 @@ Route::get('/', function () {
     return redirect()->route('client.login');
 });
 
-// Dedicated Client Login Routes
+// ==========================================
+// Multi-Login Routes (Client, Staff, Admin)
+// ==========================================
+
+// Client Login
 Route::get('/login/client', [AuthController::class, 'showClientLogin'])->name('client.login');
 Route::post('/login/client', [AuthController::class, 'clientLogin']);
 
-// Dedicated Admin Login Routes
+// Staff Login
+Route::get('/login/staff', [AuthController::class, 'showStaffLogin'])->name('staff.login');
+Route::post('/login/staff', [AuthController::class, 'staffLogin'])->name('staff.login.submit');
+
+// Admin Login
 Route::get('/login/admin', [AuthController::class, 'showAdminLogin'])->name('admin.login');
 Route::post('/login/admin', [AuthController::class, 'adminLogin']);
 
@@ -28,7 +40,17 @@ Route::get('/login', function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// ==========================================
+// 2-Step OTP Account Activation & Password Setup
+// ==========================================
+Route::get('/activate-account', [AuthController::class, 'showActivationForm'])->name('account.activate');
+Route::post('/activate-account/verify', [AuthController::class, 'verifyActivationOtp'])->name('account.activate.verify');
+Route::get('/activate-account/set-password', [AuthController::class, 'showSetPasswordForm'])->name('account.activate.set-password');
+Route::post('/activate-account/set-password', [AuthController::class, 'saveActivatedPassword'])->name('account.activate.save-password');
+
+// ==========================================
 // Forgot Password OTP Routes
+// ==========================================
 Route::get('/forgot-password', [App\Http\Controllers\ForgotPasswordController::class, 'showEmailForm'])->name('password.request');
 Route::post('/forgot-password', [App\Http\Controllers\ForgotPasswordController::class, 'sendOtp'])->name('password.email');
 Route::get('/verify-otp', [App\Http\Controllers\ForgotPasswordController::class, 'showOtpForm'])->name('password.verify.form');
@@ -36,35 +58,72 @@ Route::post('/verify-otp', [App\Http\Controllers\ForgotPasswordController::class
 Route::get('/reset-password', [App\Http\Controllers\ForgotPasswordController::class, 'showResetForm'])->name('password.reset.form');
 Route::post('/reset-password', [App\Http\Controllers\ForgotPasswordController::class, 'resetPassword'])->name('password.reset');
 
+// ==========================================
+// 👑 ADMIN PORTAL ROUTES (/admin/*)
+// ==========================================
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
+    
+    // Clients & Staff Management
     Route::resource('clients', App\Http\Controllers\AdminClientController::class);
+    Route::resource('staff', App\Http\Controllers\AdminStaffController::class);
+    
+    // Services Catalog
     Route::resource('services', App\Http\Controllers\AdminServiceController::class);
     
+    // Documents Desk
     Route::get('/documents', [App\Http\Controllers\AdminDocumentController::class, 'index'])->name('documents.index');
     Route::put('/documents/{id}', [App\Http\Controllers\AdminDocumentController::class, 'update'])->name('documents.update');
     Route::get('/documents/{id}/download', [App\Http\Controllers\AdminDocumentController::class, 'download'])->name('documents.download');
     
+    // Tickets & Requests Desk
     Route::get('/tickets', [App\Http\Controllers\AdminTicketController::class, 'index'])->name('tickets.index');
     Route::get('/tickets/{id}', [App\Http\Controllers\AdminTicketController::class, 'show'])->name('tickets.show');
     Route::put('/tickets/{id}/status', [App\Http\Controllers\AdminTicketController::class, 'update'])->name('tickets.update');
     Route::post('/tickets/{id}/reply', [App\Http\Controllers\AdminTicketController::class, 'reply'])->name('tickets.reply');
     
+    // Notifications & Logs
     Route::get('/notifications', [App\Http\Controllers\AdminNotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/create', [App\Http\Controllers\AdminNotificationController::class, 'create'])->name('notifications.create');
     Route::post('/notifications', [App\Http\Controllers\AdminNotificationController::class, 'store'])->name('notifications.store');
-
     Route::get('/activity', [App\Http\Controllers\AdminActivityController::class, 'index'])->name('activity.index');
     
+    // Analytics & Reporting
     Route::get('/reports', [App\Http\Controllers\AdminReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/export/clients', [App\Http\Controllers\AdminReportController::class, 'exportClients'])->name('reports.export.clients');
     Route::get('/reports/export/services', [App\Http\Controllers\AdminReportController::class, 'exportServices'])->name('reports.export.services');
 
+    // Admin Settings
     Route::get('/settings', [App\Http\Controllers\AdminSettingController::class, 'index'])->name('settings.index');
     Route::put('/settings/profile', [App\Http\Controllers\AdminSettingController::class, 'updateProfile'])->name('settings.profile');
     Route::put('/settings/password', [App\Http\Controllers\AdminSettingController::class, 'updatePassword'])->name('settings.password');
 });
 
+// ==========================================
+// 💼 STAFF PORTAL ROUTES (/staff/*)
+// ==========================================
+Route::middleware(['auth:staff'])->prefix('staff')->name('staff.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\StaffDashboardController::class, 'index'])->name('dashboard');
+    
+    // Managed Clients (Staff can view and onboard new clients)
+    Route::get('/clients', [App\Http\Controllers\StaffClientController::class, 'index'])->name('clients.index');
+    Route::get('/clients/create', [App\Http\Controllers\StaffClientController::class, 'create'])->name('clients.create');
+    Route::post('/clients', [App\Http\Controllers\StaffClientController::class, 'store'])->name('clients.store');
+    Route::get('/clients/{client}', [App\Http\Controllers\StaffClientController::class, 'show'])->name('clients.show');
+    
+    // Support Ticket Desk
+    Route::get('/tickets', [App\Http\Controllers\StaffTicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/{ticket}', [App\Http\Controllers\StaffTicketController::class, 'show'])->name('tickets.show');
+    Route::post('/tickets/{ticket}/reply', [App\Http\Controllers\StaffTicketController::class, 'reply'])->name('tickets.reply');
+    
+    // Staff Profile & Password
+    Route::get('/settings', [App\Http\Controllers\StaffProfileController::class, 'settings'])->name('settings');
+    Route::post('/settings/password', [App\Http\Controllers\StaffProfileController::class, 'updatePassword'])->name('password.update');
+});
+
+// ==========================================
+// 🏢 CLIENT PORTAL ROUTES (/client/*)
+// ==========================================
 Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\ClientController::class, 'dashboard'])->name('dashboard');
     

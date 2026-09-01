@@ -302,6 +302,7 @@ CREATE TABLE `support_tickets` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `client_id` bigint(20) unsigned NOT NULL,
   `created_by` bigint(20) unsigned NOT NULL,
+  `assigned_staff_id` bigint(20) unsigned DEFAULT NULL,
   `subject` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `status` varchar(255) NOT NULL DEFAULT 'Open',
@@ -311,11 +312,51 @@ CREATE TABLE `support_tickets` (
   PRIMARY KEY (`id`),
   KEY `support_tickets_client_id_index` (`client_id`),
   KEY `support_tickets_status_index` (`status`),
-  KEY `support_tickets_created_by_index` (`created_by`)
+  KEY `support_tickets_created_by_index` (`created_by`),
+  KEY `support_tickets_assigned_staff_id_index` (`assigned_staff_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for `support_tickets`
-INSERT INTO `support_tickets` (`id`, `client_id`, `created_by`, `subject`, `description`, `status`, `priority`, `created_at`, `updated_at`) VALUES ('3', '13', '14', 'for update my ui', 'i want improve my projects ui , add more styles', 'Open', 'Medium', '2026-08-25 05:04:14', '2026-08-25 05:04:14');
+INSERT INTO `support_tickets` (`id`, `client_id`, `created_by`, `assigned_staff_id`, `subject`, `description`, `status`, `priority`, `created_at`, `updated_at`) VALUES ('3', '13', '14', NULL, 'for update my ui', 'i want improve my projects ui , add more styles', 'Open', 'Medium', '2026-08-25 05:04:14', '2026-08-25 05:04:14');
+
+-- Table structure for `staff_members`
+DROP TABLE IF EXISTS `staff_members`;
+CREATE TABLE `staff_members` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `designation` varchar(255) NOT NULL,
+  `department` varchar(255) NOT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `status` enum('Pending Activation','Active','Inactive') NOT NULL DEFAULT 'Pending Activation',
+  `avatar` varchar(255) DEFAULT NULL,
+  `created_by_admin_id` bigint(20) unsigned DEFAULT NULL,
+  `last_login_at` timestamp NULL DEFAULT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `staff_members_email_unique` (`email`),
+  KEY `staff_members_status_index` (`status`),
+  KEY `staff_members_department_index` (`department`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table structure for `client_assignments`
+DROP TABLE IF EXISTS `client_assignments`;
+CREATE TABLE `client_assignments` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `staff_id` bigint(20) unsigned NOT NULL,
+  `client_id` bigint(20) unsigned NOT NULL,
+  `role_in_project` varchar(255) NOT NULL DEFAULT 'Assigned Engineer',
+  `assigned_by_admin_id` bigint(20) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `client_assignments_staff_id_client_id_unique` (`staff_id`,`client_id`),
+  KEY `client_assignments_staff_id_index` (`staff_id`),
+  KEY `client_assignments_client_id_index` (`client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table structure for `ticket_replies`
 DROP TABLE IF EXISTS `ticket_replies`;
