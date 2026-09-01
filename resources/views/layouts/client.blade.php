@@ -183,13 +183,7 @@
         <div class="brand-section">
             <a href="{{ route('client.dashboard') }}" class="brand-logo">
                 <div class="brand-logo-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="5" r="3" fill="#ef4444" />
-                        <circle cx="19" cy="12" r="3" fill="#f59e0b" />
-                        <circle cx="12" cy="19" r="3" fill="#10b981" />
-                        <circle cx="5" cy="12" r="3" fill="#0284c7" />
-                        <circle cx="12" cy="12" r="2.5" fill="#3b82f6" />
-                    </svg>
+                    <img src="{{ asset('images/roriri_logo.png') }}" alt="RORIRI" width="30" height="30" style="border-radius: 50%; object-fit: cover;">
                 </div>
                 <h1 class="brand-logo-text">RORIRI</h1>
             </a>

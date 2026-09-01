@@ -391,6 +391,61 @@
             color: #0284c7 !important;
         }
 
+        /* Active Entity Tab Header (from Screenshot 2) */
+        .active-entity-tab-pill {
+            background-color: #9bd39b;
+            border-radius: 10px;
+            padding: 6px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            margin-bottom: 20px;
+        }
+
+        .active-tab-logo-circle {
+            width: 22px;
+            height: 22px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        .active-tab-logo-circle img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        .active-tab-text {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .active-tab-close {
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+            cursor: pointer;
+            padding: 0 2px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .active-tab-close:hover {
+            opacity: 1;
+        }
+
         /* Footer */
         .roriri-footer {
             background-color: #ffffff;
@@ -410,14 +465,7 @@
         <div class="brand-section">
             <a href="{{ route('admin.dashboard') }}" class="brand-logo">
                 <div class="brand-logo-icon">
-                    <!-- Stylized RORIRI Flower Logo -->
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="5" r="3" fill="#ef4444" />
-                        <circle cx="19" cy="12" r="3" fill="#f59e0b" />
-                        <circle cx="12" cy="19" r="3" fill="#10b981" />
-                        <circle cx="5" cy="12" r="3" fill="#0284c7" />
-                        <circle cx="12" cy="12" r="2.5" fill="#3b82f6" />
-                    </svg>
+                    <img src="{{ asset('images/roriri_logo.png') }}" alt="RORIRI" width="30" height="30" style="border-radius: 50%; object-fit: cover;">
                 </div>
                 <h1 class="brand-logo-text">RORIRI</h1>
             </a>
@@ -614,6 +662,15 @@
 
         <!-- Main Workspace Area -->
         <main class="main-workspace">
+            <!-- Active Entity Tab (From Screenshot 2) -->
+            <div class="active-entity-tab-pill">
+                <div class="active-tab-logo-circle">
+                    <img src="{{ asset('images/roriri_logo.png') }}" alt="Logo">
+                </div>
+                <span class="active-tab-text">RORIRI Software Solution</span>
+                <button type="button" class="active-tab-close" title="Close Tab">&times;</button>
+            </div>
+
             @yield('content')
         </main>
     </div>
