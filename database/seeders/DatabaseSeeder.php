@@ -39,58 +39,128 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 3. Client & Client User Account
-        $client = Client::updateOrCreate(
-            ['client_email' => 'client@company.com'],
+        // 3. Client Records from Database
+        $clientsData = [
             [
+                'client_id' => 6,
                 'entity_id' => 1,
-                'client_name' => 'Demo Client',
+                'client_name' => 'Joshua',
+                'client_company' => 'Best Matrimonial',
+                'industry' => 'Retail',
+                'company_size' => '1 - 10',
+                'website' => '',
+                'client_location' => '--',
+                'client_email' => 'joesva@gmail.com',
+                'primary_contact' => '7338934701',
+                'secondary_contact' => '',
+                'client_gst' => '',
+                'client_status' => 'Active',
+                'joined_date' => now(),
+            ],
+            [
+                'client_id' => 7,
+                'entity_id' => 1,
+                'client_name' => 'Senthil Murugan',
+                'client_company' => 'SD Tiles',
+                'industry' => 'Manufacturing',
+                'company_size' => '11 - 50',
+                'website' => '',
+                'client_location' => '',
+                'client_email' => 'senthil@sdtiles.com',
+                'primary_contact' => '9597174280',
+                'secondary_contact' => '',
+                'client_gst' => '',
+                'client_status' => 'Active',
+                'joined_date' => now(),
+            ],
+            [
+                'client_id' => 8,
+                'entity_id' => 1,
+                'client_name' => 'Manikandan BNI',
+                'client_company' => 'Gold Plan Mobile App',
+                'industry' => 'IT Services',
+                'company_size' => '1 - 10',
+                'website' => '',
+                'client_location' => 'Tirunelveli',
+                'client_email' => 'manikandan@gmail.com',
+                'primary_contact' => '9094447770',
+                'secondary_contact' => '',
+                'client_gst' => '',
+                'client_status' => 'Active',
+                'joined_date' => now(),
+            ],
+            [
+                'client_id' => 13,
+                'entity_id' => 1,
+                'client_name' => 'dhanush',
+                'client_company' => 'dhanush it park',
+                'industry' => 'IT Services',
+                'company_size' => '11 - 50',
+                'website' => '',
+                'client_location' => 'pavoorchatram',
+                'client_email' => 'dhanush420490@gmail.com',
+                'primary_contact' => '9876543210',
+                'secondary_contact' => '',
+                'client_gst' => '',
+                'client_status' => 'Active',
+                'joined_date' => now(),
+            ],
+            [
+                'client_id' => 14,
+                'entity_id' => 1,
+                'client_name' => 'Acme Demo Admin',
                 'client_company' => 'Acme Technologies Inc.',
-                'client_gst' => 'GSTIN33AAACD1234F1Z5',
                 'industry' => 'IT Services',
                 'company_size' => '11 - 50',
                 'website' => 'https://acme-tech.example.com',
+                'client_location' => 'San Francisco, CA',
+                'client_email' => 'client@company.com',
                 'primary_contact' => '+1 555-0142',
                 'secondary_contact' => '+1 555-0143',
-                'client_location' => 'San Francisco, CA',
+                'client_gst' => 'GSTIN33AAACD1234F1Z5',
                 'client_status' => 'Active',
                 'joined_date' => now(),
             ]
-        );
+        ];
 
-        ClientUser::updateOrCreate(
-            ['email' => 'client@company.com'],
-            [
-                'client_id' => $client->client_id,
-                'name' => 'Demo Client Admin',
-                'password' => Hash::make('client123'),
-                'role' => 'Admin',
-                'status' => 'Active',
-            ]
-        );
+        foreach ($clientsData as $c) {
+            $createdClient = Client::updateOrCreate(['client_id' => $c['client_id']], $c);
+            
+            ClientUser::updateOrCreate(
+                ['email' => $c['client_email']],
+                [
+                    'client_id' => $createdClient->client_id,
+                    'name' => $c['client_name'],
+                    'password' => Hash::make('password123'),
+                    'role' => 'Admin',
+                    'status' => 'Active',
+                ]
+            );
 
-        // 4. Assign Staff to Client
-        $staff->assignedClients()->syncWithoutDetaching([$client->client_id]);
+            // Assign to staff
+            $staff->assignedClients()->syncWithoutDetaching([$createdClient->client_id]);
+        }
 
-        // 5. Sample Subscribed Service
+        // Sample Service
         ClientService::updateOrCreate(
-            ['client_id' => $client->client_id, 'service_name' => 'Custom Web App Development & Cloud Hosting'],
+            ['client_id' => 13, 'service_name' => 'Cloud Infrastructure & API Development'],
             [
-                'description' => 'Dedicated Laravel web application with CI/CD and Alwaysdata deployment.',
-                'cost' => 1500.00,
-                'start_date' => now()->subMonths(1),
-                'end_date' => now()->addMonths(11),
+                'description' => 'Dedicated cloud architecture and microservices deployment.',
+                'cost' => 2500.00,
+                'start_date' => now()->subMonths(2),
+                'end_date' => now()->addMonths(10),
+                'assigned_team' => 'DevOps & Backend',
                 'status' => 'Active',
             ]
         );
 
-        // 6. Sample Support Ticket
+        // Sample Ticket
         SupportTicket::updateOrCreate(
-            ['client_id' => $client->client_id, 'subject' => 'SSL Certificate & Domain Setup Assistance'],
+            ['client_id' => 13, 'subject' => 'UI Enhancements & Dark Theme Integration'],
             [
-                'description' => 'We need assistance configuring our custom DNS records for the production portal.',
-                'status' => 'Open',
-                'priority' => 'High',
+                'description' => 'I want to improve my project UI and add modern responsive components.',
+                'status' => 'In Progress',
+                'priority' => 'Medium',
                 'assigned_staff_id' => $staff->id,
             ]
         );
