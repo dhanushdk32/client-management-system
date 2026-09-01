@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Models\Client;
 use App\Models\ClientUser;
 use App\Models\Otp;
 use Carbon\Carbon;
+use App\Mail\WelcomeActivationOtpMail;
+use App\Mail\WelcomeClientMail;
 
 class StaffClientController extends Controller
 {
@@ -27,7 +30,7 @@ class StaffClientController extends Controller
             });
         }
 
-        $clients = $query->latest()->paginate(10);
+        $clients = $query->latest('client_tbl.client_id')->paginate(10);
 
         return view('staff.clients.index', compact('clients'));
     }
@@ -38,6 +41,57 @@ class StaffClientController extends Controller
         $companySizes = ['1 - 10', '11 - 50', '51 - 100', '101 - 500', '500+'];
 
         return view('staff.clients.form', compact('industries', 'companySizes'));
+    }
+
+    /**
+     * AJAX endpoint: Send Welcome OTP to Client Gmail
+     */
+    public function sendCreationOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|max:100',
+            'name' => 'required|string|max:100',
+            'company' => 'required|string|max:100',
+        ]);
+
+        if (ClientUser::where('email', $request->email)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'A client account with this email already exists!'
+            ], 422);
+        }
+
+        // Generate 6-digit OTP
+        $otpCode = (string) rand(100000, 999999);
+        Otp::updateOrCreate(
+            ['email' => $request->email],
+            [
+                'otp_code' => $otpCode,
+                'expires_at' => Carbon::now()->addMinutes(30),
+            ]
+        );
+
+        // Send Welcome Email with OTP
+        try {
+            Mail::to($request->email)->send(new WelcomeActivationOtpMail(
+                $request->name,
+                $request->email,
+                'Client Portal',
+                $otpCode,
+                $request->company
+            ));
+
+            return response()->json([
+                'success' => true,
+                'message' => "Welcome email with OTP sent to {$request->email}!"
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to send OTP email from staff: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Could not send email: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function store(Request $request)
@@ -52,7 +106,19 @@ class StaffClientController extends Controller
             'client_email' => 'required|email|max:50|unique:client_users,email',
             'primary_contact' => 'required|string|max:20',
             'secondary_contact' => 'nullable|string|max:255',
+            'otp' => 'required|string|size:6',
+            'password' => 'required|string|min:6',
         ]);
+
+        // Verify OTP
+        $otpRecord = Otp::where('email', $request->client_email)->first();
+        if (!$otpRecord || $otpRecord->otp_code !== $request->otp) {
+            return back()->withInput()->withErrors(['otp' => 'The entered OTP code is invalid. Please verify the code sent to client email.']);
+        }
+
+        if (Carbon::now()->greaterThan($otpRecord->expires_at)) {
+            return back()->withInput()->withErrors(['otp' => 'The OTP code has expired. Please click Send OTP again.']);
+        }
 
         $data = $request->all();
         $optionalFields = ['client_gst', 'industry', 'company_size', 'website', 'secondary_contact', 'client_location'];
@@ -67,15 +133,16 @@ class StaffClientController extends Controller
         $data['joined_date'] = now();
 
         $client = Client::create($data);
+        $plainPassword = $request->password;
 
-        // Create client user pending activation
+        // Create client user
         $clientUser = ClientUser::create([
             'client_id' => $client->client_id,
             'name' => $client->client_name,
             'email' => $client->client_email,
-            'password' => null, // Set via OTP activation
+            'password' => Hash::make($plainPassword),
             'role' => 'Admin',
-            'status' => 'Pending Activation',
+            'status' => 'Active',
         ]);
 
         // Automatically assign this staff member to manage the new client
@@ -84,37 +151,21 @@ class StaffClientController extends Controller
             'role_in_project' => 'Account Manager / Lead Engineer'
         ]);
 
-        // Generate 6-digit OTP code for welcome email
-        $otpCode = (string) rand(100000, 999999);
-        Otp::updateOrCreate(
-            ['email' => $client->client_email],
-            [
-                'otp_code' => $otpCode,
-                'expires_at' => Carbon::now()->addHours(24),
-            ]
-        );
-
-        // Send Welcome OTP Email to client
+        // Send Final Welcome & Credentials Email
         try {
-            Mail::to($client->client_email)->send(new \App\Mail\WelcomeActivationOtpMail(
-                $client->client_name,
-                $client->client_email,
-                'Client Portal',
-                $otpCode,
-                $client->client_company
-            ));
+            Mail::to($clientUser->email)->send(new WelcomeClientMail($client, $plainPassword));
         } catch (\Exception $e) {
-            Log::error('Failed to send client welcome OTP email from staff: ' . $e->getMessage());
+            Log::error('Failed to send welcome credentials email from staff: ' . $e->getMessage());
         }
 
-        return redirect()->route('staff.clients.index')->with('success', 'Client account created successfully and Welcome OTP email sent to ' . $client->client_email);
+        // Delete verified OTP
+        Otp::where('email', $request->client_email)->delete();
+
+        return redirect()->route('staff.clients.index')->with('success', 'Client created successfully! Verification confirmed and login credentials have been sent.');
     }
 
     public function show(Client $client)
     {
-        $staff = Auth::guard('staff')->user();
-        
-        // Ensure staff is assigned or allowed to view
         $tickets = \App\Models\SupportTicket::where('client_id', $client->client_id)->latest()->get();
         $documents = \App\Models\ClientDocument::where('client_id', $client->client_id)->latest()->get();
 

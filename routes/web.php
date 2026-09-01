@@ -65,7 +65,10 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
     
     // Clients & Staff Management
+    Route::post('/clients/send-otp', [App\Http\Controllers\AdminClientController::class, 'sendCreationOtp'])->name('clients.send-otp');
     Route::resource('clients', App\Http\Controllers\AdminClientController::class);
+    
+    Route::post('/staff/send-otp', [App\Http\Controllers\AdminStaffController::class, 'sendCreationOtp'])->name('staff.send-otp');
     Route::resource('staff', App\Http\Controllers\AdminStaffController::class);
     
     // Services Catalog
@@ -106,6 +109,7 @@ Route::middleware(['auth:staff'])->prefix('staff')->name('staff.')->group(functi
     Route::get('/dashboard', [App\Http\Controllers\StaffDashboardController::class, 'index'])->name('dashboard');
     
     // Managed Clients (Staff can view and onboard new clients)
+    Route::post('/clients/send-otp', [App\Http\Controllers\StaffClientController::class, 'sendCreationOtp'])->name('clients.send-otp');
     Route::get('/clients', [App\Http\Controllers\StaffClientController::class, 'index'])->name('clients.index');
     Route::get('/clients/create', [App\Http\Controllers\StaffClientController::class, 'create'])->name('clients.create');
     Route::post('/clients', [App\Http\Controllers\StaffClientController::class, 'store'])->name('clients.store');

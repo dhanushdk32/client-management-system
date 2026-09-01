@@ -11,6 +11,8 @@ use App\Models\StaffMember;
 use App\Models\Client;
 use App\Models\Otp;
 use Carbon\Carbon;
+use App\Mail\WelcomeActivationOtpMail;
+use App\Mail\WelcomeStaffMail;
 
 class AdminStaffController extends Controller
 {
@@ -50,6 +52,57 @@ class AdminStaffController extends Controller
         return view('admin.staff.form', compact('departments', 'designations', 'clients'));
     }
 
+    /**
+     * AJAX endpoint: Send Welcome OTP to Staff Email
+     */
+    public function sendCreationOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|max:100',
+            'name' => 'required|string|max:100',
+            'designation' => 'required|string|max:100',
+        ]);
+
+        if (StaffMember::where('email', $request->email)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'A staff account with this email already exists!'
+            ], 422);
+        }
+
+        // Generate 6-digit OTP
+        $otpCode = (string) rand(100000, 999999);
+        Otp::updateOrCreate(
+            ['email' => $request->email],
+            [
+                'otp_code' => $otpCode,
+                'expires_at' => Carbon::now()->addMinutes(30),
+            ]
+        );
+
+        // Send Welcome Email with OTP
+        try {
+            Mail::to($request->email)->send(new WelcomeActivationOtpMail(
+                $request->name,
+                $request->email,
+                'Staff Member (' . $request->designation . ')',
+                $otpCode,
+                $request->designation
+            ));
+
+            return response()->json([
+                'success' => true,
+                'message' => "Welcome email with OTP sent to {$request->email}!"
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to send staff OTP email: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Could not send email: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -58,13 +111,25 @@ class AdminStaffController extends Controller
             'phone' => 'nullable|string|max:20',
             'department' => 'required|string|max:100',
             'designation' => 'required|string|max:100',
-            'status' => 'required|in:Pending Activation,Active,Inactive',
-            'password' => 'nullable|string|min:8',
+            'status' => 'required|in:Active,Inactive',
+            'otp' => 'required|string|size:6',
+            'password' => 'required|string|min:6',
             'assigned_clients' => 'nullable|array',
             'assigned_clients.*' => 'exists:client_tbl,client_id',
         ]);
 
+        // Verify OTP
+        $otpRecord = Otp::where('email', $request->email)->first();
+        if (!$otpRecord || $otpRecord->otp_code !== $request->otp) {
+            return back()->withInput()->withErrors(['otp' => 'The entered OTP code is invalid. Please verify the code sent to staff email.']);
+        }
+
+        if (Carbon::now()->greaterThan($otpRecord->expires_at)) {
+            return back()->withInput()->withErrors(['otp' => 'The OTP code has expired. Please click Send OTP again.']);
+        }
+
         $adminId = Auth::guard('admin')->id();
+        $plainPassword = $request->password;
 
         $staffData = [
             'name' => $request->name,
@@ -74,12 +139,8 @@ class AdminStaffController extends Controller
             'designation' => $request->designation,
             'status' => $request->status,
             'created_by_admin_id' => $adminId,
+            'password' => Hash::make($plainPassword),
         ];
-
-        // If admin typed an immediate password, set it, otherwise keep null for OTP activation
-        if ($request->filled('password')) {
-            $staffData['password'] = Hash::make($request->password);
-        }
 
         $staff = StaffMember::create($staffData);
 
@@ -88,30 +149,17 @@ class AdminStaffController extends Controller
             $staff->assignedClients()->sync($request->assigned_clients);
         }
 
-        // Generate 6-digit OTP code for welcome email
-        $otpCode = (string) rand(100000, 999999);
-        Otp::updateOrCreate(
-            ['email' => $staff->email],
-            [
-                'otp_code' => $otpCode,
-                'expires_at' => Carbon::now()->addHours(24),
-            ]
-        );
-
-        // Dispatch Welcome OTP Email
+        // Send Welcome & Credentials Email
         try {
-            Mail::to($staff->email)->send(new \App\Mail\WelcomeActivationOtpMail(
-                $staff->name,
-                $staff->email,
-                'Staff Member (' . $staff->designation . ')',
-                $otpCode,
-                $staff->department
-            ));
+            Mail::to($staff->email)->send(new WelcomeStaffMail($staff, $plainPassword));
         } catch (\Exception $e) {
-            Log::error('Failed to send staff welcome OTP email: ' . $e->getMessage());
+            Log::error('Failed to send staff credentials email: ' . $e->getMessage());
         }
 
-        return redirect()->route('admin.staff.index')->with('success', 'Staff member created successfully and welcome activation OTP email has been sent.');
+        // Delete verified OTP
+        Otp::where('email', $request->email)->delete();
+
+        return redirect()->route('admin.staff.index')->with('success', 'Staff member created successfully! Verification confirmed and login credentials have been sent.');
     }
 
     public function edit(StaffMember $staff)
@@ -132,8 +180,8 @@ class AdminStaffController extends Controller
             'phone' => 'nullable|string|max:20',
             'department' => 'required|string|max:100',
             'designation' => 'required|string|max:100',
-            'status' => 'required|in:Pending Activation,Active,Inactive',
-            'password' => 'nullable|string|min:8',
+            'status' => 'required|in:Active,Inactive',
+            'password' => 'nullable|string|min:6',
             'assigned_clients' => 'nullable|array',
             'assigned_clients.*' => 'exists:client_tbl,client_id',
         ]);
@@ -164,7 +212,6 @@ class AdminStaffController extends Controller
 
     public function destroy(StaffMember $staff)
     {
-        // Unassign tickets
         \App\Models\SupportTicket::where('assigned_staff_id', $staff->id)->update(['assigned_staff_id' => null]);
         $staff->assignedClients()->detach();
         $staff->delete();
