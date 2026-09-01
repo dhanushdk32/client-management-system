@@ -107,12 +107,6 @@ Route::middleware(['auth:staff'])->prefix('staff')->name('staff.')->group(functi
     Route::post('/clients', [App\Http\Controllers\StaffClientController::class, 'store'])->name('clients.store');
     Route::get('/clients/{client}', [App\Http\Controllers\StaffClientController::class, 'show'])->name('clients.show');
     
-    // Employee Document Uploads (Staff uploads Resume, Experience, ID Proofs)
-    Route::get('/documents', [App\Http\Controllers\StaffDocumentController::class, 'index'])->name('documents.index');
-    Route::post('/documents', [App\Http\Controllers\StaffDocumentController::class, 'store'])->name('documents.store');
-    Route::get('/documents/{id}/download', [App\Http\Controllers\StaffDocumentController::class, 'download'])->name('documents.download');
-    Route::delete('/documents/{id}', [App\Http\Controllers\StaffDocumentController::class, 'destroy'])->name('documents.destroy');
-    
     // Support Ticket Desk
     Route::get('/tickets', [App\Http\Controllers\StaffTicketController::class, 'index'])->name('tickets.index');
     Route::get('/tickets/{ticket}', [App\Http\Controllers\StaffTicketController::class, 'show'])->name('tickets.show');
