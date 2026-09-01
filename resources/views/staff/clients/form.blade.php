@@ -67,6 +67,13 @@
                     <label class="form-label fw-semibold small text-muted">GST / Tax Identification</label>
                     <input type="text" name="client_gst" class="form-control bg-light" placeholder="Tax ID / GST Number" value="{{ old('client_gst') }}">
                 </div>
+
+                <!-- Joined Date -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-muted">Client Joined Date</label>
+                    <input type="date" name="joined_date" class="form-control bg-light" value="{{ old('joined_date', date('Y-m-d')) }}">
+                    <div class="form-text small text-muted">Set past joining date for older clients. Defaults to today.</div>
+                </div>
             </div>
 
             <!-- Primary Contact Section -->

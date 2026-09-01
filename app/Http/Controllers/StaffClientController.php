@@ -106,6 +106,7 @@ class StaffClientController extends Controller
             'client_email' => 'required|email|max:50|unique:client_users,email',
             'primary_contact' => 'required|string|max:20',
             'secondary_contact' => 'nullable|string|max:255',
+            'joined_date' => 'nullable|date',
             'otp' => 'required|string|size:6',
             'password' => 'required|string|min:6',
         ]);
@@ -130,7 +131,7 @@ class StaffClientController extends Controller
 
         $data['entity_id'] = $data['entity_id'] ?? 1;
         $data['client_status'] = 'Active';
-        $data['joined_date'] = now();
+        $data['joined_date'] = $request->filled('joined_date') ? Carbon::parse($request->joined_date) : now();
 
         $client = Client::create($data);
         $plainPassword = $request->password;

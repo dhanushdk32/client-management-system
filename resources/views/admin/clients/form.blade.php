@@ -68,11 +68,17 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold small text-muted">Client Status</label>
+                    <label class="form-label fw-semibold small text-muted">Client Status <span class="text-danger">*</span></label>
                     <select name="client_status" class="form-select bg-light" required>
                         <option value="Active" {{ old('client_status', $client->client_status ?? 'Active') == 'Active' ? 'selected' : '' }}>Active</option>
                         <option value="Inactive" {{ old('client_status', $client->client_status ?? '') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
                     </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-muted">Client Joined Date</label>
+                    <input type="date" name="joined_date" class="form-control bg-light" value="{{ old('joined_date', isset($client) && $client->joined_date ? \Carbon\Carbon::parse($client->joined_date)->format('Y-m-d') : date('Y-m-d')) }}">
+                    <div class="form-text small text-muted">You can set a past date for older clients. Defaults to today.</div>
                 </div>
             </div>
 

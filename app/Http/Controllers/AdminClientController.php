@@ -113,6 +113,7 @@ class AdminClientController extends Controller
             'primary_contact' => 'required|string|max:20',
             'secondary_contact' => 'nullable|string|max:255',
             'client_status' => 'required|in:Active,Inactive',
+            'joined_date' => 'nullable|date',
             'otp' => 'required|string|size:6',
             'password' => 'required|string|min:6',
         ]);
@@ -136,7 +137,7 @@ class AdminClientController extends Controller
         }
         
         $data['entity_id'] = $data['entity_id'] ?? 1;
-        $data['joined_date'] = now();
+        $data['joined_date'] = $request->filled('joined_date') ? Carbon::parse($request->joined_date) : now();
 
         $client = Client::create($data);
 
@@ -189,6 +190,7 @@ class AdminClientController extends Controller
             'primary_contact' => 'required|string|max:20',
             'secondary_contact' => 'nullable|string|max:255',
             'client_status' => 'required|in:Active,Inactive',
+            'joined_date' => 'nullable|date',
             'password' => 'nullable|string|min:6',
         ]);
 
@@ -198,6 +200,10 @@ class AdminClientController extends Controller
             if (!isset($data[$field]) || is_null($data[$field])) {
                 $data[$field] = '';
             }
+        }
+
+        if ($request->filled('joined_date')) {
+            $data['joined_date'] = Carbon::parse($request->joined_date);
         }
 
         $client->update($data);
