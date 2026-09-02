@@ -31,7 +31,8 @@
                 <!-- Full Name -->
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Full Name <span class="text-danger">*</span></label>
-                    <input type="text" name="name" id="staffNameInput" class="form-control bg-light" placeholder="e.g. Alex Morgan" value="{{ old('name', $staff->name ?? '') }}" required>
+                    <input type="text" name="name" id="staffNameInput" class="form-control bg-light" placeholder="e.g. Alex Morgan" value="{{ old('name', $staff->name ?? '') }}" required pattern="[A-Za-z\s\.\'-]+" title="Name should only contain letters and spaces" oninput="this.value = this.value.replace(/[^a-zA-Z\s\.\'-]/g, '')">
+                    <div class="form-text small text-muted">Only alphabets and spaces allowed.</div>
                 </div>
 
                 <!-- Email -->
@@ -52,7 +53,8 @@
                 <!-- Phone -->
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Phone Number</label>
-                    <input type="text" name="phone" class="form-control bg-light" placeholder="+1 (555) 000-0000" value="{{ old('phone', $staff->phone ?? '') }}">
+                    <input type="tel" name="phone" class="form-control bg-light" placeholder="+1 (555) 000-0000" value="{{ old('phone', $staff->phone ?? '') }}" pattern="[0-9+\s\-]{7,15}" title="Numbers only" oninput="this.value = this.value.replace(/[^0-9+\s\-]/g, '')">
+                    <div class="form-text small text-muted">Digits only.</div>
                 </div>
 
                 <!-- Status -->

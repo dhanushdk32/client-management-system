@@ -59,8 +59,10 @@ class AdminStaffController extends Controller
     {
         $request->validate([
             'email' => 'required|email|max:100',
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|max:100|regex:/^[a-zA-Z\s\.\'-]+$/',
             'designation' => 'required|string|max:100',
+        ], [
+            'name.regex' => 'The Staff Name must only contain letters and spaces (no numbers or special symbols).',
         ]);
 
         if (StaffMember::where('email', $request->email)->exists()) {
@@ -106,16 +108,20 @@ class AdminStaffController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|max:100|regex:/^[a-zA-Z\s\.\'-]+$/',
             'email' => 'required|email|max:100|unique:staff_members,email',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|regex:/^[0-9+\s\-]{7,15}$/',
             'department' => 'required|string|max:100',
             'designation' => 'required|string|max:100',
             'status' => 'required|in:Active,Inactive',
-            'otp' => 'required|string|size:6',
+            'otp' => 'required|string|size:6|regex:/^[0-9]{6}$/',
             'password' => 'required|string|min:6',
             'assigned_clients' => 'nullable|array',
             'assigned_clients.*' => 'exists:client_tbl,client_id',
+        ], [
+            'name.regex' => 'The Staff Name must only contain letters and spaces (no numbers or special symbols).',
+            'phone.regex' => 'The Phone Number must only contain numbers (digits 0-9).',
+            'otp.regex' => 'The OTP code must be a 6-digit number.',
         ]);
 
         // Verify OTP
@@ -175,15 +181,18 @@ class AdminStaffController extends Controller
     public function update(Request $request, StaffMember $staff)
     {
         $request->validate([
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|max:100|regex:/^[a-zA-Z\s\.\'-]+$/',
             'email' => 'required|email|max:100|unique:staff_members,email,' . $staff->id,
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|regex:/^[0-9+\s\-]{7,15}$/',
             'department' => 'required|string|max:100',
             'designation' => 'required|string|max:100',
             'status' => 'required|in:Active,Inactive',
             'password' => 'nullable|string|min:6',
             'assigned_clients' => 'nullable|array',
             'assigned_clients.*' => 'exists:client_tbl,client_id',
+        ], [
+            'name.regex' => 'The Staff Name must only contain letters and spaces (no numbers or special symbols).',
+            'phone.regex' => 'The Phone Number must only contain numbers (digits 0-9).',
         ]);
 
         $updateData = [

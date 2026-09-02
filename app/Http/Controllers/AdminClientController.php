@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Client;
 use App\Models\ClientUser;
+use App\Models\ClientService;
 use App\Models\Otp;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -17,14 +18,10 @@ class AdminClientController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Client::with('users');
+        $query = Client::with(['users', 'services']);
 
         if ($request->filled('status')) {
             $query->where('client_status', $request->status);
-        }
-
-        if ($request->filled('industry')) {
-            $query->where('industry', $request->industry);
         }
 
         if ($request->filled('search')) {
@@ -32,21 +29,20 @@ class AdminClientController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('client_name', 'like', "%{$search}%")
                   ->orWhere('client_company', 'like', "%{$search}%")
-                  ->orWhere('client_email', 'like', "%{$search}%");
+                  ->orWhere('client_email', 'like', "%{$search}%")
+                  ->orWhere('primary_contact', 'like', "%{$search}%")
+                  ->orWhere('city', 'like', "%{$search}%");
             });
         }
 
-        $clients = $query->latest('client_id')->paginate(10);
-        $industries = ['IT Services', 'Finance', 'Healthcare', 'Manufacturing', 'Retail', 'Education', 'E-Commerce'];
+        $clients = $query->orderBy('client_id', 'asc')->paginate(10);
 
-        return view('admin.clients.index', compact('clients', 'industries'));
+        return view('admin.clients.index', compact('clients'));
     }
 
     public function create()
     {
-        $industries = ['IT Services', 'Finance', 'Healthcare', 'Manufacturing', 'Retail', 'Education', 'E-Commerce'];
-        $companySizes = ['1 - 10', '11 - 50', '51 - 100', '101 - 500', '500+'];
-        return view('admin.clients.form', compact('industries', 'companySizes'));
+        return view('admin.clients.form');
     }
 
     /**
@@ -56,8 +52,10 @@ class AdminClientController extends Controller
     {
         $request->validate([
             'email' => 'required|email|max:100',
-            'name' => 'required|string|max:100',
-            'company' => 'required|string|max:100',
+            'name' => 'required|string|max:100|regex:/^[a-zA-Z\s\.\'-]+$/',
+            'project_title' => 'nullable|string|max:255',
+        ], [
+            'name.regex' => 'The Client Name must only contain letters, dots, and spaces (no numbers or symbols).',
         ]);
 
         if (ClientUser::where('email', $request->email)->exists()) {
@@ -77,6 +75,8 @@ class AdminClientController extends Controller
             ]
         );
 
+        $projectName = $request->project_title ?: 'Client Project';
+
         // Send Welcome Email with OTP
         try {
             Mail::to($request->email)->send(new WelcomeActivationOtpMail(
@@ -84,12 +84,12 @@ class AdminClientController extends Controller
                 $request->email,
                 'Client Portal',
                 $otpCode,
-                $request->company
+                $projectName
             ));
 
             return response()->json([
                 'success' => true,
-                'message' => "Welcome email with OTP sent to {$request->email}!"
+                'message' => "Verification OTP code sent to {$request->email}!"
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to send OTP email: ' . $e->getMessage());
@@ -103,19 +103,28 @@ class AdminClientController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'client_company' => 'required|string|max:100',
-            'industry' => 'nullable|string|max:255',
-            'company_size' => 'nullable|string|max:100',
-            'website' => 'nullable|string|max:255',
-            'client_gst' => 'nullable|string|max:30',
-            'client_name' => 'required|string|max:50',
-            'client_email' => 'required|email|max:50|unique:client_users,email',
-            'primary_contact' => 'required|string|max:20',
-            'secondary_contact' => 'nullable|string|max:255',
+            'client_name' => 'required|string|max:100|regex:/^[a-zA-Z\s\.\'-]+$/',
+            'primary_contact' => 'required|string|regex:/^[0-9+\s\-]{7,15}$/',
+            'secondary_contact' => 'nullable|string|regex:/^[0-9+\s\-]{7,15}$/',
+            'client_email' => 'required|email|max:100|unique:client_tbl,client_email|unique:client_users,email',
             'client_status' => 'required|in:Active,Inactive',
             'joined_date' => 'nullable|date',
-            'otp' => 'required|string|size:6',
+            'end_date' => 'nullable|date',
+            'project_title' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
+            'state' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
+            'country' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
+            'otp' => 'required|string|size:6|regex:/^[0-9]{6}$/',
             'password' => 'required|string|min:6',
+        ], [
+            'client_name.regex' => 'The Client Name must only contain letters, dots, and spaces (no numbers or symbols).',
+            'primary_contact.regex' => 'The Primary Contact must only contain numeric digits (e.g. 9876543210).',
+            'secondary_contact.regex' => 'The Secondary Contact must only contain numeric digits.',
+            'city.regex' => 'City name must only contain letters and spaces.',
+            'state.regex' => 'State name must only contain letters and spaces.',
+            'country.regex' => 'Country name must only contain letters and spaces.',
+            'otp.regex' => 'The OTP code must be a 6-digit number.',
         ]);
 
         // Verify OTP
@@ -125,21 +134,43 @@ class AdminClientController extends Controller
         }
 
         if (Carbon::now()->greaterThan($otpRecord->expires_at)) {
-            return back()->withInput()->withErrors(['otp' => 'The OTP code has expired. Please click Send OTP again.']);
+            return back()->withInput()->withErrors(['otp' => 'The OTP code has expired. Please click Resend OTP.']);
         }
 
-        $data = $request->all();
-        $optionalFields = ['client_gst', 'industry', 'company_size', 'website', 'secondary_contact', 'client_location'];
-        foreach ($optionalFields as $field) {
-            if (!isset($data[$field]) || is_null($data[$field])) {
-                $data[$field] = '';
-            }
-        }
-        
-        $data['entity_id'] = $data['entity_id'] ?? 1;
-        $data['joined_date'] = $request->filled('joined_date') ? Carbon::parse($request->joined_date) : now();
+        $joinedDate = $request->filled('joined_date') ? Carbon::parse($request->joined_date) : now();
+        $location = $request->address ?: trim(($request->city ? $request->city : '') . ($request->state ? ', ' . $request->state : ''));
 
-        $client = Client::create($data);
+        $client = Client::create([
+            'entity_id' => 1,
+            'client_name' => $request->client_name,
+            'client_company' => $request->project_title ?: $request->client_name,
+            'client_email' => $request->client_email,
+            'primary_contact' => $request->primary_contact,
+            'secondary_contact' => $request->secondary_contact ?? '',
+            'client_location' => $location ?: 'Not Specified',
+            'city' => $request->city ?? '',
+            'state' => $request->state ?? '',
+            'country' => $request->country ?? 'India',
+            'client_gst' => '',
+            'industry' => 'Custom Projects',
+            'company_size' => '1 - 10',
+            'website' => '',
+            'client_status' => $request->client_status,
+            'joined_date' => $joinedDate,
+        ]);
+
+        // Create Project / Service if project_title is provided
+        if ($request->filled('project_title')) {
+            ClientService::create([
+                'client_id' => $client->client_id,
+                'service_name' => $request->project_title,
+                'status' => $request->client_status == 'Active' ? 'Active' : 'Pending',
+                'start_date' => $joinedDate,
+                'end_date' => $request->filled('end_date') ? Carbon::parse($request->end_date) : null,
+                'description' => "Initial project contracted on {$joinedDate->format('d M Y')}.",
+                'assigned_team' => 'Engineering & Development',
+            ]);
+        }
 
         $plainPassword = $request->password;
         
@@ -162,51 +193,85 @@ class AdminClientController extends Controller
         // Delete verified OTP
         Otp::where('email', $request->client_email)->delete();
 
-        return redirect()->route('admin.clients.index')->with('success', 'Client created successfully! Verification confirmed and login credentials have been sent.');
+        return redirect()->route('admin.clients.index')->with('success', "Client #CL{$client->client_id} created successfully! Verified and login credentials sent.");
     }
 
     public function show(Client $client)
     {
+        $client->load(['services', 'users']);
         return view('admin.clients.show', compact('client'));
     }
 
     public function edit(Client $client)
     {
-        $industries = ['IT Services', 'Finance', 'Healthcare', 'Manufacturing', 'Retail', 'Education', 'E-Commerce'];
-        $companySizes = ['1 - 10', '11 - 50', '51 - 100', '101 - 500', '500+'];
-        return view('admin.clients.form', compact('client', 'industries', 'companySizes'));
+        $client->load('services');
+        $primaryService = $client->services->first();
+        return view('admin.clients.form', compact('client', 'primaryService'));
     }
 
     public function update(Request $request, Client $client)
     {
         $request->validate([
-            'client_company' => 'required|string|max:100',
-            'industry' => 'nullable|string|max:255',
-            'company_size' => 'nullable|string|max:100',
-            'website' => 'nullable|string|max:255',
-            'client_gst' => 'nullable|string|max:30',
-            'client_name' => 'required|string|max:50',
-            'client_email' => 'required|email|max:50|unique:client_tbl,client_email,' . $client->client_id . ',client_id',
-            'primary_contact' => 'required|string|max:20',
-            'secondary_contact' => 'nullable|string|max:255',
+            'client_name' => 'required|string|max:100|regex:/^[a-zA-Z\s\.\'-]+$/',
+            'primary_contact' => 'required|string|regex:/^[0-9+\s\-]{7,15}$/',
+            'secondary_contact' => 'nullable|string|regex:/^[0-9+\s\-]{7,15}$/',
+            'client_email' => 'required|email|max:100|unique:client_tbl,client_email,' . $client->client_id . ',client_id',
             'client_status' => 'required|in:Active,Inactive',
             'joined_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'project_title' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
+            'state' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
+            'country' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
             'password' => 'nullable|string|min:6',
+        ], [
+            'client_name.regex' => 'The Client Name must only contain letters, dots, and spaces.',
+            'primary_contact.regex' => 'The Primary Contact must only contain numeric digits.',
+            'secondary_contact.regex' => 'The Secondary Contact must only contain numeric digits.',
+            'city.regex' => 'City name must only contain letters and spaces.',
+            'state.regex' => 'State name must only contain letters and spaces.',
+            'country.regex' => 'Country name must only contain letters and spaces.',
         ]);
 
-        $data = $request->all();
-        $optionalFields = ['client_gst', 'industry', 'company_size', 'website', 'secondary_contact', 'client_location'];
-        foreach ($optionalFields as $field) {
-            if (!isset($data[$field]) || is_null($data[$field])) {
-                $data[$field] = '';
+        $joinedDate = $request->filled('joined_date') ? Carbon::parse($request->joined_date) : $client->joined_date;
+        $location = $request->address ?: trim(($request->city ? $request->city : '') . ($request->state ? ', ' . $request->state : ''));
+
+        $client->update([
+            'client_name' => $request->client_name,
+            'client_company' => $request->project_title ?: $request->client_name,
+            'client_email' => $request->client_email,
+            'primary_contact' => $request->primary_contact,
+            'secondary_contact' => $request->secondary_contact ?? '',
+            'client_location' => $location ?: ($client->client_location ?? 'Not Specified'),
+            'city' => $request->city ?? $client->city,
+            'state' => $request->state ?? $client->state,
+            'country' => $request->country ?? $client->country,
+            'client_status' => $request->client_status,
+            'joined_date' => $joinedDate,
+        ]);
+
+        // Update or create primary project
+        if ($request->filled('project_title')) {
+            $service = ClientService::where('client_id', $client->client_id)->first();
+            if ($service) {
+                $service->update([
+                    'service_name' => $request->project_title,
+                    'status' => $request->client_status == 'Active' ? 'Active' : 'Pending',
+                    'end_date' => $request->filled('end_date') ? Carbon::parse($request->end_date) : $service->end_date,
+                ]);
+            } else {
+                ClientService::create([
+                    'client_id' => $client->client_id,
+                    'service_name' => $request->project_title,
+                    'status' => $request->client_status == 'Active' ? 'Active' : 'Pending',
+                    'start_date' => $joinedDate,
+                    'end_date' => $request->filled('end_date') ? Carbon::parse($request->end_date) : null,
+                    'description' => "Project contracted on {$joinedDate->format('d M Y')}.",
+                    'assigned_team' => 'Engineering & Development',
+                ]);
             }
         }
-
-        if ($request->filled('joined_date')) {
-            $data['joined_date'] = Carbon::parse($request->joined_date);
-        }
-
-        $client->update($data);
 
         // Update Client User
         $clientUser = ClientUser::where('client_id', $client->client_id)->first();
@@ -222,14 +287,16 @@ class AdminClientController extends Controller
             $clientUser->update($userUpdateData);
         }
 
-        return redirect()->route('admin.clients.index')->with('success', 'Client updated successfully.');
+        return redirect()->route('admin.clients.index')->with('success', "Client #CL{$client->client_id} updated successfully.");
     }
 
     public function destroy(Client $client)
     {
-        ClientUser::where('client_id', $client->client_id)->delete();
+        $clientId = $client->client_id;
+        ClientUser::where('client_id', $clientId)->delete();
+        ClientService::where('client_id', $clientId)->delete();
         $client->delete();
 
-        return redirect()->route('admin.clients.index')->with('success', 'Client deleted successfully.');
+        return redirect()->route('admin.clients.index')->with('success', "Client #CL{$clientId} deleted successfully.");
     }
 }

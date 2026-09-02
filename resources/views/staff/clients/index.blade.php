@@ -9,13 +9,15 @@
         <h5 class="fw-bold mb-1">My Managed Clients</h5>
         <p class="text-muted small mb-0">View clients assigned to you and onboard new client accounts</p>
     </div>
-    <a href="{{ route('staff.clients.create') }}" class="btn btn-primary rounded-3 px-4">
-        <i class="fa-solid fa-user-plus me-2"></i> Add New Client
+    <a href="{{ route('staff.clients.create') }}" class="btn btn-primary rounded-3 px-4 fw-semibold">
+        <i class="fa-solid fa-user-plus me-1"></i> Add New Client
     </a>
 </div>
 
 @if(session('success'))
-    <div class="alert alert-success py-2 mb-4">{{ session('success') }}</div>
+    <div class="alert alert-success py-2 px-3 small rounded-3 mb-4">
+        <i class="fa-solid fa-circle-check me-1"></i> {{ session('success') }}
+    </div>
 @endif
 
 <div class="card mb-4">
@@ -24,11 +26,11 @@
             <div class="col-md-10">
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                    <input type="text" name="search" class="form-control bg-light border-start-0 ps-0" placeholder="Search by company name, contact person, or email..." value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control bg-light border-start-0 ps-0" placeholder="Search by client name, project, phone, or email..." value="{{ request('search') }}">
                 </div>
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">Search</button>
+                <button type="submit" class="btn btn-primary w-100 fw-semibold">Search</button>
             </div>
         </form>
     </div>
@@ -38,9 +40,9 @@
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
-                <tr>
-                    <th class="ps-4">Company Name</th>
-                    <th>Contact Person</th>
+                <tr class="small text-muted">
+                    <th class="ps-4">Client ID</th>
+                    <th>Client Name / Project</th>
                     <th>Email Address</th>
                     <th>Phone</th>
                     <th>My Project Role</th>
@@ -50,24 +52,26 @@
             <tbody>
                 @forelse($clients as $client)
                     <tr>
-                        <td class="ps-4">
-                            <div class="fw-bold text-primary">{{ $client->client_company }}</div>
-                            <small class="text-muted">{{ $client->industry ?: 'IT Services' }}</small>
-                        </td>
-                        <td>{{ $client->client_name }}</td>
+                        <td class="ps-4 fw-bold text-primary">#CL{{ sprintf('%03d', $client->client_id) }}</td>
                         <td>
-                            <a href="mailto:{{ $client->client_email }}" class="text-muted text-decoration-none">
+                            <div class="fw-semibold text-dark">{{ $client->client_name }}</div>
+                            @if($client->client_company && $client->client_company !== $client->client_name)
+                                <small class="text-muted"><i class="fa-solid fa-briefcase me-1 text-primary"></i> {{ $client->client_company }}</small>
+                            @endif
+                        </td>
+                        <td>
+                            <a href="mailto:{{ $client->client_email }}" class="text-muted text-decoration-none small">
                                 <i class="fa-regular fa-envelope me-1"></i> {{ $client->client_email }}
                             </a>
                         </td>
-                        <td>{{ $client->primary_contact }}</td>
+                        <td class="small">{{ $client->primary_contact }}</td>
                         <td>
-                            <span class="badge bg-indigo-subtle text-primary border px-2 py-1">
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
                                 {{ $client->pivot->role_in_project ?? 'Lead Engineer' }}
                             </span>
                         </td>
                         <td class="text-end pe-4">
-                            <a href="{{ route('staff.clients.show', $client) }}" class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('staff.clients.show', $client) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                                 View Profile & Tickets <i class="fa-solid fa-arrow-right ms-1"></i>
                             </a>
                         </td>
@@ -75,8 +79,8 @@
                 @empty
                     <tr>
                         <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="fa-solid fa-building-circle-xmark fa-3x mb-3 d-block opacity-50"></i>
-                            No assigned clients found. You can click <strong>"Add New Client"</strong> to register a new client!
+                            <i class="fa-solid fa-users-slash fa-3x mb-3 d-block opacity-50"></i>
+                            No assigned clients found. Click <strong>"Add New Client"</strong> to register a new client!
                         </td>
                     </tr>
                 @endforelse
@@ -85,7 +89,7 @@
     </div>
     @if($clients->hasPages())
         <div class="card-footer bg-white border-top py-3">
-            {{ $clients->links() }}
+            {{ $clients->links('pagination::bootstrap-5') }}
         </div>
     @endif
 </div>
