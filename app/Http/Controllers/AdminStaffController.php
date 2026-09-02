@@ -230,10 +230,23 @@ class AdminStaffController extends Controller
 
     public function destroy(StaffMember $staff)
     {
+        // 1. Unassign tickets
         \App\Models\SupportTicket::where('assigned_staff_id', $staff->id)->update(['assigned_staff_id' => null]);
+        
+        // 2. Unassign from client projects
+        \App\Models\ClientService::where('team_leader_id', $staff->id)->update(['team_leader_id' => null]);
+        $services = \App\Models\ClientService::whereNotNull('team_members')->get();
+        foreach ($services as $srv) {
+            if (is_array($srv->team_members) && in_array($staff->id, $srv->team_members)) {
+                $updatedMembers = array_values(array_diff($srv->team_members, [$staff->id]));
+                $srv->update(['team_members' => $updatedMembers]);
+            }
+        }
+
+        // 3. Detach assigned clients & delete staff
         $staff->assignedClients()->detach();
         $staff->delete();
 
-        return redirect()->route('admin.staff.index')->with('success', 'Staff member deleted successfully.');
+        return redirect()->route('admin.staff.index')->with('success', 'Staff member deleted and unassigned from projects successfully.');
     }
 }

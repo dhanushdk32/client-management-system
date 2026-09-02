@@ -293,10 +293,38 @@ class AdminClientController extends Controller
     public function destroy(Client $client)
     {
         $clientId = $client->client_id;
+        
+        // 1. Delete associated user logins
         ClientUser::where('client_id', $clientId)->delete();
+        
+        // 2. Delete projects / services
         ClientService::where('client_id', $clientId)->delete();
+        
+        // 3. Delete support tickets & ticket replies
+        $ticketIds = \App\Models\SupportTicket::where('client_id', $clientId)->pluck('id');
+        if ($ticketIds->isNotEmpty()) {
+            \App\Models\TicketReply::whereIn('ticket_id', $ticketIds)->delete();
+            \App\Models\SupportTicket::whereIn('id', $ticketIds)->delete();
+        }
+        
+        // 4. Delete client documents & disk files
+        $docs = \App\Models\ClientDocument::where('client_id', $clientId)->get();
+        foreach ($docs as $doc) {
+            if ($doc->file_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($doc->file_path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($doc->file_path);
+            }
+            $doc->delete();
+        }
+        
+        // 5. Delete notifications
+        \App\Models\Notification::where('client_id', $clientId)->delete();
+        
+        // 6. Detach assigned staff
+        $client->assignedStaff()->detach();
+        
+        // 7. Delete client record
         $client->delete();
 
-        return redirect()->route('admin.clients.index')->with('success', "Client #CL{$clientId} deleted successfully.");
+        return redirect()->route('admin.clients.index')->with('success', "Client #CL{$clientId} and all related data deleted successfully.");
     }
 }
