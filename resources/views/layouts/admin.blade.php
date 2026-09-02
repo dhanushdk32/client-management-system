@@ -677,12 +677,6 @@
                     </a>
                 </li>
 
-                <!-- Management Modules Header -->
-                <div class="menu-category-header">
-                    <span class="menu-category-badge">M</span>
-                    <span>MANAGEMENT MODULES</span>
-                </div>
-
                 <!-- Clients -->
                 <li class="menu-item">
                     <a href="{{ route('admin.clients.index') }}" class="menu-link {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}">
