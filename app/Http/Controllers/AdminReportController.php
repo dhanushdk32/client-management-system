@@ -6,21 +6,45 @@ use Illuminate\Http\Request;
 use App\Models\Client;
 use App\Models\ClientService;
 use App\Models\SupportTicket;
+use App\Models\StaffMember;
 
 class AdminReportController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $stats = [
             'total_clients' => Client::count(),
             'active_clients' => Client::where('client_status', 'Active')->count(),
-            'total_services' => ClientService::count(),
-            'completed_services' => ClientService::where('status', 'Completed')->count(),
+            'total_projects' => ClientService::count(),
+            'active_projects' => ClientService::whereIn('status', ['Active', 'In Progress'])->count(),
+            'completed_projects' => ClientService::where('status', 'Completed')->count(),
+            'planning_projects' => ClientService::where('status', 'Planning')->count(),
             'open_tickets' => SupportTicket::where('status', 'Open')->count(),
             'resolved_tickets' => SupportTicket::where('status', 'Resolved')->count(),
         ];
 
-        return view('admin.reports.index', compact('stats'));
+        $query = ClientService::with(['client', 'teamLeader'])->latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('service_name', 'like', "%{$search}%")
+                  ->orWhere('team_name', 'like', "%{$search}%")
+                  ->orWhere('assigned_team', 'like', "%{$search}%")
+                  ->orWhereHas('client', function($cq) use ($search) {
+                      $cq->where('client_name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $projects = $query->paginate(10);
+        $allStaff = StaffMember::pluck('name', 'id')->toArray();
+
+        return view('admin.reports.index', compact('stats', 'projects', 'allStaff'));
     }
 
     public function exportClients()
@@ -38,17 +62,18 @@ class AdminReportController extends Controller
         
         $callback = function() use($clients) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Client ID', 'Company Name', 'Email', 'Phone', 'Industry', 'Status', 'Registered At']);
+            fputcsv($file, ['Client ID', 'Client Name', 'Email', 'Primary Contact', 'Secondary Contact', 'Location', 'Status', 'Joined Date']);
 
             foreach ($clients as $client) {
                 fputcsv($file, [
-                    'CL' . sprintf('%03d', $client->client_id),
-                    $client->client_company,
+                    '#CL' . sprintf('%03d', $client->client_id),
+                    $client->client_name,
                     $client->client_email,
                     $client->primary_contact,
-                    $client->client_industry,
+                    $client->secondary_contact ?? '',
+                    $client->city ? ($client->city . ', ' . ($client->state ?? '')) : ($client->client_location ?? ''),
                     $client->client_status,
-                    $client->created_at ? $client->created_at->format('Y-m-d') : 'N/A'
+                    $client->joined_date ? $client->joined_date->format('Y-m-d') : ($client->client_created_date ? \Carbon\Carbon::parse($client->client_created_date)->format('Y-m-d') : 'N/A')
                 ]);
             }
             fclose($file);
@@ -59,8 +84,9 @@ class AdminReportController extends Controller
 
     public function exportServices()
     {
-        $services = ClientService::with('client')->get();
-        $csvFileName = 'services_report_' . date('Y_m_d_H_i_s') . '.csv';
+        $services = ClientService::with(['client', 'teamLeader'])->get();
+        $allStaff = StaffMember::pluck('name', 'id')->toArray();
+        $csvFileName = 'projects_report_' . date('Y_m_d_H_i_s') . '.csv';
         
         $headers = [
             "Content-type"        => "text/csv",
@@ -70,19 +96,31 @@ class AdminReportController extends Controller
             "Expires"             => "0"
         ];
         
-        $callback = function() use($services) {
+        $callback = function() use($services, $allStaff) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Service ID', 'Client Company', 'Service Name', 'Status', 'Start Date', 'End Date', 'Assigned Team']);
+            fputcsv($file, ['Project ID', 'Client Name', 'Project Title', 'Team Name', 'Team Leader', 'Team Members', 'Status', 'Start Date', 'Target Delivery Date', 'Description']);
 
             foreach ($services as $service) {
+                $leader = $service->teamLeader ? $service->teamLeader->name : 'N/A';
+                $members = [];
+                if (is_array($service->team_members)) {
+                    foreach ($service->team_members as $mId) {
+                        if (isset($allStaff[$mId])) $members[] = $allStaff[$mId];
+                    }
+                }
+                $membersStr = !empty($members) ? implode(', ', $members) : 'N/A';
+
                 fputcsv($file, [
-                    'SRV' . sprintf('%03d', $service->id),
-                    $service->client->client_company ?? 'N/A',
+                    '#PRJ' . sprintf('%03d', $service->id),
+                    $service->client->client_name ?? 'N/A',
                     $service->service_name,
+                    $service->team_name ?: ($service->assigned_team ?? 'N/A'),
+                    $leader,
+                    $membersStr,
                     $service->status,
                     $service->start_date ? \Carbon\Carbon::parse($service->start_date)->format('Y-m-d') : 'N/A',
                     $service->end_date ? \Carbon\Carbon::parse($service->end_date)->format('Y-m-d') : 'N/A',
-                    $service->assigned_team ?? 'N/A'
+                    $service->description ?? ''
                 ]);
             }
             fclose($file);
