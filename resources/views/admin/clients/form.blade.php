@@ -130,11 +130,15 @@
                 <i class="fa-solid fa-shield-halved me-1 text-primary"></i> 4. Login Credentials & OTP Verification
             </h6>
 
+            <!-- Hidden dummy fields to neutralize aggressive browser auto-fill -->
+            <input type="text" style="display:none">
+            <input type="password" style="display:none">
+
             <div class="row g-4 mb-4">
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Client Gmail / Email Address <span class="text-danger">*</span></label>
                     <div class="input-group">
-                        <input type="email" name="client_email" id="clientEmail" class="form-control bg-light" placeholder="client@gmail.com" value="{{ old('client_email', $client->client_email ?? '') }}" required>
+                        <input type="email" name="client_email" id="clientEmail" class="form-control bg-light" placeholder="e.g. client@gmail.com" value="{{ old('client_email', $client->client_email ?? '') }}" required autocomplete="off">
                         @if(!isset($client))
                             <button type="button" id="btnSendOtp" class="btn btn-outline-primary fw-semibold px-3">
                                 <span id="sendOtpSpinner" class="spinner-border spinner-border-sm d-none me-1"></span>
@@ -165,14 +169,14 @@
                                             <i class="fa-solid fa-rotate-right me-1"></i> Resend OTP
                                         </button>
                                     </div>
-                                    <input type="text" name="otp" id="otpCodeField" class="form-control bg-white text-center fw-bold fs-5 tracking-wider" placeholder="• • • • • •" maxlength="6" pattern="\d{6}" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    <input type="text" name="otp" id="otpCodeField" class="form-control bg-white text-center fw-bold fs-5 tracking-wider" placeholder="• • • • • •" maxlength="6" pattern="\d{6}" required autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                     <div class="form-text small text-muted">Sent to client's Gmail address</div>
                                 </div>
 
                                 <div class="col-md-7">
                                     <label class="form-label fw-semibold small text-muted">Set Client Password <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <input type="password" name="password" id="clientPasswordField" class="form-control bg-white" placeholder="Set custom password (min 6 chars)" minlength="6" required>
+                                        <input type="password" name="password" id="clientPasswordField" class="form-control bg-white" placeholder="Set custom password (min 6 chars)" minlength="6" required autocomplete="new-password">
                                         <button type="button" class="btn btn-outline-secondary" id="btnTogglePassword">
                                             <i class="fa-regular fa-eye"></i>
                                         </button>
@@ -185,7 +189,7 @@
                 @else
                     <div class="col-md-6">
                         <label class="form-label fw-semibold small text-muted">Reset Password (Optional)</label>
-                        <input type="password" name="password" class="form-control bg-light" placeholder="Leave blank to keep existing password" minlength="6">
+                        <input type="password" name="password" class="form-control bg-light" placeholder="Leave blank to keep existing password" minlength="6" autocomplete="new-password">
                     </div>
                 @endif
             </div>
@@ -269,6 +273,21 @@
 
         if (btnSendOtp) btnSendOtp.addEventListener('click', triggerSendClientOtp);
         if (btnResendOtp) btnResendOtp.addEventListener('click', triggerSendClientOtp);
+
+        @if(!isset($client) && !old('client_email'))
+            // Clear any browser injected autofill on load
+            setTimeout(() => {
+                if (emailInput && !emailInput.dataset.userTyped) emailInput.value = '';
+                if (passField && !passField.dataset.userTyped) passField.value = '';
+            }, 50);
+        @endif
+
+        if (emailInput) {
+            emailInput.addEventListener('input', function() { this.dataset.userTyped = 'true'; });
+        }
+        if (passField) {
+            passField.addEventListener('input', function() { this.dataset.userTyped = 'true'; });
+        }
 
         if (btnTogglePass && passField) {
             btnTogglePass.addEventListener('click', function() {
