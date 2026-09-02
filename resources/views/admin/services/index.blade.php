@@ -67,7 +67,6 @@
                         <tr>
                             <td>
                                 <div class="fw-semibold text-dark">{{ $service->client->client_name ?? 'N/A' }}</div>
-                                <span class="text-primary small fw-semibold">#CL{{ sprintf('%03d', $service->client_id) }}</span>
                             </td>
                             <td>
                                 <div class="fw-semibold text-dark">{{ $service->service_name }}</div>
