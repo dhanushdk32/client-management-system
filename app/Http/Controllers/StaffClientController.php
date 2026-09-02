@@ -20,7 +20,7 @@ class StaffClientController extends Controller
     public function index(Request $request)
     {
         $staff = Auth::guard('staff')->user();
-        $query = $staff->assignedClients()->withCount('users');
+        $query = $staff->assignedClients()->with(['services.teamLeader', 'assignedStaff'])->withCount('users');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -33,8 +33,9 @@ class StaffClientController extends Controller
         }
 
         $clients = $query->orderBy('client_tbl.client_id', 'asc')->paginate(10);
+        $allStaff = \App\Models\StaffMember::pluck('name', 'id')->toArray();
 
-        return view('staff.clients.index', compact('clients'));
+        return view('staff.clients.index', compact('clients', 'allStaff'));
     }
 
     public function create()

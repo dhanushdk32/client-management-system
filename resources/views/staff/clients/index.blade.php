@@ -45,6 +45,7 @@
                     <th>Client Name / Project</th>
                     <th>Email Address</th>
                     <th>Phone</th>
+                    <th>Team Members</th>
                     <th>My Project Role</th>
                     <th class="text-end pe-4">Actions</th>
                 </tr>
@@ -66,6 +67,36 @@
                         </td>
                         <td class="small">{{ $client->primary_contact }}</td>
                         <td>
+                            @php
+                                $primaryService = $client->services->first();
+                                $memberNames = [];
+                                
+                                if ($primaryService && is_array($primaryService->team_members) && count($primaryService->team_members) > 0) {
+                                    foreach ($primaryService->team_members as $mId) {
+                                        if (isset($allStaff[$mId])) {
+                                            $memberNames[] = $allStaff[$mId];
+                                        }
+                                    }
+                                }
+                                
+                                if (empty($memberNames) && $client->assignedStaff && $client->assignedStaff->isNotEmpty()) {
+                                    $memberNames = $client->assignedStaff->pluck('name')->toArray();
+                                }
+                            @endphp
+
+                            @if(!empty($memberNames))
+                                <div class="d-flex flex-wrap gap-1" style="max-width: 220px;">
+                                    @foreach($memberNames as $mName)
+                                        <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 11px;">
+                                            <i class="fa-solid fa-user-gear text-primary me-1"></i> {{ $mName }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            @else
+                                <span class="text-muted small">—</span>
+                            @endif
+                        </td>
+                        <td>
                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
                                 {{ $client->pivot->role_in_project ?? 'Lead Engineer' }}
                             </span>
@@ -78,7 +109,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
+                        <td colspan="7" class="text-center py-5 text-muted">
                             <i class="fa-solid fa-users-slash fa-3x mb-3 d-block opacity-50"></i>
                             No assigned clients found. Click <strong>"Add New Client"</strong> to register a new client!
                         </td>
