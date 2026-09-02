@@ -173,66 +173,82 @@
 
         .roriri-footer {
             background-color: #ffffff;
-        /* Dark Theme Styles */
+            border-top: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* Full Dark Theme Styles */
         body.dark-theme {
-            background-color: #0f172a;
-            color: #f1f5f9;
+            background-color: #0f172a !important;
+            color: #f1f5f9 !important;
         }
 
         body.dark-theme .roriri-topbar {
-            background-color: #1e293b;
-            border-bottom-color: #334155;
+            background-color: #1e293b !important;
+            border-bottom-color: #334155 !important;
         }
 
         body.dark-theme .brand-logo-text {
-            color: #38bdf8;
+            color: #38bdf8 !important;
         }
 
-        body.dark-theme .topbar-icon-btn {
-            background-color: #334155;
-            color: #f1f5f9;
-            border-color: #475569;
+        body.dark-theme .topbar-icon-btn,
+        body.dark-theme #clientThemeToggleBtn {
+            background-color: #334155 !important;
+            color: #f1f5f9 !important;
+            border-color: #475569 !important;
         }
 
         body.dark-theme .user-profile-badge {
-            background-color: #334155;
-            border-color: #475569;
+            background-color: #334155 !important;
+            border-color: #475569 !important;
         }
 
         body.dark-theme .roriri-sidebar {
-            background-color: #1e293b;
-            border-right-color: #334155;
+            background-color: #1e293b !important;
+            border-right-color: #334155 !important;
         }
 
         body.dark-theme .menu-link {
-            color: #cbd5e1;
+            color: #cbd5e1 !important;
         }
 
         body.dark-theme .menu-link:hover {
-            background-color: #334155;
-            color: #38bdf8;
+            background-color: #334155 !important;
+            color: #38bdf8 !important;
         }
 
         body.dark-theme .menu-link.active {
-            background-color: rgba(56, 189, 248, 0.15);
-            color: #38bdf8;
+            background-color: rgba(56, 189, 248, 0.15) !important;
+            color: #38bdf8 !important;
         }
 
         body.dark-theme .main-workspace {
-            background-color: #0f172a;
+            background-color: #0f172a !important;
         }
 
         body.dark-theme .card,
         body.dark-theme .stat-card-roriri {
-            background-color: #1e293b;
-            border-color: #334155;
-            color: #f8fafc;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            background-color: #1e293b !important;
+            border-color: #334155 !important;
+            color: #f8fafc !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+        }
+
+        body.dark-theme .stat-card-label {
+            color: #94a3b8 !important;
+        }
+
+        body.dark-theme .stat-card-value {
+            color: #f8fafc !important;
         }
 
         body.dark-theme .table {
-            color: #f1f5f9;
-            border-color: #334155;
+            color: #f1f5f9 !important;
+            border-color: #334155 !important;
         }
 
         body.dark-theme .table-light,
@@ -240,12 +256,12 @@
         body.dark-theme thead.table-light th {
             background-color: #334155 !important;
             color: #cbd5e1 !important;
-            border-color: #475569;
+            border-color: #475569 !important;
         }
 
         body.dark-theme .table-hover>tbody>tr:hover>* {
-            background-color: #334155;
-            color: #ffffff;
+            background-color: #334155 !important;
+            color: #ffffff !important;
         }
 
         body.dark-theme .form-control,
@@ -256,44 +272,61 @@
         }
 
         body.dark-theme .dropdown-menu {
-            background-color: #1e293b;
-            border-color: #334155;
+            background-color: #1e293b !important;
+            border-color: #334155 !important;
         }
 
         body.dark-theme .dropdown-item {
-            color: #cbd5e1;
+            color: #cbd5e1 !important;
         }
 
         body.dark-theme .dropdown-item:hover {
-            background-color: #334155;
-            color: #38bdf8;
+            background-color: #334155 !important;
+            color: #38bdf8 !important;
         }
 
         body.dark-theme .roriri-footer {
-            background-color: #1e293b;
-            border-top-color: #334155;
-            color: #94a3b8;
+            background-color: #1e293b !important;
+            border-top-color: #334155 !important;
+            color: #94a3b8 !important;
         }
 
         body.dark-theme .bg-light {
             background-color: #334155 !important;
+            color: #cbd5e1 !important;
+        }
+
+        body.dark-theme .border,
+        body.dark-theme .border-top,
+        body.dark-theme .border-bottom {
+            border-color: #334155 !important;
         }
 
         body.dark-theme .text-dark {
             color: #f8fafc !important;
         }
 
-        body.dark-theme .text-muted {
+        body.dark-theme .text-muted,
+        body.dark-theme .text-secondary {
             color: #94a3b8 !important;
         }
 
-        .roriri-footer {
-            background-color: #ffffff;
-            border-top: 1px solid #e2e8f0;
-            padding: 16px 24px;
-            text-align: center;
-            font-size: 13px;
-            color: #64748b;
+        body.dark-theme .modal-content {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+
+        body.dark-theme .modal-header,
+        body.dark-theme .modal-footer {
+            background-color: #0f172a !important;
+            border-color: #334155 !important;
+        }
+
+        body.dark-theme .btn-light {
+            background-color: #334155 !important;
+            border-color: #475569 !important;
+            color: #f8fafc !important;
         }
     </style>
     @yield('styles')
