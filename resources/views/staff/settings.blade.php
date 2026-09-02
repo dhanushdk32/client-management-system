@@ -21,13 +21,13 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label text-muted small fw-semibold">Designation</label>
-                <input type="text" class="form-control bg-light" value="{{ $staff->designation }}" readonly>
+                <label class="form-label text-muted small fw-semibold">Primary Contact</label>
+                <input type="text" class="form-control bg-light" value="{{ $staff->phone ?? 'Not set' }}" readonly>
             </div>
 
             <div class="mb-3">
-                <label class="form-label text-muted small fw-semibold">Department</label>
-                <input type="text" class="form-control bg-light" value="{{ $staff->department }}" readonly>
+                <label class="form-label text-muted small fw-semibold">Designation & Department</label>
+                <input type="text" class="form-control bg-light" value="{{ $staff->designation }} ({{ $staff->department }})" readonly>
             </div>
 
             <div>
@@ -45,11 +45,11 @@
             <h5 class="fw-bold mb-3 text-primary border-bottom pb-2">Change Password</h5>
 
             @if(session('success'))
-                <div class="alert alert-success py-2 mb-3">{{ session('success') }}</div>
+                <div class="alert alert-success py-2 mb-3"><i class="fa-solid fa-circle-check me-1"></i> {{ session('success') }}</div>
             @endif
 
             @if(session('error'))
-                <div class="alert alert-danger py-2 mb-3">{{ session('error') }}</div>
+                <div class="alert alert-danger py-2 mb-3"><i class="fa-solid fa-circle-xmark me-1"></i> {{ session('error') }}</div>
             @endif
 
             @if($errors->any())
@@ -64,19 +64,37 @@
 
             <form action="{{ route('staff.password.update') }}" method="POST">
                 @csrf
+                <!-- Current Password -->
                 <div class="mb-3">
                     <label class="form-label text-muted small fw-semibold">Current Password</label>
-                    <input type="password" name="current_password" class="form-control bg-light" placeholder="Enter current password" required>
+                    <div class="input-group">
+                        <input type="password" name="current_password" id="staffCurrentPass" class="form-control bg-light border-end-0" placeholder="Enter current password" required>
+                        <button class="btn btn-light border border-start-0" type="button" onclick="togglePassVisibility('staffCurrentPass', this)">
+                            <i class="fa-regular fa-eye text-muted"></i>
+                        </button>
+                    </div>
                 </div>
 
+                <!-- New Password -->
                 <div class="mb-3">
                     <label class="form-label text-muted small fw-semibold">New Password</label>
-                    <input type="password" name="new_password" class="form-control bg-light" placeholder="At least 8 characters" minlength="8" required>
+                    <div class="input-group">
+                        <input type="password" name="new_password" id="staffNewPass" class="form-control bg-light border-end-0" placeholder="At least 8 characters" minlength="8" required>
+                        <button class="btn btn-light border border-start-0" type="button" onclick="togglePassVisibility('staffNewPass', this)">
+                            <i class="fa-regular fa-eye text-muted"></i>
+                        </button>
+                    </div>
                 </div>
 
+                <!-- Confirm Password -->
                 <div class="mb-4">
                     <label class="form-label text-muted small fw-semibold">Confirm New Password</label>
-                    <input type="password" name="new_password_confirmation" class="form-control bg-light" placeholder="Re-type new password" minlength="8" required>
+                    <div class="input-group">
+                        <input type="password" name="new_password_confirmation" id="staffConfirmPass" class="form-control bg-light border-end-0" placeholder="Re-type new password" minlength="8" required>
+                        <button class="btn btn-light border border-start-0" type="button" onclick="togglePassVisibility('staffConfirmPass', this)">
+                            <i class="fa-regular fa-eye text-muted"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
@@ -87,3 +105,21 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    function togglePassVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye', 'fa-regular');
+            icon.classList.add('fa-eye-slash', 'fa-solid', 'text-primary');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash', 'fa-solid', 'text-primary');
+            icon.classList.add('fa-eye', 'fa-regular', 'text-muted');
+        }
+    }
+</script>
+@endpush

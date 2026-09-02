@@ -303,17 +303,32 @@
                     
                     <div class="mb-3">
                         <label class="form-label fw-semibold small text-muted">Current Password</label>
-                        <input type="password" name="current_password" class="form-control bg-light" required>
+                        <div class="input-group">
+                            <input type="password" name="current_password" id="adminCurrentPass" class="form-control bg-light border-end-0" required>
+                            <button class="btn btn-light border border-start-0" type="button" onclick="togglePassVisibility('adminCurrentPass', this)">
+                                <i class="fa-regular fa-eye text-muted"></i>
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-semibold small text-muted">New Password (Min 6 Characters)</label>
-                        <input type="password" name="new_password" class="form-control bg-light" minlength="6" required>
+                        <div class="input-group">
+                            <input type="password" name="new_password" id="adminNewPass" class="form-control bg-light border-end-0" minlength="6" required>
+                            <button class="btn btn-light border border-start-0" type="button" onclick="togglePassVisibility('adminNewPass', this)">
+                                <i class="fa-regular fa-eye text-muted"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label fw-semibold small text-muted">Confirm New Password</label>
-                        <input type="password" name="new_password_confirmation" class="form-control bg-light" minlength="6" required>
+                        <div class="input-group">
+                            <input type="password" name="new_password_confirmation" id="adminConfirmPass" class="form-control bg-light border-end-0" minlength="6" required>
+                            <button class="btn btn-light border border-start-0" type="button" onclick="togglePassVisibility('adminConfirmPass', this)">
+                                <i class="fa-regular fa-eye text-muted"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="d-flex justify-content-end">
@@ -329,6 +344,19 @@
 
 @push('scripts')
 <script>
+    function togglePassVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye', 'fa-regular');
+            icon.classList.add('fa-eye-slash', 'fa-solid', 'text-primary');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash', 'fa-solid', 'text-primary');
+            icon.classList.add('fa-eye', 'fa-regular', 'text-muted');
+        }
+    }
     function updateLiveBrandPreview() {
         const nameVal = document.getElementById('inputBrandName').value || 'RORIRI';
         const taglineVal = document.getElementById('inputBrandTagline').value || 'Software Solution';
