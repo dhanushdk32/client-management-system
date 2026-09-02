@@ -38,7 +38,7 @@ class StaffMember extends Authenticatable
     {
         return $this->belongsToMany(Client::class, 'client_assignments', 'staff_id', 'client_id')
                     ->withPivot('role_in_project', 'assigned_by_admin_id')
-                    ->withTimestamps();
+                    ->withTimestamps('created_at', 'updated_at');
     }
 
     public function assignedTickets()

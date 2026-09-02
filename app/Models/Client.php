@@ -50,6 +50,6 @@ class Client extends Model
     {
         return $this->belongsToMany(StaffMember::class, 'client_assignments', 'client_id', 'staff_id')
                     ->withPivot('role_in_project', 'assigned_by_admin_id')
-                    ->withTimestamps();
+                    ->withTimestamps('created_at', 'updated_at');
     }
 }
