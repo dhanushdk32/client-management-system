@@ -45,4 +45,11 @@ class Client extends Model
     {
         return $this->hasMany(ClientService::class, 'client_id', 'client_id');
     }
+
+    public function assignedStaff()
+    {
+        return $this->belongsToMany(StaffMember::class, 'client_assignments', 'client_id', 'staff_id')
+                    ->withPivot('role_in_project', 'assigned_by_admin_id')
+                    ->withTimestamps();
+    }
 }
