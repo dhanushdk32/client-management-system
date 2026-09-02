@@ -12,8 +12,9 @@
         </div>
 
         @if($errors->any())
-            <div class="alert alert-danger p-2 mb-4">
-                <ul class="mb-0 ps-3">
+            <div class="alert alert-danger p-3 mb-4 rounded-3">
+                <div class="fw-bold mb-1"><i class="fa-solid fa-circle-exclamation me-1"></i> Please resolve the following errors:</div>
+                <ul class="mb-0 ps-3 small">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -27,6 +28,10 @@
                 @method('PUT')
             @endif
 
+            <!-- Hidden dummy fields to neutralize aggressive browser auto-fill -->
+            <input type="text" style="display:none">
+            <input type="password" style="display:none">
+
             <div class="row g-4 mb-4">
                 <!-- Full Name -->
                 <div class="col-md-6">
@@ -39,7 +44,7 @@
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Work Email Address <span class="text-danger">*</span></label>
                     <div class="input-group">
-                        <input type="email" name="email" id="staffEmailInput" class="form-control bg-light" placeholder="alex@itcompany.com" value="{{ old('email', $staff->email ?? '') }}" required>
+                        <input type="email" name="email" id="staffEmailInput" class="form-control bg-light" placeholder="e.g. alex@company.com" value="{{ old('email', $staff->email ?? '') }}" required autocomplete="off">
                         @if(!isset($staff))
                             <button type="button" id="btnAdminSendStaffOtp" class="btn btn-outline-primary fw-semibold px-3">
                                 <span id="staffSendOtpSpinner" class="spinner-border spinner-border-sm d-none me-1"></span>
@@ -50,16 +55,22 @@
                     <div id="staffAdminOtpStatus" class="small mt-1"></div>
                 </div>
 
-                <!-- Phone -->
+                <!-- Primary Phone -->
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold small text-muted">Phone Number</label>
-                    <input type="tel" name="phone" class="form-control bg-light" placeholder="+1 (555) 000-0000" value="{{ old('phone', $staff->phone ?? '') }}" pattern="[0-9+\s\-]{7,15}" title="Numbers only" oninput="this.value = this.value.replace(/[^0-9+\s\-]/g, '')">
-                    <div class="form-text small text-muted">Digits only.</div>
+                    <label class="form-label fw-semibold small text-muted">Primary Contact Number <span class="text-danger">*</span></label>
+                    <input type="tel" name="phone" id="staffPrimaryPhone" class="form-control bg-light" placeholder="e.g. 9876543210" value="{{ old('phone', $staff->phone ?? '') }}" required pattern="[0-9+\s\-]{7,15}" title="Numbers only (7-15 digits)" oninput="this.value = this.value.replace(/[^0-9+\s\-]/g, '')">
+                    <div class="form-text small text-muted">Digits only (e.g. 9876543210).</div>
+                </div>
+
+                <!-- Secondary Phone -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-muted">Secondary Contact Number (Optional)</label>
+                    <input type="tel" name="secondary_phone" id="staffSecondaryPhone" class="form-control bg-light" placeholder="e.g. 9123456780" value="{{ old('secondary_phone', $staff->secondary_phone ?? '') }}" pattern="[0-9+\s\-]{7,15}" title="Numbers only (7-15 digits)" oninput="this.value = this.value.replace(/[^0-9+\s\-]/g, '')">
                 </div>
 
                 <!-- Status -->
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold small text-muted">Account Status</label>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small text-muted">Account Status <span class="text-danger">*</span></label>
                     <select name="status" class="form-select bg-light" required>
                         <option value="Active" {{ old('status', $staff->status ?? 'Active') == 'Active' ? 'selected' : '' }}>Active</option>
                         <option value="Inactive" {{ old('status', $staff->status ?? '') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
@@ -67,7 +78,7 @@
                 </div>
 
                 <!-- Department -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label fw-semibold small text-muted">Department <span class="text-danger">*</span></label>
                     <select name="department" class="form-select bg-light" required>
                         <option value="">Select Department</option>
@@ -78,7 +89,7 @@
                 </div>
 
                 <!-- Designation / Role -->
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label fw-semibold small text-muted">Job Designation <span class="text-danger">*</span></label>
                     <input type="text" name="designation" id="staffDesigInput" list="designationsList" class="form-control bg-light" placeholder="e.g. Lead Developer" value="{{ old('designation', $staff->designation ?? '') }}" required>
                     <datalist id="designationsList">
@@ -99,8 +110,10 @@
                         <div class="form-check card p-3 bg-light border-0 shadow-sm h-100">
                             <input class="form-check-input ms-0 me-2" type="checkbox" name="assigned_clients[]" value="{{ $client->client_id }}" id="client_{{ $client->client_id }}" {{ in_array($client->client_id, old('assigned_clients', $selectedClients ?? [])) ? 'checked' : '' }}>
                             <label class="form-check-label fw-semibold" for="client_{{ $client->client_id }}">
-                                {{ $client->client_company }}
-                                <span class="d-block small text-muted fw-normal">{{ $client->client_name }}</span>
+                                {{ $client->client_name }}
+                                @if($client->client_company && $client->client_company !== $client->client_name)
+                                    <span class="d-block small text-muted fw-normal">({{ $client->client_company }})</span>
+                                @endif
                             </label>
                         </div>
                     </div>
@@ -132,14 +145,14 @@
                                     <i class="fa-solid fa-rotate-right me-1"></i> Resend OTP
                                 </button>
                             </div>
-                            <input type="text" name="otp" id="staffOtpCodeField" class="form-control bg-white text-center fw-bold fs-5 tracking-wider" placeholder="• • • • • •" maxlength="6" pattern="\d{6}" required>
+                            <input type="text" name="otp" id="staffOtpCodeField" class="form-control bg-white text-center fw-bold fs-5 tracking-wider" placeholder="• • • • • •" maxlength="6" pattern="\d{6}" required autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             <div class="form-text small text-muted">Enter the 6-digit code sent to staff email</div>
                         </div>
 
                         <div class="col-md-7">
                             <label class="form-label fw-semibold small text-muted">Set Staff Password <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input type="password" name="password" id="staffPasswordField" class="form-control bg-white" placeholder="Type your custom password (min 6 chars)" minlength="6" required>
+                                <input type="password" name="password" id="staffPasswordField" class="form-control bg-white" placeholder="Type your custom password (min 6 chars)" minlength="6" required autocomplete="new-password">
                                 <button type="button" class="btn btn-outline-secondary" id="btnToggleStaffPass">
                                     <i class="fa-regular fa-eye"></i>
                                 </button>
@@ -153,7 +166,7 @@
                 <div class="row g-4 mb-4">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold small text-muted">Reset Password (Optional)</label>
-                        <input type="password" name="password" class="form-control bg-light" placeholder="Leave blank to keep existing password" minlength="6">
+                        <input type="password" name="password" class="form-control bg-light" placeholder="Leave blank to keep existing password" minlength="6" autocomplete="new-password">
                     </div>
                 </div>
             @endif
@@ -181,6 +194,21 @@
         
         const passField = document.getElementById('staffPasswordField');
         const btnTogglePass = document.getElementById('btnToggleStaffPass');
+
+        @if(!isset($staff) && !old('email'))
+            // Clear browser autofilled credentials on load
+            setTimeout(() => {
+                if (emailInput && !emailInput.dataset.userTyped) emailInput.value = '';
+                if (passField && !passField.dataset.userTyped) passField.value = '';
+            }, 50);
+        @endif
+
+        if (emailInput) {
+            emailInput.addEventListener('input', function() { this.dataset.userTyped = 'true'; });
+        }
+        if (passField) {
+            passField.addEventListener('input', function() { this.dataset.userTyped = 'true'; });
+        }
 
         function triggerSendOtp() {
             const email = emailInput.value.trim();
@@ -221,7 +249,8 @@
                 
                 if (data.success) {
                     otpStatus.innerHTML = '<span class="text-success fw-semibold"><i class="fa-solid fa-circle-check me-1"></i> OTP code sent to ' + email + ' (Valid for 5 minutes).</span>';
-                    document.getElementById('staffOtpCodeField').focus();
+                    const otpField = document.getElementById('staffOtpCodeField');
+                    if (otpField) otpField.focus();
                 } else {
                     otpStatus.innerHTML = '<span class="text-danger fw-semibold"><i class="fa-solid fa-circle-xmark me-1"></i> ' + (data.message || 'Failed to send OTP') + '</span>';
                 }

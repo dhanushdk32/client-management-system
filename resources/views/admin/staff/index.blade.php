@@ -79,6 +79,9 @@
                                 <div>
                                     <div class="fw-bold">{{ $staff->name }}</div>
                                     <div class="small text-muted"><i class="fa-regular fa-envelope me-1"></i> {{ $staff->email }}</div>
+                                    @if($staff->phone)
+                                        <div class="small text-muted" style="font-size: 11px;"><i class="fa-solid fa-phone me-1"></i> {{ $staff->phone }}</div>
+                                    @endif
                                 </div>
                             </div>
                         </td>

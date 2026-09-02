@@ -33,6 +33,7 @@ class AdminStaffController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
                   ->orWhere('designation', 'like', "%{$search}%");
             });
         }
@@ -110,7 +111,8 @@ class AdminStaffController extends Controller
         $request->validate([
             'name' => 'required|string|max:100|regex:/^[a-zA-Z\s\.\'-]+$/',
             'email' => 'required|email|max:100|unique:staff_members,email',
-            'phone' => 'nullable|string|regex:/^[0-9+\s\-]{7,15}$/',
+            'phone' => 'required|string|regex:/^[0-9+\s\-]{7,15}$/',
+            'secondary_phone' => 'nullable|string|regex:/^[0-9+\s\-]{7,15}$/',
             'department' => 'required|string|max:100',
             'designation' => 'required|string|max:100',
             'status' => 'required|in:Active,Inactive',
@@ -120,7 +122,9 @@ class AdminStaffController extends Controller
             'assigned_clients.*' => 'exists:client_tbl,client_id',
         ], [
             'name.regex' => 'The Staff Name must only contain letters and spaces (no numbers or special symbols).',
-            'phone.regex' => 'The Phone Number must only contain numbers (digits 0-9).',
+            'phone.required' => 'The Primary Contact Number is required.',
+            'phone.regex' => 'The Primary Contact Number must only contain digits (e.g. 9876543210).',
+            'secondary_phone.regex' => 'The Secondary Contact Number must only contain digits.',
             'otp.regex' => 'The OTP code must be a 6-digit number.',
         ]);
 
@@ -131,7 +135,7 @@ class AdminStaffController extends Controller
         }
 
         if (Carbon::now()->greaterThan($otpRecord->expires_at)) {
-            return back()->withInput()->withErrors(['otp' => 'The OTP code has expired. Please click Send OTP again.']);
+            return back()->withInput()->withErrors(['otp' => 'The OTP code has expired. Please click Resend OTP.']);
         }
 
         $adminId = Auth::guard('admin')->id();
@@ -140,7 +144,8 @@ class AdminStaffController extends Controller
         $staffData = [
             'name' => $request->name,
             'email' => $request->email,
-            'phone' => $request->phone ?? '',
+            'phone' => $request->phone,
+            'secondary_phone' => $request->secondary_phone ?? '',
             'department' => $request->department,
             'designation' => $request->designation,
             'status' => $request->status,
@@ -183,7 +188,8 @@ class AdminStaffController extends Controller
         $request->validate([
             'name' => 'required|string|max:100|regex:/^[a-zA-Z\s\.\'-]+$/',
             'email' => 'required|email|max:100|unique:staff_members,email,' . $staff->id,
-            'phone' => 'nullable|string|regex:/^[0-9+\s\-]{7,15}$/',
+            'phone' => 'required|string|regex:/^[0-9+\s\-]{7,15}$/',
+            'secondary_phone' => 'nullable|string|regex:/^[0-9+\s\-]{7,15}$/',
             'department' => 'required|string|max:100',
             'designation' => 'required|string|max:100',
             'status' => 'required|in:Active,Inactive',
@@ -192,13 +198,16 @@ class AdminStaffController extends Controller
             'assigned_clients.*' => 'exists:client_tbl,client_id',
         ], [
             'name.regex' => 'The Staff Name must only contain letters and spaces (no numbers or special symbols).',
-            'phone.regex' => 'The Phone Number must only contain numbers (digits 0-9).',
+            'phone.required' => 'The Primary Contact Number is required.',
+            'phone.regex' => 'The Primary Contact Number must only contain digits (e.g. 9876543210).',
+            'secondary_phone.regex' => 'The Secondary Contact Number must only contain digits.',
         ]);
 
         $updateData = [
             'name' => $request->name,
             'email' => $request->email,
-            'phone' => $request->phone ?? '',
+            'phone' => $request->phone,
+            'secondary_phone' => $request->secondary_phone ?? '',
             'department' => $request->department,
             'designation' => $request->designation,
             'status' => $request->status,

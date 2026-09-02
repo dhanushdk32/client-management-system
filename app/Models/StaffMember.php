@@ -15,6 +15,7 @@ class StaffMember extends Authenticatable
         'name',
         'email',
         'phone',
+        'secondary_phone',
         'designation',
         'department',
         'password',
