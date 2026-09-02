@@ -107,6 +107,10 @@
             flex-direction: column;
             padding: 16px 0;
             flex-shrink: 0;
+            position: sticky;
+            top: 65px;
+            height: calc(100vh - 65px);
+            overflow-y: auto;
         }
 
         .sidebar-menu {

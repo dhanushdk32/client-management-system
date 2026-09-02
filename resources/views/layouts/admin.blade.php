@@ -187,6 +187,10 @@
             transition: width 0.3s ease, transform 0.3s ease;
             z-index: 1000;
             flex-shrink: 0;
+            position: sticky;
+            top: 65px;
+            height: calc(100vh - 65px);
+            overflow-y: auto;
         }
 
         .roriri-sidebar.collapsed {
