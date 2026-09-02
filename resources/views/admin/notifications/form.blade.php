@@ -25,10 +25,10 @@
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Select Recipient (Client)</label>
                     <select name="client_id" class="form-select bg-light" required>
-                        <option value="">Select a client...</option>
+                        <option value="">-- Choose Client --</option>
                         @foreach($clients as $client)
                             <option value="{{ $client->client_id }}" {{ old('client_id') == $client->client_id ? 'selected' : '' }}>
-                                {{ $client->client_company }} (CL{{ sprintf('%03d', $client->client_id) }})
+                                {{ $client->client_name }} (#CL{{ sprintf('%03d', $client->client_id) }})
                             </option>
                         @endforeach
                     </select>

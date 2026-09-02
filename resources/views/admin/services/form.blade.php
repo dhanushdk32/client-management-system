@@ -37,10 +37,10 @@
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Select Target Client <span class="text-danger">*</span></label>
                     <select name="client_id" class="form-select bg-light" required {{ isset($service) ? 'disabled' : '' }}>
-                        <option value="">-- Choose Client Company --</option>
+                        <option value="">-- Choose Client --</option>
                         @foreach($clients as $client)
                             <option value="{{ $client->client_id }}" {{ (old('client_id', $service->client_id ?? '') == $client->client_id) ? 'selected' : '' }}>
-                                {{ $client->client_company }} ({{ $client->client_name }} - #CL{{ sprintf('%03d', $client->client_id) }})
+                                {{ $client->client_name }} (#CL{{ sprintf('%03d', $client->client_id) }})
                             </option>
                         @endforeach
                     </select>

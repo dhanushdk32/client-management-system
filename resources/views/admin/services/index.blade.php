@@ -52,7 +52,7 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr class="small text-muted">
-                        <th>Client / Organization</th>
+                        <th>Client</th>
                         <th>Project / Service</th>
                         <th>Assigned Team / Lead</th>
                         <th>Status</th>
@@ -64,8 +64,8 @@
                     @forelse($services as $service)
                         <tr>
                             <td>
-                                <div class="fw-semibold text-dark">{{ $service->client->client_company ?? 'N/A' }}</div>
-                                <span class="text-muted small">ID: #CL{{ sprintf('%03d', $service->client_id) }} ({{ $service->client->client_name ?? '' }})</span>
+                                <div class="fw-semibold text-dark">{{ $service->client->client_name ?? 'N/A' }}</div>
+                                <span class="text-primary small fw-semibold">#CL{{ sprintf('%03d', $service->client_id) }}</span>
                             </td>
                             <td>
                                 <div class="fw-semibold text-dark">{{ $service->service_name }}</div>
