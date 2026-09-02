@@ -169,15 +169,19 @@
     <div class="col-lg-6">
         <div class="card p-4 h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold mb-0 text-dark">Recently Added Clients</h5>
+                <div>
+                    <h5 class="fw-bold mb-0 text-dark">Recently Added Clients</h5>
+                    <span class="text-muted" style="font-size: 11px;">Added within the last 30 days</span>
+                </div>
                 <a href="{{ route('admin.clients.index') }}" class="text-primary small fw-semibold text-decoration-none">View All &rarr;</a>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr class="small text-muted">
-                            <th>Company</th>
+                            <th>Client Name</th>
                             <th>Contact</th>
+                            <th>Joined Date</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -185,10 +189,13 @@
                         @forelse($recentClients as $client)
                             <tr>
                                 <td>
-                                    <div class="fw-semibold text-dark">{{ $client->client_company }}</div>
-                                    <span class="text-muted small">{{ $client->client_email }}</span>
+                                    <div class="fw-semibold text-dark">{{ $client->client_name }}</div>
+                                    <span class="text-muted small" style="font-size: 11px;">{{ $client->client_email }}</span>
                                 </td>
-                                <td>{{ $client->client_name }}</td>
+                                <td class="small">{{ $client->primary_contact }}</td>
+                                <td class="small text-muted">
+                                    {{ $client->joined_date ? $client->joined_date->format('d M Y') : 'N/A' }}
+                                </td>
                                 <td>
                                     <span class="badge {{ $client->client_status === 'Active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }} rounded-pill px-2 py-1">
                                         {{ $client->client_status }}
@@ -196,7 +203,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="3" class="text-center text-muted py-3">No clients found.</td></tr>
+                            <tr><td colspan="4" class="text-center text-muted py-4 small">No new clients added in the past 30 days.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

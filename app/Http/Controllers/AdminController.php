@@ -70,8 +70,18 @@ class AdminController extends Controller
             ->limit(5)
             ->get();
 
-        // Recent Clients
-        $recentClients = Client::latest('client_id')->limit(5)->get();
+        // Recent Clients (Added within the last 1 month)
+        $oneMonthAgo = \Carbon\Carbon::now()->subMonth();
+        $recentClients = Client::where(function($q) use ($oneMonthAgo) {
+                $q->where('joined_date', '>=', $oneMonthAgo)
+                  ->orWhere(function($subQ) use ($oneMonthAgo) {
+                      $subQ->whereNull('joined_date')
+                           ->where('client_created_date', '>=', $oneMonthAgo);
+                  });
+            })
+            ->orderBy('client_id', 'desc')
+            ->limit(5)
+            ->get();
 
         // Recent Tickets
         $recentTickets = SupportTicket::with('client')->latest('id')->limit(5)->get();
