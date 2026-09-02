@@ -385,6 +385,7 @@
         .bg-icon-green { background-color: #dcfce7; color: #16a34a; }
         .bg-icon-red { background-color: #fef2f2; color: #ef4444; }
         .bg-icon-purple { background-color: #f5f3ff; color: #7c3aed; }
+        .bg-icon-gray { background-color: #f1f5f9; color: #64748b; }
 
         .card {
             border: 1px solid #f1f5f9;

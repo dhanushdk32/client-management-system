@@ -66,16 +66,16 @@
         </a>
     </div>
 
-    <!-- Card 5: Total Tickets -->
+    <!-- Card 5: Inactive Clients -->
     <div class="col-xl-3 col-md-6">
-        <a href="{{ route('admin.tickets.index') }}" class="text-decoration-none">
+        <a href="{{ route('admin.clients.index', ['status' => 'Inactive']) }}" class="text-decoration-none">
             <div class="stat-card-roriri">
                 <div>
-                    <div class="stat-card-label">Support Tickets</div>
-                    <h3 class="stat-card-value">{{ $totalTickets ?? 0 }}</h3>
+                    <div class="stat-card-label">Inactive Clients</div>
+                    <h3 class="stat-card-value text-secondary">{{ $inactiveClients ?? 0 }}</h3>
                 </div>
-                <div class="stat-icon-wrapper bg-icon-yellow">
-                    <i class="fa-solid fa-ticket"></i>
+                <div class="stat-icon-wrapper bg-icon-gray">
+                    <i class="fa-solid fa-user-slash"></i>
                 </div>
             </div>
         </a>
