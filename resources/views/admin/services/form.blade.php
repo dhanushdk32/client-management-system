@@ -124,9 +124,9 @@
                     <div class="form-text small text-muted">Select the primary lead engineer responsible for this project.</div>
                 </div>
 
-                <!-- Team Members (Multiple Selection) -->
+                <!-- Team Members -->
                 <div class="col-md-12">
-                    <label class="form-label fw-semibold small text-muted mb-2">Team Members (Select Multiple Staff)</label>
+                    <label class="form-label fw-semibold small text-muted mb-2">Team Members</label>
                     <div class="p-3 rounded-3 bg-light border">
                         <div class="row g-3">
                             @php
@@ -151,7 +151,6 @@
                             @endif
                         </div>
                     </div>
-                    <div class="form-text small text-muted mt-1">Check all engineers, designers, or QA staff contributing to this project.</div>
                 </div>
 
                 <!-- Project Scope Description -->
