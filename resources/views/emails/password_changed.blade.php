@@ -9,9 +9,9 @@
     <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
         
         <!-- Header Banner -->
-        <div style="background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%); padding: 35px 30px; text-align: center; color: #ffffff;">
+        <div style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); padding: 35px 30px; text-align: center; color: #ffffff;">
             <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #ffffff;">Password Changed Successfully</h1>
-            <p style="margin: 8px 0 0 0; font-size: 14px; color: #ccfbf1; opacity: 0.95;">Security Notification for Your Account</p>
+            <p style="margin: 8px 0 0 0; font-size: 14px; color: #e0f2fe; opacity: 0.95;">Security Notification for Your Account</p>
         </div>
 
         <!-- Body Content -->
@@ -20,7 +20,7 @@
                 Hello <strong>{{ $user->name }}</strong>,
             </p>
             <p style="color: #475569; font-size: 15px; line-height: 1.6;">
-                This email is to confirm that the password for your <strong>Client Portal account</strong> ({{ $user->email }}) was successfully updated on <strong>{{ $changedAt }}</strong>.
+                This email is to confirm that the password for your account (<strong>{{ $user->email }}</strong>) was successfully updated on <strong>{{ $changedAt }} (IST)</strong>.
             </p>
 
             <!-- Status Card -->
@@ -29,14 +29,14 @@
                     ✓ Status: Password Updated
                 </h4>
                 <p style="margin: 0; color: #15803d; font-size: 13px; line-height: 1.5;">
-                    Your account is secure with your new password. You can now use it to log in to the Client Portal.
+                    Your account is secure with your new password. You can now use it to log in to the portal.
                 </p>
             </div>
 
             <!-- Login Action Button -->
             <div style="text-align: center; margin: 30px 0 25px 0;">
-                <a href="{{ route('client.login') }}" style="display: inline-block; background-color: #0d9488; color: #ffffff; padding: 13px 30px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);">
-                    Sign In to Client Portal
+                <a href="{{ route('login') }}" style="display: inline-block; background-color: #0284c7; color: #ffffff; padding: 13px 32px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
+                    Go to Login Page
                 </a>
             </div>
 
@@ -51,7 +51,7 @@
         <!-- Footer -->
         <div style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
             <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-                &copy; {{ date('Y') }} Client Management System. All rights reserved.
+                &copy; {{ date('Y') }} {{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}. All rights reserved.
             </p>
         </div>
     </div>

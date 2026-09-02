@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Carbon\Carbon;
 
 class PasswordChangedMail extends Mailable
 {
@@ -16,7 +17,7 @@ class PasswordChangedMail extends Mailable
     public function __construct($user, $changedAt = null)
     {
         $this->user = $user;
-        $this->changedAt = $changedAt ?? now()->toDayDateTimeString();
+        $this->changedAt = $changedAt ?? Carbon::now('Asia/Kolkata')->format('D, M j, Y g:i A');
     }
 
     public function build()
