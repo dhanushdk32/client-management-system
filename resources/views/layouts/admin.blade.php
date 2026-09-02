@@ -608,12 +608,14 @@
 
     <!-- RORIRI Topbar -->
     <header class="roriri-topbar">
-        <div class="brand-section">
+        <div class="brand-section" style="width: auto; min-width: 260px;">
             <a href="{{ route('admin.dashboard') }}" class="brand-logo">
                 <div class="brand-logo-icon">
-                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}" width="30" height="30" style="border-radius: 50%; object-fit: contain;">
+                    <img src="{{ asset('images/roriri_logo.png') }}" alt="RORIRI" width="32" height="32" style="border-radius: 50%; object-fit: cover;">
                 </div>
-                <h1 class="brand-logo-text">{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}</h1>
+                <h1 class="brand-logo-text" style="font-size: 19px; font-weight: 800; color: #0284c7; white-space: nowrap; margin: 0;">
+                    RORIRI <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">Software Solutions</span>
+                </h1>
             </a>
             <button class="sidebar-toggle-btn" id="sidebarToggle" title="Toggle Navigation">
                 <i class="fa-solid fa-bars"></i>
@@ -763,12 +765,12 @@
 
         <!-- Main Workspace Area -->
         <main class="main-workspace">
-            <!-- Active Entity Tab (From Screenshot 2) -->
+            <!-- Active Entity Tab -->
             <div class="active-entity-tab-pill">
                 <div class="active-tab-logo-circle">
-                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="Logo">
+                    <img src="{{ asset('images/roriri_logo.png') }}" alt="RORIRI">
                 </div>
-                <span class="active-tab-text">{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }} {{ \App\Models\SystemSetting::get('brand_tagline', 'Software Solution') }}</span>
+                <span class="active-tab-text">RORIRI Software Solutions</span>
                 <button type="button" class="active-tab-close" title="Close Tab">&times;</button>
             </div>
 

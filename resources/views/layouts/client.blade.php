@@ -296,14 +296,16 @@
 
     <!-- RORIRI Topbar -->
     <header class="roriri-topbar">
-        <div class="brand-section">
+        <div class="brand-section" style="width: auto; min-width: 260px;">
             <a href="{{ route('client.dashboard') }}" class="brand-logo">
                 <div class="brand-logo-icon">
-                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}" width="30" height="30" style="border-radius: 50%; object-fit: contain;">
+                    <img src="{{ asset('images/roriri_logo.png') }}" alt="RORIRI" width="32" height="32" style="border-radius: 50%; object-fit: cover;">
                 </div>
-                <h1 class="brand-logo-text">{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}</h1>
+                <h1 class="brand-logo-text" style="font-size: 19px; font-weight: 800; color: #0284c7; white-space: nowrap; margin: 0;">
+                    RORIRI <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">Software Solutions</span>
+                </h1>
             </a>
-            <span class="badge bg-primary-subtle text-primary border rounded-pill px-3 py-1 fw-semibold">Client Portal</span>
+            <span class="badge bg-primary-subtle text-primary border rounded-pill px-3 py-1 fw-semibold ms-2">Client Portal</span>
         </div>
 
         <div class="d-flex align-items-center gap-3">
