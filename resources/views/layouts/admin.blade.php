@@ -424,6 +424,174 @@
             border-color: #dc2626;
         }
 
+        /* Dark Theme Styles */
+        body.dark-theme {
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+
+        body.dark-theme .roriri-topbar {
+            background-color: #1e293b;
+            border-bottom-color: #334155;
+        }
+
+        body.dark-theme .brand-logo-text {
+            color: #38bdf8;
+        }
+
+        body.dark-theme .topbar-icon-btn,
+        body.dark-theme .sidebar-toggle-btn {
+            background-color: #334155;
+            color: #f1f5f9;
+            border-color: #475569;
+        }
+
+        body.dark-theme .topbar-icon-btn:hover,
+        body.dark-theme .sidebar-toggle-btn:hover {
+            background-color: #475569;
+            color: #38bdf8;
+        }
+
+        body.dark-theme .user-profile-badge {
+            background-color: #334155;
+            border-color: #475569;
+        }
+
+        body.dark-theme .user-name {
+            color: #f8fafc;
+        }
+
+        body.dark-theme .roriri-sidebar {
+            background-color: #1e293b;
+            border-right-color: #334155;
+        }
+
+        body.dark-theme .menu-link {
+            color: #cbd5e1;
+        }
+
+        body.dark-theme .menu-link:hover {
+            background-color: #334155;
+            color: #38bdf8;
+        }
+
+        body.dark-theme .menu-link.active {
+            background-color: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+        }
+
+        body.dark-theme .main-workspace {
+            background-color: #0f172a;
+        }
+
+        body.dark-theme .card,
+        body.dark-theme .stat-card-roriri {
+            background-color: #1e293b;
+            border-color: #334155;
+            color: #f8fafc;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        body.dark-theme .stat-card-value {
+            color: #f8fafc;
+        }
+
+        body.dark-theme .stat-card-label {
+            color: #94a3b8;
+        }
+
+        body.dark-theme .table {
+            color: #f1f5f9;
+            border-color: #334155;
+        }
+
+        body.dark-theme .table-light,
+        body.dark-theme thead.table-light tr,
+        body.dark-theme thead.table-light th {
+            background-color: #334155 !important;
+            color: #cbd5e1 !important;
+            border-color: #475569;
+        }
+
+        body.dark-theme .table-hover>tbody>tr:hover>* {
+            background-color: #334155;
+            color: #ffffff;
+        }
+
+        body.dark-theme .form-control,
+        body.dark-theme .form-select {
+            background-color: #0f172a !important;
+            border-color: #475569 !important;
+            color: #f8fafc !important;
+        }
+
+        body.dark-theme .form-control::placeholder {
+            color: #64748b;
+        }
+
+        body.dark-theme .input-group-text {
+            background-color: #334155 !important;
+            border-color: #475569 !important;
+            color: #cbd5e1 !important;
+        }
+
+        body.dark-theme .dropdown-menu {
+            background-color: #1e293b;
+            border-color: #334155;
+        }
+
+        body.dark-theme .dropdown-item {
+            color: #cbd5e1;
+        }
+
+        body.dark-theme .dropdown-item:hover {
+            background-color: #334155;
+            color: #38bdf8;
+        }
+
+        body.dark-theme .modal-content {
+            background-color: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #334155;
+        }
+
+        body.dark-theme .modal-header,
+        body.dark-theme .modal-footer {
+            border-color: #334155;
+        }
+
+        body.dark-theme .roriri-footer {
+            background-color: #1e293b;
+            border-top-color: #334155;
+            color: #94a3b8;
+        }
+
+        body.dark-theme .border-top {
+            border-top-color: #334155 !important;
+        }
+        body.dark-theme .border-bottom {
+            border-bottom-color: #334155 !important;
+        }
+        body.dark-theme .border {
+            border-color: #334155 !important;
+        }
+
+        body.dark-theme .bg-light {
+            background-color: #334155 !important;
+        }
+
+        body.dark-theme .text-dark {
+            color: #f8fafc !important;
+        }
+
+        body.dark-theme .text-muted {
+            color: #94a3b8 !important;
+        }
+
+        body.dark-theme .sidebar-logout-btn {
+            background-color: #1e293b;
+        }
+
         /* Footer */
         .roriri-footer {
             background-color: #ffffff;
@@ -454,9 +622,9 @@
 
         <div class="topbar-right">
             <!-- Theme Toggle Icon -->
-            <a href="#" class="topbar-icon-btn" title="Toggle Theme" id="themeToggleBtn">
-                <i class="fa-regular fa-moon"></i>
-            </a>
+            <button type="button" class="topbar-icon-btn" title="Toggle Dark/Light Theme" id="themeToggleBtn" style="border:none; cursor:pointer;">
+                <i class="fa-regular fa-moon" id="themeIcon"></i>
+            </button>
 
             <!-- Quick App Grid Icon -->
             <a href="#" class="topbar-icon-btn" title="Quick Navigation" data-bs-toggle="dropdown">
@@ -518,7 +686,7 @@
                 <!-- Clients -->
                 <li class="menu-item">
                     <a href="{{ route('admin.clients.index') }}" class="menu-link {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-users"></i>
+                        <i class="fa-solid fa-building"></i>
                         <span>Clients</span>
                     </a>
                 </li>
@@ -526,7 +694,7 @@
                 <!-- Staff Team -->
                 <li class="menu-item">
                     <a href="{{ route('admin.staff.index') }}" class="menu-link {{ request()->routeIs('admin.staff.*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-user-gear"></i>
+                        <i class="fa-solid fa-user-tie"></i>
                         <span>Staff Team</span>
                     </a>
                 </li>
@@ -558,7 +726,7 @@
                 <!-- Notifications -->
                 <li class="menu-item">
                     <a href="{{ route('admin.notifications.index') }}" class="menu-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
-                        <i class="fa-regular fa-bell"></i>
+                        <i class="fa-solid fa-bell"></i>
                         <span>Notifications</span>
                     </a>
                 </li>
@@ -623,13 +791,51 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // Dark Mode Logic with LocalStorage persistence
+        function applySavedTheme() {
+            const savedTheme = localStorage.getItem('roriri_theme') || 'light';
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+                document.documentElement.setAttribute('data-bs-theme', 'dark');
+                if (themeIcon) {
+                    themeIcon.classList.remove('fa-moon', 'fa-regular');
+                    themeIcon.classList.add('fa-sun', 'fa-solid', 'text-warning');
+                }
+            } else {
+                document.body.classList.remove('dark-theme');
+                document.documentElement.setAttribute('data-bs-theme', 'light');
+                if (themeIcon) {
+                    themeIcon.classList.remove('fa-sun', 'fa-solid', 'text-warning');
+                    themeIcon.classList.add('fa-moon', 'fa-regular');
+                }
+            }
+        }
+
+        // Apply theme immediately before render
+        applySavedTheme();
+
         document.addEventListener('DOMContentLoaded', function() {
+            applySavedTheme();
+
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('roririSidebar');
 
             if (sidebarToggle && sidebar) {
                 sidebarToggle.addEventListener('click', function() {
                     sidebar.classList.toggle('collapsed');
+                });
+            }
+
+            const themeToggleBtn = document.getElementById('themeToggleBtn');
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const isDark = document.body.classList.contains('dark-theme');
+                    const newTheme = isDark ? 'light' : 'dark';
+                    localStorage.setItem('roriri_theme', newTheme);
+                    applySavedTheme();
                 });
             }
         });
