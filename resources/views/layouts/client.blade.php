@@ -493,6 +493,10 @@
         Copyright &copy; {{ date('Y') }} {{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}. All rights reserved.
     </footer>
 
+    <!-- Modals Stack -->
+    @stack('modals')
+    @yield('modals')
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
