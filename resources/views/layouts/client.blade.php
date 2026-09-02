@@ -417,12 +417,9 @@
                     <li><a class="dropdown-item py-2 rounded-2" href="{{ route('client.settings') }}"><i class="fa-solid fa-gear me-2 text-muted"></i> Account Settings</a></li>
                     <li><hr class="dropdown-divider my-1"></li>
                     <li>
-                        <form action="{{ route('logout') }}" method="POST" class="m-0">
-                            @csrf
-                            <button type="submit" class="dropdown-item py-2 rounded-2 text-danger">
-                                <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
-                            </button>
-                        </form>
+                        <button type="button" class="dropdown-item py-2 rounded-2 text-danger" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+                            <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -473,12 +470,9 @@
             </ul>
 
             <div class="p-3 border-top mt-auto">
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-outline-danger w-100 btn-sm rounded-3 py-2">
-                        <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
-                    </button>
-                </form>
+                <button type="button" class="btn btn-outline-danger w-100 btn-sm rounded-3 py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+                    <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                </button>
             </div>
         </aside>
 
@@ -492,6 +486,28 @@
     <footer class="roriri-footer">
         Copyright &copy; {{ date('Y') }} {{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}. All rights reserved.
     </footer>
+
+    <!-- Universal Logout Confirmation Modal -->
+    <div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-body text-center p-4">
+                    <div class="rounded-circle bg-danger-subtle text-danger d-inline-flex align-items-center justify-content-center mb-3" style="width: 54px; height: 54px; font-size: 22px;">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1 text-dark">Confirm Logout</h5>
+                    <p class="text-muted small mb-4">Are you sure you want to log out of your account?</p>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-light border w-100 rounded-3 py-2 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+                        <form action="{{ route('logout') }}" method="POST" class="w-100 m-0">
+                            @csrf
+                            <button type="submit" class="btn btn-danger w-100 rounded-3 py-2 fw-semibold">Yes, Logout</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modals Stack -->
     @stack('modals')
