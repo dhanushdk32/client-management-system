@@ -34,8 +34,9 @@ class AdminServiceController extends Controller
 
         $services = $query->orderBy('created_at', 'desc')->paginate(10);
         $clients = Client::where('client_status', 'Active')->get();
+        $allStaff = StaffMember::pluck('name', 'id')->toArray();
 
-        return view('admin.services.index', compact('services', 'clients'));
+        return view('admin.services.index', compact('services', 'clients', 'allStaff'));
     }
 
     public function create()

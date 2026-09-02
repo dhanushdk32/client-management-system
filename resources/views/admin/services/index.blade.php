@@ -54,7 +54,9 @@
                     <tr class="small text-muted">
                         <th>Client</th>
                         <th>Project / Service</th>
-                        <th>Assigned Team / Lead</th>
+                        <th>Team Name</th>
+                        <th>Team Leader</th>
+                        <th>Members</th>
                         <th>Status</th>
                         <th>Delivery Timeline</th>
                         <th class="text-end">Action</th>
@@ -70,15 +72,60 @@
                             <td>
                                 <div class="fw-semibold text-dark">{{ $service->service_name }}</div>
                                 @if($service->description)
-                                    <span class="text-muted small text-truncate d-inline-block" style="max-width: 260px;">
+                                    <span class="text-muted small text-truncate d-inline-block" style="max-width: 220px;">
                                         {{ $service->description }}
                                     </span>
                                 @endif
                             </td>
                             <td>
-                                <span class="badge bg-light text-dark border">
-                                    <i class="fa-solid fa-users-gear me-1 text-primary"></i> {{ $service->assigned_team ?? 'Engineering Team' }}
+                                @php
+                                    $teamName = $service->team_name;
+                                    if (!$teamName && $service->assigned_team) {
+                                        $parts = explode('•', $service->assigned_team);
+                                        $teamName = trim($parts[0]);
+                                    }
+                                @endphp
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
+                                    <i class="fa-solid fa-users me-1"></i> {{ $teamName ?: 'General Team' }}
                                 </span>
+                            </td>
+                            <td>
+                                @if($service->teamLeader)
+                                    <div class="fw-semibold text-dark small">
+                                        <i class="fa-solid fa-user-tie text-primary me-1"></i> {{ $service->teamLeader->name }}
+                                    </div>
+                                    <span class="text-muted" style="font-size: 11px;">{{ $service->teamLeader->designation }}</span>
+                                @elseif($service->assigned_team && preg_match('/Lead:\s*([^•]+)/', $service->assigned_team, $m))
+                                    <div class="fw-semibold text-dark small">
+                                        <i class="fa-solid fa-user-tie text-primary me-1"></i> {{ trim($m[1]) }}
+                                    </div>
+                                    <span class="text-muted" style="font-size: 11px;">Team Lead</span>
+                                @else
+                                    <span class="text-muted small">—</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if(is_array($service->team_members) && count($service->team_members) > 0)
+                                    <div class="d-flex flex-wrap gap-1" style="max-width: 180px;">
+                                        @foreach($service->team_members as $mId)
+                                            @if(isset($allStaff[$mId]))
+                                                <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 11px;">
+                                                    {{ $allStaff[$mId] }}
+                                                </span>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                @elseif($service->assigned_team && preg_match('/Members:\s*([^•]+)/', $service->assigned_team, $m))
+                                    <div class="d-flex flex-wrap gap-1" style="max-width: 180px;">
+                                        @foreach(explode(',', $m[1]) as $mName)
+                                            <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 11px;">
+                                                {{ trim($mName) }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="text-muted small">—</span>
+                                @endif
                             </td>
                             <td>
                                 @if($service->status == 'Active')
