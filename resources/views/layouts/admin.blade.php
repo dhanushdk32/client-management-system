@@ -179,25 +179,32 @@
         /* Sidebar Styling */
         .roriri-sidebar {
             width: 260px;
+            min-width: 260px;
+            max-width: 260px;
             background-color: var(--sidebar-bg);
             border-right: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
             padding: 16px 0;
-            transition: width 0.3s ease, transform 0.3s ease;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
             z-index: 1000;
             flex-shrink: 0;
+            flex-grow: 0;
             position: sticky;
-            top: 65px;
-            height: calc(100vh - 65px);
+            top: 68px;
+            height: calc(100vh - 68px);
             overflow-y: auto;
+            overflow-x: hidden;
+            box-sizing: border-box;
         }
 
         .roriri-sidebar.collapsed {
-            width: 0;
-            padding: 0;
-            overflow: hidden;
-            border: none;
+            width: 0 !important;
+            min-width: 0 !important;
+            max-width: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            border-right: none !important;
         }
 
         .sidebar-menu {
@@ -223,7 +230,7 @@
             border-radius: 10px;
             color: #475569;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 500;
             transition: all 0.2s ease;
         }
@@ -275,9 +282,10 @@
         /* Main Workspace Content */
         .main-workspace {
             flex: 1;
+            min-width: 0;
             padding: 24px 30px;
             background-color: var(--body-bg);
-            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         /* Active Entity Tab Header (from Screenshot 2) */

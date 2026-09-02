@@ -72,6 +72,24 @@
             font-family: 'Outfit', sans-serif;
         }
 
+        .sidebar-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #0284c7;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .sidebar-toggle-btn:hover {
+            background-color: #f1f5f9;
+        }
+
         .user-profile-badge {
             display: flex;
             align-items: center;
@@ -101,16 +119,40 @@
 
         .roriri-sidebar {
             width: 260px;
+            min-width: 260px;
+            max-width: 260px;
             background-color: var(--sidebar-bg);
             border-right: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
             padding: 16px 0;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+            z-index: 1000;
             flex-shrink: 0;
+            flex-grow: 0;
             position: sticky;
             top: 65px;
             height: calc(100vh - 65px);
             overflow-y: auto;
+            overflow-x: hidden;
+            box-sizing: border-box;
+        }
+
+        .roriri-sidebar.collapsed {
+            width: 0 !important;
+            min-width: 0 !important;
+            max-width: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            border-right: none !important;
+        }
+
+        .main-workspace {
+            flex: 1;
+            min-width: 0;
+            padding: 24px 30px;
+            overflow-x: hidden;
+            background-color: #f8fafc;
         }
 
         .sidebar-menu {
@@ -340,6 +382,9 @@
     <!-- RORIRI Topbar -->
     <header class="roriri-topbar">
         <div class="brand-section" style="width: auto; min-width: 260px;">
+            <button class="sidebar-toggle-btn me-2" id="sidebarToggle" title="Toggle Navigation Sidebar">
+                <i class="fa-solid fa-bars"></i>
+            </button>
             <a href="{{ route('client.dashboard') }}" class="brand-logo">
                 <div class="brand-logo-icon">
                     <img src="{{ asset('images/roriri_logo.png') }}" alt="RORIRI" width="32" height="32" style="border-radius: 50%; object-fit: cover;">
@@ -348,7 +393,7 @@
                     RORIRI <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">Software Solutions</span>
                 </h1>
             </a>
-            <span class="badge bg-primary-subtle text-primary border rounded-pill px-3 py-1 fw-semibold ms-2">Client Portal</span>
+            <span class="badge bg-primary-subtle text-primary border rounded-pill px-3 py-1 fw-semibold ms-2 d-none d-md-inline-block">Client Portal</span>
         </div>
 
         <div class="d-flex align-items-center gap-3">
@@ -483,6 +528,21 @@
                     const newTheme = isDark ? 'light' : 'dark';
                     localStorage.setItem('roriri_theme', newTheme);
                     applySavedTheme();
+                });
+            }
+
+            // Steady Sidebar Collapse Toggle
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.querySelector('.roriri-sidebar');
+            if (sidebarToggle && sidebar) {
+                if (localStorage.getItem('roriri_client_sidebar_collapsed') === 'true') {
+                    sidebar.classList.add('collapsed');
+                }
+
+                sidebarToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    sidebar.classList.toggle('collapsed');
+                    localStorage.setItem('roriri_client_sidebar_collapsed', sidebar.classList.contains('collapsed'));
                 });
             }
         });
