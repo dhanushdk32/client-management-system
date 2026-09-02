@@ -611,9 +611,9 @@
         <div class="brand-section">
             <a href="{{ route('admin.dashboard') }}" class="brand-logo">
                 <div class="brand-logo-icon">
-                    <img src="{{ asset('images/roriri_logo.png') }}" alt="RORIRI" width="30" height="30" style="border-radius: 50%; object-fit: cover;">
+                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}" width="30" height="30" style="border-radius: 50%; object-fit: contain;">
                 </div>
-                <h1 class="brand-logo-text">RORIRI</h1>
+                <h1 class="brand-logo-text">{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}</h1>
             </a>
             <button class="sidebar-toggle-btn" id="sidebarToggle" title="Toggle Navigation">
                 <i class="fa-solid fa-bars"></i>
@@ -766,9 +766,9 @@
             <!-- Active Entity Tab (From Screenshot 2) -->
             <div class="active-entity-tab-pill">
                 <div class="active-tab-logo-circle">
-                    <img src="{{ asset('images/roriri_logo.png') }}" alt="Logo">
+                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="Logo">
                 </div>
-                <span class="active-tab-text">RORIRI Software Solution</span>
+                <span class="active-tab-text">{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }} {{ \App\Models\SystemSetting::get('brand_tagline', 'Software Solution') }}</span>
                 <button type="button" class="active-tab-close" title="Close Tab">&times;</button>
             </div>
 
@@ -778,7 +778,7 @@
 
     <!-- RORIRI Footer -->
     <footer class="roriri-footer">
-        Copyright &copy; 2026. All right reserved.
+        Copyright &copy; {{ date('Y') }} {{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}. All rights reserved.
     </footer>
 
     <!-- Bootstrap JS -->

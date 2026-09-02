@@ -90,6 +90,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 
     // Admin Settings
     Route::get('/settings', [App\Http\Controllers\AdminSettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings/brand', [App\Http\Controllers\AdminSettingController::class, 'updateBrand'])->name('settings.brand');
+    Route::put('/settings/company', [App\Http\Controllers\AdminSettingController::class, 'updateCompany'])->name('settings.company');
     Route::put('/settings/profile', [App\Http\Controllers\AdminSettingController::class, 'updateProfile'])->name('settings.profile');
     Route::put('/settings/password', [App\Http\Controllers\AdminSettingController::class, 'updatePassword'])->name('settings.password');
 });

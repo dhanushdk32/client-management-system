@@ -299,9 +299,9 @@
         <div class="brand-section">
             <a href="{{ route('client.dashboard') }}" class="brand-logo">
                 <div class="brand-logo-icon">
-                    <img src="{{ asset('images/roriri_logo.png') }}" alt="RORIRI" width="30" height="30" style="border-radius: 50%; object-fit: cover;">
+                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}" width="30" height="30" style="border-radius: 50%; object-fit: contain;">
                 </div>
-                <h1 class="brand-logo-text">RORIRI</h1>
+                <h1 class="brand-logo-text">{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}</h1>
             </a>
             <span class="badge bg-primary-subtle text-primary border rounded-pill px-3 py-1 fw-semibold">Client Portal</span>
         </div>
@@ -400,7 +400,7 @@
 
     <!-- RORIRI Footer -->
     <footer class="roriri-footer">
-        Copyright &copy; 2026. All right reserved.
+        Copyright &copy; {{ date('Y') }} {{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}. All rights reserved.
     </footer>
 
     <!-- Bootstrap JS -->
