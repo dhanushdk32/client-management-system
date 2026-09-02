@@ -49,19 +49,11 @@ class SystemSetting extends Model
      */
     public static function getBrandLogoUrl()
     {
-        $logoType = self::get('brand_logo_type', 'preset');
-        if ($logoType === 'custom_upload') {
-            $customPath = self::get('brand_logo_path');
-            if ($customPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($customPath)) {
-                return asset('storage/' . $customPath);
-            }
+        $customPath = self::get('brand_logo_path');
+        if ($customPath) {
+            return asset('storage/' . $customPath);
         }
 
-        $preset = self::get('brand_logo_preset', 'original');
-        if ($preset === 'original' || empty($preset)) {
-            return asset('images/roriri_logo.png');
-        }
-
-        return asset('images/presets/' . $preset . '.svg');
+        return asset('images/roriri_logo.png');
     }
 }

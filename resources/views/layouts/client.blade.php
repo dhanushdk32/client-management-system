@@ -497,10 +497,10 @@
             </button>
             <a href="{{ route('client.dashboard') }}" class="brand-logo">
                 <div class="brand-logo-icon">
-                    <img src="{{ asset('images/roriri_logo.png') }}" alt="RORIRI" width="32" height="32" style="border-radius: 50%; object-fit: cover;">
+                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}" width="32" height="32" style="border-radius: 50%; object-fit: contain;">
                 </div>
                 <h1 class="brand-logo-text" style="font-size: 19px; font-weight: 800; color: #0284c7; white-space: nowrap; margin: 0;">
-                    RORIRI <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">Software Solutions</span>
+                    {{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }} <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">{{ \App\Models\SystemSetting::get('brand_tagline', 'Software Solutions') }}</span>
                 </h1>
             </a>
             <span class="badge bg-primary-subtle text-primary border rounded-pill px-3 py-1 fw-semibold ms-2 d-none d-md-inline-block">Client Portal</span>
