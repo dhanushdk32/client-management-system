@@ -290,8 +290,13 @@
                 scales: {
                     y: {
                         beginAtZero: true,
+                        suggestedMin: 0,
+                        suggestedMax: 15,
                         grid: { color: '#f1f5f9' },
-                        ticks: { precision: 0 }
+                        ticks: {
+                            stepSize: 5,
+                            precision: 0
+                        }
                     },
                     x: {
                         grid: { display: false }
