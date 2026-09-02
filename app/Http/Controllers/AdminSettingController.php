@@ -16,38 +16,7 @@ class AdminSettingController extends Controller
         $admin = Auth::guard('admin')->user();
         $settings = SystemSetting::getAllSettings();
 
-        $presets = [
-            'original' => [
-                'name' => 'RORIRI Classic Circle (Original)',
-                'preview' => asset('images/roriri_logo.png')
-            ],
-            'logo_1' => [
-                'name' => 'Apex Infinity Sphere (Cyan / Sky)',
-                'preview' => asset('images/presets/logo_1.svg')
-            ],
-            'logo_2' => [
-                'name' => 'Cyber Hexagon Matrix (Indigo / Teal)',
-                'preview' => asset('images/presets/logo_2.svg')
-            ],
-            'logo_3' => [
-                'name' => 'Titan Digital Shield (Emerald / Green)',
-                'preview' => asset('images/presets/logo_3.svg')
-            ],
-            'logo_4' => [
-                'name' => 'Quantum Pulse Star (Amber / Gold)',
-                'preview' => asset('images/presets/logo_4.svg')
-            ],
-            'logo_5' => [
-                'name' => 'Prism Diamond Core (Violet / Purple)',
-                'preview' => asset('images/presets/logo_5.svg')
-            ],
-            'logo_6' => [
-                'name' => 'Velocity Tech Wing (Crimson / Coral)',
-                'preview' => asset('images/presets/logo_6.svg')
-            ],
-        ];
-
-        return view('admin.settings.index', compact('admin', 'settings', 'presets'));
+        return view('admin.settings.index', compact('admin', 'settings'));
     }
 
     public function updateBrand(Request $request)
@@ -55,16 +24,12 @@ class AdminSettingController extends Controller
         $request->validate([
             'brand_name' => 'required|string|max:100',
             'brand_tagline' => 'nullable|string|max:150',
-            'brand_logo_type' => 'required|in:preset,custom_upload',
-            'brand_logo_preset' => 'nullable|string',
             'custom_logo' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|max:2048',
             'default_theme' => 'required|in:light,dark',
         ]);
 
         SystemSetting::set('brand_name', $request->brand_name);
         SystemSetting::set('brand_tagline', $request->brand_tagline ?? 'Software Solution');
-        SystemSetting::set('brand_logo_type', $request->brand_logo_type);
-        SystemSetting::set('brand_logo_preset', $request->brand_logo_preset ?? 'original');
         SystemSetting::set('default_theme', $request->default_theme);
 
         if ($request->hasFile('custom_logo')) {

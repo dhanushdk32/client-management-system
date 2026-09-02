@@ -74,46 +74,21 @@
                         <span class="badge bg-secondary small">Live Preview</span>
                     </div>
 
-                    <!-- Logo Selection Option -->
+                    <!-- Custom Logo Upload Box -->
                     <div class="mb-4">
-                        <label class="form-label fw-semibold small text-muted mb-2">Choose Brand Logo <span class="text-danger">*</span></label>
-                        <div class="d-flex gap-3 mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="brand_logo_type" id="typePreset" value="preset" {{ old('brand_logo_type', $settings['brand_logo_type'] ?? 'preset') === 'preset' ? 'checked' : '' }} onchange="toggleLogoSource()">
-                                <label class="form-check-label fw-semibold small" for="typePreset">
-                                    Select from Preset Logos
-                                </label>
+                        <label class="form-label fw-semibold small text-muted mb-2">Upload Brand Logo (PNG, SVG, JPG, WebP - Max 2MB) <span class="text-danger">*</span></label>
+                        <div class="p-3 rounded-3 bg-light border">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <div class="rounded-circle bg-white p-1 border shadow-sm d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; flex-shrink: 0;">
+                                    <img id="currentCustomLogoThumbnail" src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="Current Brand Logo" style="width: 42px; height: 42px; object-fit: contain; border-radius: 50%;">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <input type="file" name="custom_logo" id="customLogoInput" class="form-control bg-white" accept="image/*" onchange="previewCustomUpload(event)">
+                                </div>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="brand_logo_type" id="typeCustom" value="custom_upload" {{ old('brand_logo_type', $settings['brand_logo_type'] ?? '') === 'custom_upload' ? 'checked' : '' }} onchange="toggleLogoSource()">
-                                <label class="form-check-label fw-semibold small" for="typeCustom">
-                                    Upload Custom Logo File
-                                </label>
+                            <div class="form-text small text-muted">
+                                <i class="fa-solid fa-circle-info me-1 text-primary"></i> Recommended: Square transparent PNG or SVG icon (e.g., 512x512px).
                             </div>
-                        </div>
-
-                        <!-- 6 Preset Logos Grid -->
-                        <div id="presetLogosSection" class="p-3 rounded-3 bg-light border mb-3">
-                            <div class="row g-3">
-                                @foreach($presets as $key => $preset)
-                                    <div class="col-md-4 col-6">
-                                        <label class="card h-100 p-2 text-center border cursor-pointer preset-card {{ (old('brand_logo_preset', $settings['brand_logo_preset'] ?? 'original') === $key) ? 'border-primary shadow-sm bg-white' : 'bg-light' }}" style="cursor: pointer;">
-                                            <input type="radio" name="brand_logo_preset" value="{{ $key }}" class="d-none" {{ (old('brand_logo_preset', $settings['brand_logo_preset'] ?? 'original') === $key) ? 'checked' : '' }} onchange="selectPresetLogo('{{ $preset['preview'] }}', this)">
-                                            <div class="my-2">
-                                                <img src="{{ $preset['preview'] }}" alt="{{ $preset['name'] }}" style="width: 44px; height: 44px; object-fit: contain;">
-                                            </div>
-                                            <div class="small fw-semibold text-dark text-truncate" style="font-size: 11px;">{{ $preset['name'] }}</div>
-                                        </label>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <!-- Custom Logo Upload Box -->
-                        <div id="customUploadSection" class="p-3 rounded-3 bg-light border mb-3 d-none">
-                            <label class="form-label fw-semibold small text-muted">Upload Custom Image (PNG, SVG, JPG - Max 2MB)</label>
-                            <input type="file" name="custom_logo" id="customLogoInput" class="form-control bg-white" accept="image/*" onchange="previewCustomUpload(event)">
-                            <div class="form-text small text-muted">Transparent square PNG or SVG recommended (512x512px).</div>
                         </div>
                     </div>
 
@@ -364,44 +339,19 @@
         document.getElementById('livePreviewTagline').innerText = taglineVal;
     }
 
-    function toggleLogoSource() {
-        const isCustom = document.getElementById('typeCustom').checked;
-        const presetSection = document.getElementById('presetLogosSection');
-        const customSection = document.getElementById('customUploadSection');
-
-        if (isCustom) {
-            presetSection.classList.add('d-none');
-            customSection.classList.remove('d-none');
-        } else {
-            presetSection.classList.remove('d-none');
-            customSection.classList.add('d-none');
-        }
-    }
-
-    function selectPresetLogo(imgSrc, radioEl) {
-        document.getElementById('livePreviewLogo').src = imgSrc;
-        document.querySelectorAll('.preset-card').forEach(card => {
-            card.classList.remove('border-primary', 'shadow-sm', 'bg-white');
-            card.classList.add('bg-light');
-        });
-        radioEl.closest('.preset-card').classList.add('border-primary', 'shadow-sm', 'bg-white');
-        radioEl.closest('.preset-card').classList.remove('bg-light');
-    }
-
     function previewCustomUpload(event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('livePreviewLogo').src = e.target.result;
+                const livePreview = document.getElementById('livePreviewLogo');
+                const thumb = document.getElementById('currentCustomLogoThumbnail');
+                if (livePreview) livePreview.src = e.target.result;
+                if (thumb) thumb.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleLogoSource();
-    });
 </script>
 @endpush
 @endsection
