@@ -4,14 +4,16 @@
 @section('page_title', 'Assigned Clients & Projects')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <div>
-        <h5 class="fw-bold mb-1">My Managed Clients</h5>
-        <p class="text-muted small mb-0">View clients assigned to you and onboard new client accounts</p>
+        <h5 class="fw-bold mb-1">Client Directory</h5>
+        <p class="text-muted small mb-0">Browse all client profiles, view project team assignments, and onboard new clients.</p>
     </div>
-    <a href="{{ route('staff.clients.create') }}" class="btn btn-primary rounded-3 px-4 fw-semibold">
-        <i class="fa-solid fa-user-plus me-1"></i> Add New Client
-    </a>
+    <div class="d-flex gap-2">
+        <a href="{{ route('staff.clients.create') }}" class="btn btn-primary rounded-3 px-4 fw-semibold">
+            <i class="fa-solid fa-user-plus me-1"></i> Add New Client
+        </a>
+    </div>
 </div>
 
 @if(session('success'))
@@ -20,9 +22,26 @@
     </div>
 @endif
 
+<!-- Scope Filter Tabs & Search Bar -->
 <div class="card mb-4">
     <div class="card-body p-3">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+            <ul class="nav nav-pills gap-2">
+                <li class="nav-item">
+                    <a class="nav-link rounded-pill px-3 py-1 fw-semibold {{ $scope === 'all' ? 'active' : 'bg-light text-muted' }}" href="{{ route('staff.clients.index', ['scope' => 'all']) }}">
+                        <i class="fa-solid fa-users me-1"></i> All Clients <span class="badge bg-white text-dark ms-1">{{ $totalClientsCount ?? 0 }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-pill px-3 py-1 fw-semibold {{ $scope === 'assigned' ? 'active' : 'bg-light text-muted' }}" href="{{ route('staff.clients.index', ['scope' => 'assigned']) }}">
+                        <i class="fa-solid fa-user-check me-1"></i> My Assigned Clients <span class="badge bg-white text-dark ms-1">{{ $assignedCount ?? 0 }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
         <form method="GET" action="{{ route('staff.clients.index') }}" class="row g-2">
+            <input type="hidden" name="scope" value="{{ $scope }}">
             <div class="col-md-10">
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>

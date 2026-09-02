@@ -373,8 +373,8 @@
                 </li>
                 <li class="menu-item">
                     <a href="{{ route('staff.clients.index') }}" class="menu-link {{ request()->routeIs('staff.clients.*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-building"></i>
-                        <span>Clients & Projects</span>
+                        <i class="fa-solid fa-users"></i>
+                        <span>Clients</span>
                     </a>
                 </li>
                 <li class="menu-item">

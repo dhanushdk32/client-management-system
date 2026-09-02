@@ -20,13 +20,19 @@ class StaffClientController extends Controller
     public function index(Request $request)
     {
         $staff = Auth::guard('staff')->user();
-        $query = $staff->assignedClients()->with(['services.teamLeader', 'assignedStaff'])->withCount('users');
+        $scope = $request->get('scope', 'all');
+
+        if ($scope === 'assigned') {
+            $query = $staff->assignedClients()->with(['services.teamLeader', 'assignedStaff'])->withCount('users');
+        } else {
+            $query = Client::with(['services.teamLeader', 'assignedStaff'])->withCount('users');
+        }
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('client_company', 'like', "%{$search}%")
-                  ->orWhere('client_name', 'like', "%{$search}%")
+                $q->where('client_name', 'like', "%{$search}%")
+                  ->orWhere('client_company', 'like', "%{$search}%")
                   ->orWhere('client_email', 'like', "%{$search}%")
                   ->orWhere('primary_contact', 'like', "%{$search}%");
             });
@@ -34,8 +40,10 @@ class StaffClientController extends Controller
 
         $clients = $query->orderBy('client_tbl.client_id', 'asc')->paginate(10);
         $allStaff = \App\Models\StaffMember::pluck('name', 'id')->toArray();
+        $assignedCount = $staff->assignedClients()->count();
+        $totalClientsCount = Client::count();
 
-        return view('staff.clients.index', compact('clients', 'allStaff'));
+        return view('staff.clients.index', compact('clients', 'allStaff', 'scope', 'assignedCount', 'totalClientsCount'));
     }
 
     public function create()
