@@ -5,13 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
+use App\Models\StaffMember;
 
 class ClientProfileController extends Controller
 {
     public function show()
     {
-        $client = Auth::guard('client')->user()->client;
-        return view('client.profile', compact('client'));
+        $user = Auth::guard('client')->user();
+        $client = $user->client;
+        $client->load(['services.teamLeader', 'assignedStaff']);
+        $primaryService = $client->services->first();
+        $allStaff = StaffMember::pluck('name', 'id')->toArray();
+
+        return view('client.profile', compact('client', 'primaryService', 'allStaff'));
     }
 
     public function update(Request $request)
@@ -20,43 +26,45 @@ class ClientProfileController extends Controller
         $client = $user->client;
 
         $request->validate([
-            'client_company' => 'required|string|max:100',
-            'industry' => 'nullable|string|max:255',
-            'company_size' => 'nullable|string|max:100',
-            'website' => 'nullable|string|max:255',
-            'client_gst' => 'nullable|string|max:30',
-            'client_name' => 'required|string|max:50',
-            'client_email' => 'required|email|max:50|unique:client_users,email,'.$user->id,
-            'primary_contact' => 'required|string|max:11',
-            'secondary_contact' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:100',
-            'state' => 'nullable|string|max:100',
-            'country' => 'nullable|string|max:100',
+            'client_name' => 'required|string|max:100|regex:/^[a-zA-Z\s\.\'-]+$/',
+            'client_email' => 'required|email|max:100|unique:client_users,email,' . $user->id,
+            'primary_contact' => 'required|string|regex:/^[0-9+\s\-]{7,15}$/',
+            'secondary_contact' => 'nullable|string|regex:/^[0-9+\s\-]{7,15}$/',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
+            'state' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
+            'country' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
+        ], [
+            'client_name.regex' => 'The Client Name must only contain letters, dots, and spaces.',
+            'primary_contact.regex' => 'The Primary Contact must only contain numeric digits.',
+            'secondary_contact.regex' => 'The Secondary Contact must only contain numeric digits.',
+            'city.regex' => 'City name must only contain letters and spaces.',
+            'state.regex' => 'State name must only contain letters and spaces.',
+            'country.regex' => 'Country name must only contain letters and spaces.',
         ]);
 
-        $data = $request->only([
-            'client_company', 'industry', 'company_size', 'website', 'client_gst',
-            'client_name', 'client_email',
-            'primary_contact', 'secondary_contact', 'city', 'state', 'country'
+        $location = $request->address ?: trim(($request->city ? $request->city : '') . ($request->state ? ', ' . $request->state : ''));
+
+        $client->update([
+            'client_name' => $request->client_name,
+            'client_email' => $request->client_email,
+            'primary_contact' => $request->primary_contact,
+            'secondary_contact' => $request->secondary_contact ?? '',
+            'client_location' => $location ?: ($client->client_location ?? 'Not Specified'),
+            'city' => $request->city ?? '',
+            'state' => $request->state ?? '',
+            'country' => $request->country ?? 'India',
         ]);
 
-        // Default empty strings for nullable non-null DB columns
-        foreach (['client_gst', 'industry', 'company_size', 'website', 'secondary_contact', 'city', 'state', 'country'] as $field) {
-            if (!isset($data[$field]) || is_null($data[$field])) {
-                $data[$field] = '';
-            }
-        }
-
-        $client->update($data);
-
-        // Sync name and email with login account
+        // Sync name and email with client user login
         $user->update([
-            'name' => $data['client_name'],
-            'email' => $data['client_email'],
+            'name' => $request->client_name,
+            'email' => $request->client_email,
         ]);
 
-        return back()->with('success', 'Profile and company information updated successfully.');
+        return back()->with('success', 'Your client profile information has been updated successfully.');
     }
+
     public function settings()
     {
         return view('client.settings');
@@ -66,7 +74,7 @@ class ClientProfileController extends Controller
     {
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
+            'new_password' => 'required|min:6|confirmed',
         ]);
 
         $user = Auth::guard('client')->user();

@@ -368,7 +368,7 @@
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-2 rounded-3">
-                    <li><a class="dropdown-item py-2 rounded-2" href="{{ route('client.profile') }}"><i class="fa-solid fa-building me-2 text-muted"></i> Company Profile</a></li>
+                    <li><a class="dropdown-item py-2 rounded-2" href="{{ route('client.profile') }}"><i class="fa-solid fa-user-circle me-2 text-muted"></i> My Profile</a></li>
                     <li><a class="dropdown-item py-2 rounded-2" href="{{ route('client.settings') }}"><i class="fa-solid fa-gear me-2 text-muted"></i> Account Settings</a></li>
                     <li><hr class="dropdown-divider my-1"></li>
                     <li>
@@ -415,8 +415,8 @@
                 </li>
                 <li class="menu-item">
                     <a href="{{ route('client.profile') }}" class="menu-link {{ request()->routeIs('client.profile') ? 'active' : '' }}">
-                        <i class="fa-solid fa-building"></i>
-                        <span>Company Profile</span>
+                        <i class="fa-solid fa-user-circle"></i>
+                        <span>My Profile</span>
                     </a>
                 </li>
                 <li class="menu-item">
