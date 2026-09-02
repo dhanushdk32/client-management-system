@@ -11,14 +11,15 @@
                 <h5 class="fw-bold mb-1 text-primary border-bottom border-2 border-primary pb-2 d-inline-block">
                     {{ isset($service) ? 'Edit Client Project' : 'Assign New Project to Client' }}
                 </h5>
-                <p class="text-muted small mb-0">Define the project details, assign the technical staff team, and set the delivery timeline. This project will immediately display inside the client's portal.</p>
+                <p class="text-muted small mb-0">Define the project details, assign the technical team leader & members, and set the delivery timeline.</p>
             </div>
             <a href="{{ route('admin.services.index') }}" class="btn btn-light border text-muted"><i class="fa-solid fa-arrow-left me-1"></i> Back to Projects</a>
         </div>
 
         @if(isset($errors) && $errors->any())
-            <div class="alert alert-danger p-2 mb-4">
-                <ul class="mb-0 ps-3">
+            <div class="alert alert-danger p-3 mb-4 rounded-3">
+                <div class="fw-bold mb-1"><i class="fa-solid fa-circle-exclamation me-1"></i> Please resolve the following errors:</div>
+                <ul class="mb-0 ps-3 small">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -32,6 +33,10 @@
                 @method('PUT')
             @endif
 
+            <!-- 1. Project & Client Info -->
+            <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">
+                <i class="fa-solid fa-folder-open me-1 text-primary"></i> 1. Project Specifications
+            </h6>
             <div class="row g-4 mb-4">
                 <!-- Select Client -->
                 <div class="col-md-6">
@@ -80,7 +85,7 @@
                 <!-- Start Date -->
                 <div class="col-md-4">
                     <label class="form-label fw-semibold small text-muted">Project Start Date</label>
-                    <input type="date" name="start_date" class="form-control bg-light" value="{{ old('start_date', isset($service) && $service->start_date ? $service->start_date->format('Y-m-d') : '') }}">
+                    <input type="date" name="start_date" class="form-control bg-light" value="{{ old('start_date', isset($service) && $service->start_date ? $service->start_date->format('Y-m-d') : date('Y-m-d')) }}">
                 </div>
 
                 <!-- Target End Date -->
@@ -88,18 +93,65 @@
                     <label class="form-label fw-semibold small text-muted">Target Delivery / End Date</label>
                     <input type="date" name="end_date" class="form-control bg-light" value="{{ old('end_date', isset($service) && $service->end_date ? $service->end_date->format('Y-m-d') : '') }}">
                 </div>
+            </div>
 
-                <!-- Assigned Lead / Team -->
-                <div class="col-md-12">
-                    <label class="form-label fw-semibold small text-muted">Assigned Team / Lead Engineer</label>
-                    <input type="text" name="assigned_team" list="staffSuggestions" class="form-control bg-light" placeholder="e.g. Mobile Engineering Team Alpha / Alex Morgan (Lead)" value="{{ old('assigned_team', $service->assigned_team ?? '') }}">
-                    <datalist id="staffSuggestions">
+            <!-- 2. Technical Team Assignment -->
+            <h6 class="fw-bold mb-3 mt-4 text-secondary border-bottom pb-2">
+                <i class="fa-solid fa-users-gear me-1 text-primary"></i> 2. Technical Team & Staff Allocation
+            </h6>
+
+            <div class="row g-4 mb-4">
+                <!-- Team Name -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-muted">Team Name</label>
+                    <input type="text" name="team_name" class="form-control bg-light" placeholder="e.g. Alpha Mobile Squad / Core Dev Team" value="{{ old('team_name', $service->team_name ?? '') }}">
+                    <div class="form-text small text-muted">Custom name for this project's dedicated engineering squad.</div>
+                </div>
+
+                <!-- Team Leader Selection -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-muted">Team Leader <span class="text-danger">*</span></label>
+                    <select name="team_leader_id" class="form-select bg-light">
+                        <option value="">-- Select Team Leader from Staff --</option>
                         @if(isset($staffMembers))
                             @foreach($staffMembers as $staff)
-                                <option value="{{ $staff->name }} ({{ $staff->designation }})">
+                                <option value="{{ $staff->id }}" {{ (old('team_leader_id', $service->team_leader_id ?? '') == $staff->id) ? 'selected' : '' }}>
+                                    {{ $staff->name }} ({{ $staff->designation }} - {{ $staff->department }})
+                                </option>
                             @endforeach
                         @endif
-                    </datalist>
+                    </select>
+                    <div class="form-text small text-muted">Select the primary lead engineer responsible for this project.</div>
+                </div>
+
+                <!-- Team Members (Multiple Selection) -->
+                <div class="col-md-12">
+                    <label class="form-label fw-semibold small text-muted mb-2">Team Members (Select Multiple Staff)</label>
+                    <div class="p-3 rounded-3 bg-light border">
+                        <div class="row g-3">
+                            @php
+                                $selectedMembers = old('team_members', (isset($service) && is_array($service->team_members)) ? $service->team_members : []);
+                            @endphp
+                            @if(isset($staffMembers) && $staffMembers->count() > 0)
+                                @foreach($staffMembers as $staff)
+                                    <div class="col-md-4">
+                                        <div class="form-check card p-2 bg-white border shadow-xs h-100">
+                                            <input class="form-check-input ms-0 me-2" type="checkbox" name="team_members[]" value="{{ $staff->id }}" id="team_member_{{ $staff->id }}" {{ in_array($staff->id, $selectedMembers) ? 'checked' : '' }}>
+                                            <label class="form-check-label fw-semibold small" for="team_member_{{ $staff->id }}">
+                                                {{ $staff->name }}
+                                                <span class="d-block text-muted" style="font-size: 11px; font-weight: normal;">
+                                                    {{ $staff->designation }} ({{ $staff->department }})
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="col-12 text-muted small">No active staff members available. Please add staff first.</div>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="form-text small text-muted mt-1">Check all engineers, designers, or QA staff contributing to this project.</div>
                 </div>
 
                 <!-- Project Scope Description -->
