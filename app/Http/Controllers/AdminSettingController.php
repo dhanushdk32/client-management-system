@@ -123,16 +123,16 @@ class AdminSettingController extends Controller
         $admin = Auth::guard('admin')->user();
         
         $request->validate([
-            'username' => 'required|string|max:255|unique:portal_admins,username,' . $admin->id,
+            'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:portal_admins,email,' . $admin->id,
         ]);
 
         $admin->update([
-            'username' => $request->username,
+            'name' => $request->name,
             'email' => $request->email,
         ]);
 
-        return back()->with('success_profile', 'Admin credentials updated successfully.');
+        return back()->with('success_profile', 'Admin profile and credentials updated successfully.');
     }
 
     public function updatePassword(Request $request)

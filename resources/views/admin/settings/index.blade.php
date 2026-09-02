@@ -260,8 +260,8 @@
                     @csrf
                     @method('PUT')
                     <div class="mb-3">
-                        <label class="form-label fw-semibold small text-muted">Admin Username</label>
-                        <input type="text" name="username" class="form-control bg-light" value="{{ old('username', $admin->username) }}" required>
+                        <label class="form-label fw-semibold small text-muted">Admin Full Name</label>
+                        <input type="text" name="name" class="form-control bg-light" value="{{ old('name', $admin->name) }}" required placeholder="e.g. Dhanush Kumar">
                     </div>
                     
                     <div class="mb-4">
