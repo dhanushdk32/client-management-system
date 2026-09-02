@@ -4,57 +4,49 @@
 @section('page_title', 'Welcome, ' . ($client->client_company ?? 'Client'))
 
 @section('content')
-<div class="row">
+<div class="row g-3 mb-4">
     <!-- Stat Cards -->
     <div class="col-md-3">
-        <div class="card stat-card h-100">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-title text-muted text-uppercase mb-1" style="font-size: 12px; letter-spacing: 0.5px;">My Services</div>
-                    <div class="stat-value text-dark mb-0" style="font-size: 24px;">{{ $servicesCount }}</div>
-                </div>
-                <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                    <i class="fa-solid fa-briefcase fs-5"></i>
-                </div>
+        <div class="stat-card-roriri">
+            <div>
+                <div class="stat-card-label text-uppercase">My Services</div>
+                <h3 class="stat-card-value text-primary mb-0">{{ $servicesCount }}</h3>
+            </div>
+            <div class="stat-icon-wrapper bg-icon-cyan">
+                <i class="fa-solid fa-briefcase"></i>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card stat-card h-100">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-title text-muted text-uppercase mb-1" style="font-size: 12px; letter-spacing: 0.5px;">Documents</div>
-                    <div class="stat-value text-dark mb-0" style="font-size: 24px;">{{ $documentsVerified }} / {{ $documentsTotal }}</div>
-                </div>
-                <div class="bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                    <i class="fa-solid fa-file-shield fs-5"></i>
-                </div>
+        <div class="stat-card-roriri">
+            <div>
+                <div class="stat-card-label text-uppercase">Documents</div>
+                <h3 class="stat-card-value text-success mb-0">{{ $documentsVerified }} / {{ $documentsTotal }}</h3>
+            </div>
+            <div class="stat-icon-wrapper bg-icon-green">
+                <i class="fa-solid fa-file-shield"></i>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card stat-card h-100">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-title text-muted text-uppercase mb-1" style="font-size: 12px; letter-spacing: 0.5px;">Open Requests</div>
-                    <div class="stat-value text-dark mb-0" style="font-size: 24px;">{{ $openRequests }}</div>
-                </div>
-                <div class="bg-warning-subtle text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                    <i class="fa-solid fa-ticket fs-5"></i>
-                </div>
+        <div class="stat-card-roriri">
+            <div>
+                <div class="stat-card-label text-uppercase">Open Requests</div>
+                <h3 class="stat-card-value text-warning mb-0">{{ $openRequests }}</h3>
+            </div>
+            <div class="stat-icon-wrapper bg-icon-yellow">
+                <i class="fa-solid fa-ticket"></i>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card stat-card h-100">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stat-title text-muted text-uppercase mb-1" style="font-size: 12px; letter-spacing: 0.5px;">Notifications</div>
-                    <div class="stat-value text-dark mb-0" style="font-size: 24px;">{{ $unreadNotifications }}</div>
-                </div>
-                <div class="bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                    <i class="fa-regular fa-bell fs-5"></i>
-                </div>
+        <div class="stat-card-roriri">
+            <div>
+                <div class="stat-card-label text-uppercase">Notifications</div>
+                <h3 class="stat-card-value text-danger mb-0">{{ $unreadNotifications }}</h3>
+            </div>
+            <div class="stat-icon-wrapper bg-icon-red">
+                <i class="fa-regular fa-bell"></i>
             </div>
         </div>
     </div>
