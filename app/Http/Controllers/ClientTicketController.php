@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SupportTicket;
 use App\Models\TicketReply;
+use App\Models\Client;
 
 class ClientTicketController extends Controller
 {
@@ -25,17 +26,26 @@ class ClientTicketController extends Controller
         ]);
 
         $user = Auth::guard('client')->user();
+        $client = Client::with(['assignedStaff', 'services.teamLeader'])->find($user->client_id);
+
+        // Find primary assigned staff member for this client
+        $assignedStaffId = null;
+        if ($client) {
+            $assignedStaffId = $client->assignedStaff->first()?->id 
+                ?? $client->services->first()?->team_leader_id;
+        }
 
         SupportTicket::create([
             'client_id' => $user->client_id,
             'created_by' => $user->id,
+            'assigned_staff_id' => $assignedStaffId,
             'subject' => $request->subject,
             'description' => $request->description,
             'priority' => $request->priority,
             'status' => 'Open'
         ]);
 
-        return redirect()->route('client.tickets.index')->with('success', 'Ticket submitted successfully.');
+        return redirect()->route('client.tickets.index')->with('success', 'Your request has been submitted to your assigned engineering team.');
     }
 
     public function show($id)
@@ -62,7 +72,6 @@ class ClientTicketController extends Controller
             'message' => $request->message
         ]);
 
-        // If ticket was answered/resolved, perhaps client reply opens it back? We can just keep it as is.
         if ($ticket->status != 'Open' && $ticket->status != 'In Progress') {
             $ticket->update(['status' => 'Open']);
         }
