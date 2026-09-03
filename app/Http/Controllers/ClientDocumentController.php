@@ -22,7 +22,7 @@ class ClientDocumentController extends Controller
         $request->validate([
             'document_type' => 'required|string|max:100',
             'document_name' => 'required|string|max:255',
-            'file' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120', // 5MB max
+            'file' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx,zip|max:10240', // 10MB max
         ]);
 
         $client_id = Auth::guard('client')->user()->client_id;
@@ -37,7 +37,8 @@ class ClientDocumentController extends Controller
             'document_type' => $request->document_type,
             'document_name' => $request->document_name,
             'file_path' => $filePath,
-            'status' => 'Pending'
+            'status' => 'Pending',
+            'approval_status' => 'Pending Approval',
         ]);
 
         \App\Models\Notification::create([
@@ -48,6 +49,50 @@ class ClientDocumentController extends Controller
         ]);
 
         return redirect()->route('client.documents.index')->with('success', 'Document uploaded successfully. Awaiting verification.');
+    }
+
+    public function approveDeliverable(Request $request, $id)
+    {
+        $client_id = Auth::guard('client')->user()->client_id;
+        $document = ClientDocument::where('client_id', $client_id)->where('id', $id)->firstOrFail();
+
+        $document->update([
+            'approval_status' => 'Approved',
+            'client_feedback' => $request->input('client_feedback', 'Approved by Client.'),
+        ]);
+
+        \App\Models\Notification::create([
+            'client_id' => $client_id,
+            'title' => 'Deliverable Approved',
+            'message' => 'You have formally approved "' . $document->document_name . '". Your project team leader has been notified.',
+            'is_read' => 0
+        ]);
+
+        return back()->with('success', 'Deliverable successfully approved and sign-off recorded!');
+    }
+
+    public function requestRevision(Request $request, $id)
+    {
+        $request->validate([
+            'client_feedback' => 'required|string|max:1000'
+        ]);
+
+        $client_id = Auth::guard('client')->user()->client_id;
+        $document = ClientDocument::where('client_id', $client_id)->where('id', $id)->firstOrFail();
+
+        $document->update([
+            'approval_status' => 'Revision Requested',
+            'client_feedback' => $request->client_feedback,
+        ]);
+
+        \App\Models\Notification::create([
+            'client_id' => $client_id,
+            'title' => 'Revision Requested',
+            'message' => 'Revision requested for "' . $document->document_name . '". Feedback forwarded to the engineering lead.',
+            'is_read' => 0
+        ]);
+
+        return back()->with('success', 'Revision request and feedback submitted to your technical lead.');
     }
 
     public function download($id)
@@ -61,6 +106,6 @@ class ClientDocumentController extends Controller
             return response()->download(storage_path('app/public/' . $document->file_path), $downloadName);
         }
         
-        return back()->with('error', 'File not found.');
+        return back()->with('error', 'File not found on server.');
     }
 }

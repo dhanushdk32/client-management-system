@@ -12,7 +12,7 @@
 
 <div class="row g-4">
     <div class="col-lg-8">
-        <div class="card h-100 shadow-sm border-0">
+        <div class="card h-100 shadow-sm border-0 rounded-4">
             <div class="card-body p-4">
                 
                 @if(session('success'))
@@ -48,7 +48,7 @@
                     </div>
                 </div>
 
-                <!-- Original Description -->
+                <!-- Original Request Bubble -->
                 <div class="d-flex gap-3 mb-4">
                     <div class="flex-shrink-0">
                         <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px;">
@@ -62,6 +62,25 @@
                                 <span class="small text-muted">{{ $ticket->created_at->format('d M Y, h:i A') }}</span>
                             </div>
                             <div class="text-dark" style="white-space: pre-wrap;">{{ $ticket->description }}</div>
+
+                            <!-- Attached File in Original Request -->
+                            @if($ticket->attachment_path)
+                                <div class="mt-3 pt-2 border-top">
+                                    <div class="small fw-semibold text-muted mb-1"><i class="fa-solid fa-paperclip me-1 text-primary"></i> Attachment:</div>
+                                    @php
+                                        $ext = strtolower(pathinfo($ticket->attachment_path, PATHINFO_EXTENSION));
+                                    @endphp
+                                    @if(in_array($ext, ['png', 'jpg', 'jpeg']))
+                                        <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank">
+                                            <img src="{{ asset('storage/' . $ticket->attachment_path) }}" alt="Attachment" class="img-fluid rounded border mt-1 shadow-sm" style="max-height: 200px;">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank" download class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 mt-1">
+                                            <i class="fa-solid fa-file-arrow-down me-1 text-primary"></i> {{ $ticket->attachment_name ?: 'Download Attached File' }}
+                                        </a>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -100,6 +119,25 @@
                                     </span>
                                 </div>
                                 <div style="white-space: pre-wrap;">{{ $reply->message }}</div>
+
+                                <!-- Attached File in Reply -->
+                                @if($reply->attachment_path)
+                                    <div class="mt-3 pt-2 border-top">
+                                        <div class="small fw-semibold text-muted mb-1"><i class="fa-solid fa-paperclip me-1 text-primary"></i> Attachment:</div>
+                                        @php
+                                            $ext = strtolower(pathinfo($reply->attachment_path, PATHINFO_EXTENSION));
+                                        @endphp
+                                        @if(in_array($ext, ['png', 'jpg', 'jpeg']))
+                                            <a href="{{ asset('storage/' . $reply->attachment_path) }}" target="_blank">
+                                                <img src="{{ asset('storage/' . $reply->attachment_path) }}" alt="Attachment" class="img-fluid rounded border mt-1 shadow-sm" style="max-height: 200px;">
+                                            </a>
+                                        @else
+                                            <a href="{{ asset('storage/' . $reply->attachment_path) }}" target="_blank" download class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 mt-1">
+                                                <i class="fa-solid fa-file-arrow-down me-1 text-primary"></i> {{ $reply->attachment_name ?: 'Download Attached File' }}
+                                            </a>
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -107,13 +145,20 @@
                 
                 @if($ticket->status != 'Closed')
                     <div class="mt-4 border-top pt-4">
-                        <form action="{{ route('client.tickets.reply', $ticket->id) }}" method="POST">
+                        <form action="{{ route('client.tickets.reply', $ticket->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label fw-semibold small text-muted">Reply to Team Leader</label>
                                 <textarea name="message" class="form-control bg-light" rows="3" required placeholder="Type your reply or question here..."></textarea>
                             </div>
-                            <div class="text-end">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <div>
+                                    <label class="btn btn-sm btn-light border rounded-pill px-3 mb-0 text-muted" style="cursor: pointer;">
+                                        <i class="fa-solid fa-paperclip me-1 text-primary"></i> Attach Screenshot / File
+                                        <input type="file" name="attachment" class="d-none" accept=".png,.jpg,.jpeg,.pdf,.zip,.txt,.doc,.docx" onchange="document.getElementById('file-chosen-client').textContent = this.files[0].name;">
+                                    </label>
+                                    <span id="file-chosen-client" class="small text-muted ms-2"></span>
+                                </div>
                                 <button type="submit" class="btn btn-primary px-4 rounded-pill fw-semibold shadow-sm">
                                     <i class="fa-solid fa-paper-plane me-2"></i> Send Reply
                                 </button>
@@ -132,7 +177,6 @@
     
     <!-- Right Sidebar info -->
     <div class="col-lg-4">
-        <!-- 🌟 Assigned Team Leader Card -->
         @php
             $leader = $ticket->assignedStaff ?? $ticket->client->assignedStaff->first();
         @endphp

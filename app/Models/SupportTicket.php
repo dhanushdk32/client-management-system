@@ -14,6 +14,8 @@ class SupportTicket extends Model
         'assigned_staff_id',
         'subject',
         'description',
+        'attachment_path',
+        'attachment_name',
         'status',
         'priority'
     ];

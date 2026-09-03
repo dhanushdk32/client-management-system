@@ -149,12 +149,17 @@ Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(fun
     Route::get('/documents', [App\Http\Controllers\ClientDocumentController::class, 'index'])->name('documents.index');
     Route::post('/documents', [App\Http\Controllers\ClientDocumentController::class, 'store'])->name('documents.store');
     Route::get('/documents/{id}/download', [App\Http\Controllers\ClientDocumentController::class, 'download'])->name('documents.download');
+    Route::post('/documents/{id}/approve', [App\Http\Controllers\ClientDocumentController::class, 'approveDeliverable'])->name('documents.approve');
+    Route::post('/documents/{id}/request-revision', [App\Http\Controllers\ClientDocumentController::class, 'requestRevision'])->name('documents.revision');
     
     Route::get('/tickets', [App\Http\Controllers\ClientTicketController::class, 'index'])->name('tickets.index');
     Route::post('/tickets', [App\Http\Controllers\ClientTicketController::class, 'store'])->name('tickets.store');
     Route::get('/tickets/{id}', [App\Http\Controllers\ClientTicketController::class, 'show'])->name('tickets.show');
     Route::post('/tickets/{id}/reply', [App\Http\Controllers\ClientTicketController::class, 'reply'])->name('tickets.reply');
     
+    Route::get('/knowledge-base', [App\Http\Controllers\ClientKnowledgeBaseController::class, 'index'])->name('knowledge.index');
+    Route::get('/knowledge-base/{slug}', [App\Http\Controllers\ClientKnowledgeBaseController::class, 'show'])->name('knowledge.show');
+
     Route::get('/notifications', [App\Http\Controllers\ClientNotificationController::class, 'index'])->name('notifications.index');
     Route::put('/notifications/{id}/read', [App\Http\Controllers\ClientNotificationController::class, 'markAsRead'])->name('notifications.read');
 

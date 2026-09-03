@@ -69,6 +69,8 @@ class StaffServiceController extends Controller
             'client_id' => 'required|in:' . implode(',', $assignedClientIds),
             'service_name' => 'required|string|max:255',
             'status' => 'required|in:Active,In Progress,Planning,Completed,On Hold,Under Maintenance',
+            'current_phase' => 'nullable|string|max:150',
+            'progress_percentage' => 'nullable|integer|min:0|max:100',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'description' => 'nullable|string',
@@ -102,6 +104,8 @@ class StaffServiceController extends Controller
         }
 
         $data['assigned_team'] = !empty($teamSummaryParts) ? implode(' • ', $teamSummaryParts) : 'Engineering Team';
+        $data['progress_percentage'] = $request->input('progress_percentage', 20);
+        $data['current_phase'] = $request->input('current_phase', 'Requirements & Scoping');
 
         $service = ClientService::create($data);
 
@@ -165,6 +169,8 @@ class StaffServiceController extends Controller
             'client_id' => 'required|exists:client_tbl,client_id',
             'service_name' => 'required|string|max:255',
             'status' => 'required|in:Active,In Progress,Planning,Completed,On Hold,Under Maintenance',
+            'current_phase' => 'nullable|string|max:150',
+            'progress_percentage' => 'nullable|integer|min:0|max:100',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'description' => 'nullable|string',

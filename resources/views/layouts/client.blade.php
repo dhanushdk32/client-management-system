@@ -566,6 +566,12 @@
                     </a>
                 </li>
                 <li class="menu-item">
+                    <a href="{{ route('client.knowledge.index') }}" class="menu-link {{ request()->routeIs('client.knowledge.*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>Help Center & Guides</span>
+                    </a>
+                </li>
+                <li class="menu-item">
                     <a href="{{ route('client.profile') }}" class="menu-link {{ request()->routeIs('client.profile') ? 'active' : '' }}">
                         <i class="fa-solid fa-user-circle"></i>
                         <span>My Profile</span>

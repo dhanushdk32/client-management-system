@@ -9,9 +9,9 @@
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <div>
                 <h5 class="fw-bold mb-1 text-primary border-bottom border-2 border-primary pb-2 d-inline-block">
-                    {{ isset($service) ? 'Edit Client Project' : 'Add / Assign Project to Client' }}
+                    {{ isset($service) ? 'Edit Client Project & Milestones' : 'Add / Assign Project to Client' }}
                 </h5>
-                <p class="text-muted small mb-0">Define the project details, assign the technical squad leader & members, and set the delivery timeline.</p>
+                <p class="text-muted small mb-0">Define project details, assign the technical squad leader, track delivery phases, and set progress percentages.</p>
             </div>
             <a href="{{ route('staff.services.index') }}" class="btn btn-light border rounded-pill px-3 text-muted"><i class="fa-solid fa-arrow-left me-1"></i> Back to Projects</a>
         </div>
@@ -35,7 +35,7 @@
 
             <!-- 1. Project & Client Info -->
             <h6 class="fw-bold mb-3 text-secondary border-bottom pb-2">
-                <i class="fa-solid fa-folder-open me-1 text-primary"></i> 1. Project Specifications
+                <i class="fa-solid fa-folder-open me-1 text-primary"></i> 1. Project Specifications & Roadmap
             </h6>
             <div class="row g-4 mb-4">
                 <!-- Select Client -->
@@ -71,25 +71,45 @@
 
                 <!-- Project Status -->
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold small text-muted">Project Status <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold small text-muted">Overall Status <span class="text-danger">*</span></label>
                     <select name="status" class="form-select bg-light" required>
                         <option value="Active" {{ old('status', $service->status ?? 'Active') == 'Active' ? 'selected' : '' }}>Active (Live)</option>
                         <option value="In Progress" {{ old('status', $service->status ?? '') == 'In Progress' ? 'selected' : '' }}>In Progress (Under Development)</option>
                         <option value="Planning" {{ old('status', $service->status ?? '') == 'Planning' ? 'selected' : '' }}>Planning & Architecture</option>
                         <option value="Completed" {{ old('status', $service->status ?? '') == 'Completed' ? 'selected' : '' }}>Completed & Delivered</option>
                         <option value="On Hold" {{ old('status', $service->status ?? '') == 'On Hold' ? 'selected' : '' }}>On Hold</option>
-                        <option value="Under Maintenance" {{ old('status', $service->status ?? '') == 'Under Maintenance' ? 'selected' : '' }}>Under Maintenance</option>
                     </select>
                 </div>
 
-                <!-- Start Date -->
+                <!-- Current Delivery Phase / Milestone -->
                 <div class="col-md-4">
+                    <label class="form-label fw-semibold small text-muted">Current Delivery Phase <span class="text-danger">*</span></label>
+                    <select name="current_phase" class="form-select bg-light" required>
+                        <option value="Requirements & Scoping" {{ old('current_phase', $service->current_phase ?? 'Requirements & Scoping') == 'Requirements & Scoping' ? 'selected' : '' }}>1. Requirements & Scoping</option>
+                        <option value="UI/UX Design & Architecture" {{ old('current_phase', $service->current_phase ?? '') == 'UI/UX Design & Architecture' ? 'selected' : '' }}>2. UI/UX Design & Architecture</option>
+                        <option value="Core Development" {{ old('current_phase', $service->current_phase ?? '') == 'Core Development' ? 'selected' : '' }}>3. Core Development & APIs</option>
+                        <option value="QA & Integration Testing" {{ old('current_phase', $service->current_phase ?? '') == 'QA & Integration Testing' ? 'selected' : '' }}>4. QA & Integration Testing</option>
+                        <option value="Deployment & Live Launch" {{ old('current_phase', $service->current_phase ?? '') == 'Deployment & Live Launch' ? 'selected' : '' }}>5. Deployment & Live Launch</option>
+                    </select>
+                </div>
+
+                <!-- Progress Percentage Slider -->
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small text-muted d-flex justify-content-between">
+                        <span>Milestone Progress</span>
+                        <span id="progressLabel" class="fw-bold text-primary">{{ old('progress_percentage', $service->progress_percentage ?? 20) }}%</span>
+                    </label>
+                    <input type="range" name="progress_percentage" min="0" max="100" step="5" class="form-range" value="{{ old('progress_percentage', $service->progress_percentage ?? 20) }}" oninput="document.getElementById('progressLabel').textContent = this.value + '%'">
+                </div>
+
+                <!-- Start Date -->
+                <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Project Start Date</label>
                     <input type="date" name="start_date" class="form-control bg-light" value="{{ old('start_date', isset($service) && $service->start_date ? $service->start_date->format('Y-m-d') : date('Y-m-d')) }}">
                 </div>
 
                 <!-- Target End Date -->
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Target Delivery / End Date</label>
                     <input type="date" name="end_date" class="form-control bg-light" value="{{ old('end_date', isset($service) && $service->end_date ? $service->end_date->format('Y-m-d') : '') }}">
                 </div>
@@ -105,7 +125,7 @@
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Team Name</label>
                     <input type="text" name="team_name" class="form-control bg-light" placeholder="e.g. Alpha Mobile Squad / Core Dev Team" value="{{ old('team_name', $service->team_name ?? '') }}">
-                    <div class="form-text small text-muted">Custom name for this project's dedicated engineering squad.</div>
+                    <div class="form-text small text-muted">Custom squad name for this client's project.</div>
                 </div>
 
                 <!-- Team Leader Selection -->
@@ -121,7 +141,7 @@
                             @endforeach
                         @endif
                     </select>
-                    <div class="form-text small text-muted">Select the primary lead engineer responsible for this project.</div>
+                    <div class="form-text small text-muted">The client will have direct communication with this Team Leader in their portal.</div>
                 </div>
 
                 <!-- Team Members -->
@@ -162,8 +182,8 @@
 
             <div class="d-flex justify-content-end gap-3 mt-4">
                 <a href="{{ route('staff.services.index') }}" class="btn btn-light px-4 border rounded-pill fw-semibold text-muted">Cancel</a>
-                <button type="submit" class="btn btn-primary px-5 rounded-pill fw-semibold">
-                    <i class="fa-solid fa-check-circle me-1"></i> {{ isset($service) ? 'Update Project' : 'Save & Assign Project' }}
+                <button type="submit" class="btn btn-primary px-5 rounded-pill fw-semibold shadow-sm">
+                    <i class="fa-solid fa-check-circle me-1"></i> {{ isset($service) ? 'Update Project & Milestones' : 'Save & Assign Project' }}
                 </button>
             </div>
         </form>

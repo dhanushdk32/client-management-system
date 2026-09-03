@@ -71,7 +71,16 @@ class StaffTicketController extends Controller
         $request->validate([
             'message' => 'required|string',
             'status' => 'nullable|in:Open,In Progress,Resolved,Closed',
+            'attachment' => 'nullable|file|mimes:png,jpg,jpeg,pdf,zip,txt,doc,docx|max:10240',
         ]);
+
+        $attachmentPath = null;
+        $attachmentName = null;
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $attachmentName = $file->getClientOriginalName();
+            $attachmentPath = $file->storeAs('attachments/replies/' . $ticket->client_id, time() . '_' . $attachmentName, 'public');
+        }
 
         // Create reply
         TicketReply::create([
@@ -79,6 +88,8 @@ class StaffTicketController extends Controller
             'sender_type' => 'Staff',
             'sender_id' => $staff->id,
             'message' => "[Staff Response - {$staff->name}]:\n" . $request->message,
+            'attachment_path' => $attachmentPath,
+            'attachment_name' => $attachmentName,
         ]);
 
         // Update status if provided

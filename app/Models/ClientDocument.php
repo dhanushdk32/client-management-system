@@ -15,7 +15,14 @@ class ClientDocument extends Model
         'document_type',
         'document_name',
         'file_path',
-        'status'
+        'status',
+        'approval_status',
+        'client_feedback',
+        'is_deliverable',
+    ];
+
+    protected $casts = [
+        'is_deliverable' => 'boolean',
     ];
 
     public function client()

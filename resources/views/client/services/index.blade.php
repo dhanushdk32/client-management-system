@@ -77,6 +77,28 @@
                             </div>
                         </div>
 
+                        <!-- 🌟 Visual Delivery Phase & Progress Bar -->
+                        @php
+                            $progress = $service->progress_percentage ?? ($service->status == 'Completed' ? 100 : ($service->status == 'Active' ? 65 : 25));
+                            $phase = $service->current_phase ?? ($service->status == 'Completed' ? 'Deployment & Live Launch' : 'Core Development');
+                        @endphp
+                        <div class="bg-light p-3 rounded-3 border mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small fw-bold text-dark"><i class="fa-solid fa-bars-progress me-1 text-primary"></i> Current Phase:</span>
+                                <span class="badge bg-primary text-white rounded-pill px-2 py-1 font-monospace" style="font-size: 11px;">{{ $phase }}</span>
+                            </div>
+                            <div class="progress rounded-pill shadow-xs" style="height: 10px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: {{ $progress }}%" aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2 small text-muted" style="font-size: 11px;">
+                                <span>Requirements</span>
+                                <span>Architecture</span>
+                                <span>Development</span>
+                                <span>QA</span>
+                                <span><strong>{{ $progress }}% Complete</strong></span>
+                            </div>
+                        </div>
+
                         <!-- 🌟 Highlighted Team Leader Card for Direct Conversation -->
                         <div class="card bg-primary-subtle border border-primary-subtle p-3 rounded-3 mb-3">
                             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -156,7 +178,15 @@
 
                         <table class="table table-borderless mb-0">
                             <tr>
-                                <td class="text-muted w-40">Status</td>
+                                <td class="text-muted w-40">Delivery Phase</td>
+                                <td class="fw-semibold">: <span class="badge bg-primary text-white">{{ $service->current_phase ?? 'Active Development' }}</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Progress</td>
+                                <td class="fw-semibold">: {{ $service->progress_percentage ?? 20 }}% Completed</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Overall Status</td>
                                 <td class="fw-semibold">: 
                                     <span class="badge bg-primary-subtle text-primary px-3 py-1">{{ $service->status }}</span>
                                 </td>

@@ -4,7 +4,7 @@
 @section('page_title', 'Ticket #' . $ticket->id)
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
         <h4 class="fw-bold mb-1">#{{ $ticket->id }} - {{ $ticket->subject }}</h4>
         <div class="d-flex align-items-center gap-2 mt-1">
@@ -46,6 +46,25 @@
             <div class="text-dark" style="white-space: pre-line; line-height: 1.6;">
                 {{ $ticket->description }}
             </div>
+
+            <!-- Original Request Attachment -->
+            @if($ticket->attachment_path)
+                <div class="mt-3 pt-3 border-top">
+                    <div class="small fw-semibold text-muted mb-1"><i class="fa-solid fa-paperclip me-1 text-primary"></i> Client Attachment:</div>
+                    @php
+                        $ext = strtolower(pathinfo($ticket->attachment_path, PATHINFO_EXTENSION));
+                    @endphp
+                    @if(in_array($ext, ['png', 'jpg', 'jpeg']))
+                        <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank">
+                            <img src="{{ asset('storage/' . $ticket->attachment_path) }}" alt="Attachment" class="img-fluid rounded border mt-1 shadow-sm" style="max-height: 200px;">
+                        </a>
+                    @else
+                        <a href="{{ asset('storage/' . $ticket->attachment_path) }}" target="_blank" download class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 mt-1">
+                            <i class="fa-solid fa-file-arrow-down me-1 text-primary"></i> {{ $ticket->attachment_name ?: 'Download Attached File' }}
+                        </a>
+                    @endif
+                </div>
+            @endif
         </div>
 
         <!-- Threaded Replies -->
@@ -62,6 +81,25 @@
                     <div style="white-space: pre-line; line-height: 1.6;">
                         {{ $reply->message }}
                     </div>
+
+                    <!-- Reply Attachment -->
+                    @if($reply->attachment_path)
+                        <div class="mt-3 pt-2 border-top">
+                            <div class="small fw-semibold text-muted mb-1"><i class="fa-solid fa-paperclip me-1 text-primary"></i> Attached File:</div>
+                            @php
+                                $ext = strtolower(pathinfo($reply->attachment_path, PATHINFO_EXTENSION));
+                            @endphp
+                            @if(in_array($ext, ['png', 'jpg', 'jpeg']))
+                                <a href="{{ asset('storage/' . $reply->attachment_path) }}" target="_blank">
+                                    <img src="{{ asset('storage/' . $reply->attachment_path) }}" alt="Attachment" class="img-fluid rounded border mt-1 shadow-sm" style="max-height: 200px;">
+                                </a>
+                            @else
+                                <a href="{{ asset('storage/' . $reply->attachment_path) }}" target="_blank" download class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 mt-1">
+                                    <i class="fa-solid fa-file-arrow-down me-1 text-primary"></i> {{ $reply->attachment_name ?: 'Download Attached File' }}
+                                </a>
+                            @endif
+                        </div>
+                    @endif
                 </div>
             @endforeach
         @endif
@@ -70,14 +108,14 @@
         <div class="card p-4 border-0 shadow-sm mt-4">
             <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-reply me-2"></i> Post Reply & Update Status</h5>
             
-            <form action="{{ route('staff.tickets.reply', $ticket) }}" method="POST">
+            <form action="{{ route('staff.tickets.reply', $ticket) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                     <label class="form-label fw-semibold small text-muted">Your Response to Client</label>
-                    <textarea name="message" class="form-control bg-light" rows="5" placeholder="Type your technical update, solution, or inquiry here..." required></textarea>
+                    <textarea name="message" class="form-control bg-light" rows="4" placeholder="Type your technical update, solution, or inquiry here..." required></textarea>
                 </div>
 
-                <div class="row align-items-center mb-4">
+                <div class="row align-items-center mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold small text-muted">Update Ticket Status</label>
                         <select name="status" class="form-select bg-light">
@@ -87,11 +125,16 @@
                             <option value="Open" {{ $ticket->status == 'Open' ? 'selected' : '' }}>Open</option>
                         </select>
                     </div>
-                    <div class="col-md-6 text-end mt-3 mt-md-0">
-                        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
-                            <i class="fa-solid fa-paper-plane me-1"></i> Send Reply to Client
-                        </button>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small text-muted">Attach Technical File / Screenshot</label>
+                        <input type="file" name="attachment" class="form-control bg-light" accept=".png,.jpg,.jpeg,.pdf,.zip,.txt,.doc,.docx">
                     </div>
+                </div>
+
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold shadow-sm">
+                        <i class="fa-solid fa-paper-plane me-1"></i> Send Reply to Client
+                    </button>
                 </div>
             </form>
         </div>

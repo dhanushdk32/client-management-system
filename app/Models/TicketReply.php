@@ -12,7 +12,9 @@ class TicketReply extends Model
         'ticket_id',
         'sender_type',
         'sender_id',
-        'message'
+        'message',
+        'attachment_path',
+        'attachment_name',
     ];
 
     public function ticket()

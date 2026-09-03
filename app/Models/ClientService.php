@@ -12,6 +12,9 @@ class ClientService extends Model
         'client_id',
         'service_name',
         'status',
+        'progress_percentage',
+        'current_phase',
+        'milestones',
         'start_date',
         'end_date',
         'description',
@@ -25,6 +28,8 @@ class ClientService extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'team_members' => 'array',
+        'milestones' => 'array',
+        'progress_percentage' => 'integer',
     ];
 
     public function client()
