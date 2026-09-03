@@ -1,18 +1,18 @@
 @extends('layouts.staff')
 
-@section('title', 'Assigned Clients - Staff Portal')
-@section('page_title', 'Assigned Clients & Projects')
+@section('title', 'My Assigned Clients - Staff Portal')
+@section('page_title', 'My Assigned Clients')
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <div>
-        <h5 class="fw-bold mb-1">Client Directory</h5>
-        <p class="text-muted small mb-0">Browse all client profiles, view project team assignments, and onboard new clients.</p>
+        <h5 class="fw-bold mb-1 text-primary border-bottom border-2 border-primary pb-2 d-inline-block">My Assigned Clients Directory</h5>
+        <p class="text-muted small mb-0">Clients and projects assigned directly to you by the Administrator.</p>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{{ route('staff.clients.create') }}" class="btn btn-primary rounded-3 px-4 fw-semibold">
-            <i class="fa-solid fa-user-plus me-1"></i> Add New Client
-        </a>
+    <div>
+        <span class="badge bg-primary-subtle text-primary border rounded-pill px-3 py-2 fw-semibold">
+            <i class="fa-solid fa-user-check me-1"></i> {{ $assignedCount }} Assigned Client(s)
+        </span>
     </div>
 </div>
 
@@ -21,31 +21,20 @@
         <i class="fa-solid fa-circle-check me-1"></i> {{ session('success') }}
     </div>
 @endif
+@if(session('error'))
+    <div class="alert alert-danger py-2 px-3 small rounded-3 mb-4">
+        <i class="fa-solid fa-circle-exclamation me-1"></i> {{ session('error') }}
+    </div>
+@endif
 
-<!-- Scope Filter Tabs & Search Bar -->
-<div class="card mb-4">
+<!-- Search Bar -->
+<div class="card mb-4 shadow-sm border-0">
     <div class="card-body p-3">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
-            <ul class="nav nav-pills gap-2">
-                <li class="nav-item">
-                    <a class="nav-link rounded-pill px-3 py-1 fw-semibold {{ $scope === 'all' ? 'active' : 'bg-light text-muted' }}" href="{{ route('staff.clients.index', ['scope' => 'all']) }}">
-                        <i class="fa-solid fa-users me-1"></i> All Clients <span class="badge bg-white text-dark ms-1">{{ $totalClientsCount ?? 0 }}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link rounded-pill px-3 py-1 fw-semibold {{ $scope === 'assigned' ? 'active' : 'bg-light text-muted' }}" href="{{ route('staff.clients.index', ['scope' => 'assigned']) }}">
-                        <i class="fa-solid fa-user-check me-1"></i> My Assigned Clients <span class="badge bg-white text-dark ms-1">{{ $assignedCount ?? 0 }}</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
         <form method="GET" action="{{ route('staff.clients.index') }}" class="row g-2">
-            <input type="hidden" name="scope" value="{{ $scope }}">
             <div class="col-md-10">
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                    <input type="text" name="search" class="form-control bg-light border-start-0 ps-0" placeholder="Search by client name, project, phone, or email..." value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control bg-light border-start-0 ps-0" placeholder="Search by client name, company, phone, or email..." value="{{ request('search') }}">
                 </div>
             </div>
             <div class="col-md-2">
@@ -55,18 +44,17 @@
     </div>
 </div>
 
-<div class="card">
+<div class="card shadow-sm border-0">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr class="small text-muted">
                     <th class="ps-4">Client ID</th>
-                    <th>Client Name / Project</th>
+                    <th>Client Organization / Name</th>
                     <th>Email Address</th>
                     <th>Phone</th>
-                    <th>Team Members</th>
                     <th>My Project Role</th>
-                    <th class="text-end pe-4">Actions</th>
+                    <th class="text-end pe-4">Client 360</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,9 +62,9 @@
                     <tr>
                         <td class="ps-4 fw-bold text-primary">#CL{{ sprintf('%03d', $client->client_id) }}</td>
                         <td>
-                            <div class="fw-semibold text-dark">{{ $client->client_name }}</div>
+                            <div class="fw-semibold text-dark">{{ $client->client_company ?: $client->client_name }}</div>
                             @if($client->client_company && $client->client_company !== $client->client_name)
-                                <small class="text-muted"><i class="fa-solid fa-briefcase me-1 text-primary"></i> {{ $client->client_company }}</small>
+                                <small class="text-muted"><i class="fa-regular fa-user me-1 text-primary"></i> {{ $client->client_name }}</small>
                             @endif
                         </td>
                         <td>
@@ -86,51 +74,21 @@
                         </td>
                         <td class="small">{{ $client->primary_contact }}</td>
                         <td>
-                            @php
-                                $primaryService = $client->services->first();
-                                $memberNames = [];
-                                
-                                if ($primaryService && is_array($primaryService->team_members) && count($primaryService->team_members) > 0) {
-                                    foreach ($primaryService->team_members as $mId) {
-                                        if (isset($allStaff[$mId])) {
-                                            $memberNames[] = $allStaff[$mId];
-                                        }
-                                    }
-                                }
-                                
-                                if (empty($memberNames) && $client->assignedStaff && $client->assignedStaff->isNotEmpty()) {
-                                    $memberNames = $client->assignedStaff->pluck('name')->toArray();
-                                }
-                            @endphp
-
-                            @if(!empty($memberNames))
-                                <div class="d-flex flex-wrap gap-1" style="max-width: 220px;">
-                                    @foreach($memberNames as $mName)
-                                        <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 11px;">
-                                            <i class="fa-solid fa-user-gear text-primary me-1"></i> {{ $mName }}
-                                        </span>
-                                    @endforeach
-                                </div>
-                            @else
-                                <span class="text-muted small">—</span>
-                            @endif
-                        </td>
-                        <td>
                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
-                                {{ $client->pivot->role_in_project ?? 'Lead Engineer' }}
+                                {{ $client->pivot->role_in_project ?? 'Assigned Engineer / Squad Member' }}
                             </span>
                         </td>
                         <td class="text-end pe-4">
                             <a href="{{ route('staff.clients.show', $client) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                View Profile & Tickets <i class="fa-solid fa-arrow-right ms-1"></i>
+                                View Dashboard <i class="fa-solid fa-arrow-right ms-1"></i>
                             </a>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center py-5 text-muted">
-                            <i class="fa-solid fa-users-slash fa-3x mb-3 d-block opacity-50"></i>
-                            No assigned clients found. Click <strong>"Add New Client"</strong> to register a new client!
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="fa-solid fa-user-shield fa-3x mb-3 d-block text-light"></i>
+                            No assigned clients found. The Administrator will allocate clients to you.
                         </td>
                     </tr>
                 @endforelse

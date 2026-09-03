@@ -1,7 +1,7 @@
 @extends('layouts.staff')
 
-@section('title', 'Reports & Project Portfolio - Staff Portal')
-@section('page_title', 'Reports & Project Portfolio')
+@section('title', 'Assigned Projects Report - Staff Portal')
+@section('page_title', 'My Portfolio & Reports')
 
 @section('content')
 <!-- High-Level Metric Cards -->
@@ -11,9 +11,9 @@
             <div class="card-body p-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
-                        <div class="text-muted small fw-semibold">Clients Portfolio</div>
-                        <h3 class="fw-bold my-1 text-dark">{{ $stats['total_clients'] }}</h3>
-                        <span class="badge bg-primary-subtle text-primary small">{{ $stats['my_clients'] }} Assigned to Me</span>
+                        <div class="text-muted small fw-semibold">My Assigned Clients</div>
+                        <h3 class="fw-bold my-1 text-dark">{{ $stats['my_clients'] }}</h3>
+                        <span class="badge bg-primary-subtle text-primary small">Active Portfolio</span>
                     </div>
                     <div class="stat-icon-wrapper bg-icon-cyan">
                         <i class="fa-solid fa-users"></i>
@@ -28,7 +28,7 @@
             <div class="card-body p-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
-                        <div class="text-muted small fw-semibold">Total Projects</div>
+                        <div class="text-muted small fw-semibold">My Projects</div>
                         <h3 class="fw-bold my-1 text-dark">{{ $stats['total_projects'] }}</h3>
                         <span class="badge bg-primary-subtle text-primary small">{{ $stats['active_projects'] }} In Progress</span>
                     </div>
@@ -62,7 +62,7 @@
             <div class="card-body p-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
-                        <div class="text-muted small fw-semibold">Support Requests</div>
+                        <div class="text-muted small fw-semibold">Client Inquiries</div>
                         <h3 class="fw-bold my-1 text-dark">{{ $stats['open_tickets'] }}</h3>
                         <span class="badge bg-warning-subtle text-warning small">{{ $stats['resolved_tickets'] }} Resolved</span>
                     </div>
@@ -80,7 +80,7 @@
     <div class="card-header bg-transparent p-4 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div>
             <h5 class="fw-bold mb-1 text-primary">
-                <i class="fa-solid fa-chart-pie me-1"></i> Project Portfolio & Operations Report
+                <i class="fa-solid fa-chart-pie me-1"></i> My Assigned Projects & Operations Report
             </h5>
             <p class="text-muted small mb-0">Overview of client projects, assigned technical squads, delivery timelines, and statuses.</p>
         </div>
@@ -95,20 +95,9 @@
     </div>
 
     <div class="card-body p-4">
-        <!-- Scope Tabs -->
-        <div class="d-flex gap-2 mb-4 border-bottom pb-3">
-            <a href="{{ route('staff.reports.index', ['scope' => 'all'] + request()->except('page', 'scope')) }}" class="btn btn-sm rounded-pill px-3 fw-semibold {{ $scope === 'all' ? 'btn-primary' : 'btn-light border text-muted' }}">
-                <i class="fa-solid fa-globe me-1"></i> All Projects ({{ $stats['total_projects'] }})
-            </a>
-            <a href="{{ route('staff.reports.index', ['scope' => 'assigned'] + request()->except('page', 'scope')) }}" class="btn btn-sm rounded-pill px-3 fw-semibold {{ $scope === 'assigned' ? 'btn-primary' : 'btn-light border text-muted' }}">
-                <i class="fa-solid fa-user-check me-1"></i> My Clients' Projects
-            </a>
-        </div>
-
         <!-- Filter Form -->
         <form action="{{ route('staff.reports.index') }}" method="GET" class="row g-2 mb-4 align-items-center">
-            <input type="hidden" name="scope" value="{{ $scope }}">
-            <div class="col-md-5">
+            <div class="col-md-6">
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-search text-muted"></i></span>
                     <input type="text" name="search" value="{{ request('search') }}" class="form-control bg-light border-start-0 ps-0" placeholder="Search by project name, client, team, or lead...">
@@ -124,12 +113,10 @@
                     <option value="On Hold" {{ request('status') == 'On Hold' ? 'selected' : '' }}>On Hold</option>
                 </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3 d-flex gap-2">
                 <button type="submit" class="btn btn-primary w-100 fw-semibold">Filter</button>
-            </div>
-            <div class="col-md-2">
                 @if(request()->hasAny(['search', 'status']))
-                    <a href="{{ route('staff.reports.index', ['scope' => $scope]) }}" class="btn btn-light border w-100 text-muted">Reset</a>
+                    <a href="{{ route('staff.reports.index') }}" class="btn btn-light border w-100 text-muted">Reset</a>
                 @endif
             </div>
         </form>
@@ -236,7 +223,7 @@
                         <tr>
                             <td colspan="8" class="text-center py-5 text-muted">
                                 <i class="fa-solid fa-folder-open fa-3x mb-3 text-light"></i>
-                                <p class="mb-0">No project portfolio records match the selected criteria.</p>
+                                <p class="mb-0">No assigned projects match the selected criteria.</p>
                             </td>
                         </tr>
                     @endforelse

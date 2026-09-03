@@ -14,13 +14,10 @@ class StaffDocumentController extends Controller
     {
         $staff = Auth::guard('staff')->user();
         $assignedClientIds = $staff->assignedClients()->pluck('client_tbl.client_id')->toArray();
-        $scope = $request->get('scope', 'all');
 
-        $query = ClientDocument::with('client')->latest();
-
-        if ($scope === 'assigned') {
-            $query->whereIn('client_id', $assignedClientIds);
-        }
+        $query = ClientDocument::with('client')
+            ->whereIn('client_id', $assignedClientIds)
+            ->latest();
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -40,16 +37,24 @@ class StaffDocumentController extends Controller
 
         $documents = $query->paginate(10);
 
-        return view('staff.documents.index', compact('documents', 'scope'));
+        return view('staff.documents.index', compact('documents'));
     }
 
     public function update(Request $request, $id)
     {
+        $staff = Auth::guard('staff')->user();
+        $assignedClientIds = $staff->assignedClients()->pluck('client_tbl.client_id')->toArray();
+
         $request->validate([
             'status' => 'required|in:Pending,Verified,Rejected',
         ]);
 
         $document = ClientDocument::findOrFail($id);
+
+        if (!in_array($document->client_id, $assignedClientIds)) {
+            return back()->with('error', 'Unauthorized access to this document.');
+        }
+
         $document->update(['status' => $request->status]);
 
         if ($request->status !== 'Pending') {
@@ -66,7 +71,14 @@ class StaffDocumentController extends Controller
 
     public function download($id)
     {
+        $staff = Auth::guard('staff')->user();
+        $assignedClientIds = $staff->assignedClients()->pluck('client_tbl.client_id')->toArray();
+
         $document = ClientDocument::findOrFail($id);
+
+        if (!in_array($document->client_id, $assignedClientIds)) {
+            return back()->with('error', 'Unauthorized access to this document.');
+        }
         
         if (Storage::disk('public')->exists($document->file_path)) {
             $extension = pathinfo($document->file_path, PATHINFO_EXTENSION);

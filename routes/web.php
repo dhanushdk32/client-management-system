@@ -102,11 +102,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 Route::middleware(['auth:staff'])->prefix('staff')->name('staff.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\StaffDashboardController::class, 'index'])->name('dashboard');
     
-    // Managed Clients (Staff can view and onboard new clients)
-    Route::post('/clients/send-otp', [App\Http\Controllers\StaffClientController::class, 'sendCreationOtp'])->name('clients.send-otp');
+    // Assigned Clients (Staff can only view their assigned clients)
     Route::get('/clients', [App\Http\Controllers\StaffClientController::class, 'index'])->name('clients.index');
-    Route::get('/clients/create', [App\Http\Controllers\StaffClientController::class, 'create'])->name('clients.create');
-    Route::post('/clients', [App\Http\Controllers\StaffClientController::class, 'store'])->name('clients.store');
     Route::get('/clients/{client}', [App\Http\Controllers\StaffClientController::class, 'show'])->name('clients.show');
     
     // Services & Projects Management

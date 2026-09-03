@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Client;
 use App\Models\ClientService;
 use App\Models\SupportTicket;
 use App\Models\StaffMember;
@@ -14,27 +13,27 @@ class StaffReportController extends Controller
     public function index(Request $request)
     {
         $staff = Auth::guard('staff')->user();
-        
         $assignedClientIds = $staff->assignedClients()->pluck('client_tbl.client_id')->toArray();
 
+        // Projects for assigned clients or where staff is leader/member
+        $projectsQuery = ClientService::with(['client', 'teamLeader'])
+            ->where(function($q) use ($staff, $assignedClientIds) {
+                $q->whereIn('client_id', $assignedClientIds)
+                  ->orWhere('team_leader_id', $staff->id)
+                  ->orWhereJsonContains('team_members', (string) $staff->id)
+                  ->orWhereJsonContains('team_members', (int) $staff->id);
+            });
+
         $stats = [
-            'total_clients' => Client::count(),
             'my_clients' => count($assignedClientIds),
-            'total_projects' => ClientService::count(),
-            'active_projects' => ClientService::whereIn('status', ['Active', 'In Progress'])->count(),
-            'completed_projects' => ClientService::where('status', 'Completed')->count(),
-            'open_tickets' => SupportTicket::where('status', 'Open')->count(),
-            'resolved_tickets' => SupportTicket::where('status', 'Resolved')->count(),
-            'my_tickets' => SupportTicket::whereIn('client_id', $assignedClientIds)->count(),
+            'total_projects' => (clone $projectsQuery)->count(),
+            'active_projects' => (clone $projectsQuery)->whereIn('status', ['Active', 'In Progress'])->count(),
+            'completed_projects' => (clone $projectsQuery)->where('status', 'Completed')->count(),
+            'open_tickets' => SupportTicket::whereIn('client_id', $assignedClientIds)->whereIn('status', ['Open', 'In Progress'])->count(),
+            'resolved_tickets' => SupportTicket::whereIn('client_id', $assignedClientIds)->where('status', 'Resolved')->count(),
         ];
 
-        $scope = $request->get('scope', 'all');
-
-        $query = ClientService::with(['client', 'teamLeader'])->latest();
-
-        if ($scope === 'assigned') {
-            $query->whereIn('client_id', $assignedClientIds);
-        }
+        $query = (clone $projectsQuery)->latest();
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -56,13 +55,14 @@ class StaffReportController extends Controller
         $projects = $query->paginate(10);
         $allStaff = StaffMember::pluck('name', 'id')->toArray();
 
-        return view('staff.reports.index', compact('stats', 'projects', 'allStaff', 'scope'));
+        return view('staff.reports.index', compact('stats', 'projects', 'allStaff'));
     }
 
     public function exportClients()
     {
-        $clients = Client::all();
-        $csvFileName = 'staff_clients_report_' . date('Y_m_d_H_i_s') . '.csv';
+        $staff = Auth::guard('staff')->user();
+        $clients = $staff->assignedClients;
+        $csvFileName = 'my_assigned_clients_report_' . date('Y_m_d_H_i_s') . '.csv';
         
         $headers = [
             "Content-type"        => "text/csv",
@@ -97,9 +97,20 @@ class StaffReportController extends Controller
 
     public function exportServices()
     {
-        $services = ClientService::with(['client', 'teamLeader'])->get();
+        $staff = Auth::guard('staff')->user();
+        $assignedClientIds = $staff->assignedClients()->pluck('client_tbl.client_id')->toArray();
+
+        $services = ClientService::with(['client', 'teamLeader'])
+            ->where(function($q) use ($staff, $assignedClientIds) {
+                $q->whereIn('client_id', $assignedClientIds)
+                  ->orWhere('team_leader_id', $staff->id)
+                  ->orWhereJsonContains('team_members', (string) $staff->id)
+                  ->orWhereJsonContains('team_members', (int) $staff->id);
+            })
+            ->get();
+
         $allStaff = StaffMember::pluck('name', 'id')->toArray();
-        $csvFileName = 'staff_projects_report_' . date('Y_m_d_H_i_s') . '.csv';
+        $csvFileName = 'my_projects_report_' . date('Y_m_d_H_i_s') . '.csv';
         
         $headers = [
             "Content-type"        => "text/csv",

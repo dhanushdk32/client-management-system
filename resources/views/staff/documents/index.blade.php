@@ -1,15 +1,15 @@
 @extends('layouts.staff')
 
-@section('title', 'Client Documents Vault - Staff Portal')
-@section('page_title', 'Client Documents Vault')
+@section('title', 'Assigned Client Documents - Staff Portal')
+@section('page_title', 'Assigned Client Documents Vault')
 
 @section('content')
 <div class="card shadow-sm border-0">
     <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <div>
-                <h5 class="fw-bold mb-1 text-primary border-bottom border-2 border-primary pb-2 d-inline-block">Client Documents Vault</h5>
-                <p class="text-muted small mb-0">Review, verify, and download compliance documents, GST files, identity proofs, and specifications submitted by clients.</p>
+                <h5 class="fw-bold mb-1 text-primary border-bottom border-2 border-primary pb-2 d-inline-block">Assigned Client Documents Vault</h5>
+                <p class="text-muted small mb-0">Review, verify, and download compliance documents, GST files, identity proofs, and specifications submitted by your assigned clients.</p>
             </div>
         </div>
 
@@ -24,20 +24,9 @@
             </div>
         @endif
 
-        <!-- Scope Tabs -->
-        <div class="d-flex gap-2 mb-4 border-bottom pb-3">
-            <a href="{{ route('staff.documents.index', ['scope' => 'all'] + request()->except('page', 'scope')) }}" class="btn btn-sm rounded-pill px-3 fw-semibold {{ $scope === 'all' ? 'btn-primary' : 'btn-light border text-muted' }}">
-                <i class="fa-solid fa-globe me-1"></i> All Client Documents
-            </a>
-            <a href="{{ route('staff.documents.index', ['scope' => 'assigned'] + request()->except('page', 'scope')) }}" class="btn btn-sm rounded-pill px-3 fw-semibold {{ $scope === 'assigned' ? 'btn-primary' : 'btn-light border text-muted' }}">
-                <i class="fa-solid fa-user-check me-1"></i> My Clients' Documents
-            </a>
-        </div>
-
         <!-- Filter Bar -->
         <div class="d-flex justify-content-between mb-4">
             <form action="{{ route('staff.documents.index') }}" method="GET" class="d-flex gap-2 w-100 flex-wrap">
-                <input type="hidden" name="scope" value="{{ $scope }}">
                 <div class="input-group" style="max-width: 380px;">
                     <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-search text-muted"></i></span>
                     <input type="text" name="search" value="{{ request('search') }}" class="form-control border-start-0 ps-0" placeholder="Search by document name, type, or client...">
@@ -50,7 +39,7 @@
                 </select>
                 <button type="submit" class="btn btn-outline-primary fw-semibold">Filter</button>
                 @if(request()->hasAny(['search', 'status']))
-                    <a href="{{ route('staff.documents.index', ['scope' => $scope]) }}" class="btn btn-light border text-muted">Reset</a>
+                    <a href="{{ route('staff.documents.index') }}" class="btn btn-light border text-muted">Reset</a>
                 @endif
             </form>
         </div>
@@ -106,7 +95,7 @@
                         <tr>
                             <td colspan="6" class="text-center text-muted py-5">
                                 <i class="fa-solid fa-folder-open fa-3x mb-2 text-muted opacity-50"></i>
-                                <p class="mb-0">No client documents uploaded yet.</p>
+                                <p class="mb-0">No documents uploaded by your assigned clients yet.</p>
                             </td>
                         </tr>
                     @endforelse

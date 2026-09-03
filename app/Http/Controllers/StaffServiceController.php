@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ClientService;
-use App\Models\Client;
 use App\Models\StaffMember;
 use App\Models\Notification;
 
@@ -15,13 +14,14 @@ class StaffServiceController extends Controller
     {
         $staff = Auth::guard('staff')->user();
         $assignedClientIds = $staff->assignedClients()->pluck('client_tbl.client_id')->toArray();
-        $scope = $request->get('scope', 'all');
 
-        $query = ClientService::with(['client', 'teamLeader']);
-
-        if ($scope === 'assigned') {
-            $query->whereIn('client_id', $assignedClientIds);
-        }
+        $query = ClientService::with(['client', 'teamLeader'])
+            ->where(function($q) use ($staff, $assignedClientIds) {
+                $q->whereIn('client_id', $assignedClientIds)
+                  ->orWhere('team_leader_id', $staff->id)
+                  ->orWhereJsonContains('team_members', (string) $staff->id)
+                  ->orWhereJsonContains('team_members', (int) $staff->id);
+            });
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -46,23 +46,27 @@ class StaffServiceController extends Controller
         }
 
         $services = $query->orderBy('created_at', 'desc')->paginate(10);
-        $clients = Client::where('client_status', 'Active')->get();
+        $clients = $staff->assignedClients;
         $allStaff = StaffMember::pluck('name', 'id')->toArray();
 
-        return view('staff.services.index', compact('services', 'clients', 'allStaff', 'scope'));
+        return view('staff.services.index', compact('services', 'clients', 'allStaff'));
     }
 
     public function create()
     {
-        $clients = Client::where('client_status', 'Active')->get();
+        $staff = Auth::guard('staff')->user();
+        $clients = $staff->assignedClients;
         $staffMembers = StaffMember::where('status', 'Active')->get();
         return view('staff.services.form', compact('clients', 'staffMembers'));
     }
 
     public function store(Request $request)
     {
+        $staff = Auth::guard('staff')->user();
+        $assignedClientIds = $staff->assignedClients()->pluck('client_tbl.client_id')->toArray();
+
         $request->validate([
-            'client_id' => 'required|exists:client_tbl,client_id',
+            'client_id' => 'required|in:' . implode(',', $assignedClientIds),
             'service_name' => 'required|string|max:255',
             'status' => 'required|in:Active,In Progress,Planning,Completed,On Hold,Under Maintenance',
             'start_date' => 'nullable|date',
@@ -72,6 +76,8 @@ class StaffServiceController extends Controller
             'team_leader_id' => 'nullable|exists:staff_members,id',
             'team_members' => 'nullable|array',
             'team_members.*' => 'exists:staff_members,id',
+        ], [
+            'client_id.in' => 'You can only assign projects to clients allocated to you by the Admin.'
         ]);
 
         $data = $request->all();
@@ -109,7 +115,7 @@ class StaffServiceController extends Controller
         }
 
         if (!empty($allStaffIds)) {
-            $client = Client::find($request->client_id);
+            $client = \App\Models\Client::find($request->client_id);
             if ($client) {
                 foreach ($allStaffIds as $staffId) {
                     $isLeader = ($staffId == $request->team_leader_id);
@@ -134,13 +140,27 @@ class StaffServiceController extends Controller
 
     public function edit(ClientService $service)
     {
-        $clients = Client::where('client_status', 'Active')->get();
+        $staff = Auth::guard('staff')->user();
+        $assignedClientIds = $staff->assignedClients()->pluck('client_tbl.client_id')->toArray();
+
+        // Security check
+        $isLeaderOrMember = ($service->team_leader_id == $staff->id) ||
+            (is_array($service->team_members) && in_array($staff->id, $service->team_members));
+
+        if (!in_array($service->client_id, $assignedClientIds) && !$isLeaderOrMember) {
+            return redirect()->route('staff.services.index')->with('error', 'Unauthorized access to this project.');
+        }
+
+        $clients = $staff->assignedClients;
         $staffMembers = StaffMember::where('status', 'Active')->get();
         return view('staff.services.form', compact('service', 'clients', 'staffMembers'));
     }
 
     public function update(Request $request, ClientService $service)
     {
+        $staff = Auth::guard('staff')->user();
+        $assignedClientIds = $staff->assignedClients()->pluck('client_tbl.client_id')->toArray();
+
         $request->validate([
             'client_id' => 'required|exists:client_tbl,client_id',
             'service_name' => 'required|string|max:255',

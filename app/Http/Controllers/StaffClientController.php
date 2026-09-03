@@ -4,29 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 use App\Models\Client;
-use App\Models\ClientUser;
-use App\Models\ClientService;
-use App\Models\Otp;
-use Carbon\Carbon;
-use App\Mail\WelcomeActivationOtpMail;
-use App\Mail\WelcomeClientMail;
 
 class StaffClientController extends Controller
 {
     public function index(Request $request)
     {
         $staff = Auth::guard('staff')->user();
-        $scope = $request->get('scope', 'all');
 
-        if ($scope === 'assigned') {
-            $query = $staff->assignedClients()->with(['services.teamLeader', 'assignedStaff'])->withCount('users');
-        } else {
-            $query = Client::with(['services.teamLeader', 'assignedStaff'])->withCount('users');
-        }
+        // Staff only sees clients assigned to them
+        $query = $staff->assignedClients()->with(['services.teamLeader', 'assignedStaff'])->withCount('users');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -40,177 +27,20 @@ class StaffClientController extends Controller
 
         $clients = $query->orderBy('client_tbl.client_id', 'asc')->paginate(10);
         $allStaff = \App\Models\StaffMember::pluck('name', 'id')->toArray();
-        $assignedCount = $staff->assignedClients()->count();
-        $totalClientsCount = Client::count();
+        $assignedCount = $clients->total();
 
-        return view('staff.clients.index', compact('clients', 'allStaff', 'scope', 'assignedCount', 'totalClientsCount'));
-    }
-
-    public function create()
-    {
-        return view('staff.clients.form');
-    }
-
-    /**
-     * AJAX endpoint: Send Welcome OTP to Client Gmail
-     */
-    public function sendCreationOtp(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|max:100',
-            'name' => 'required|string|max:100|regex:/^[a-zA-Z\s\.\'-]+$/',
-            'project_title' => 'nullable|string|max:255',
-        ], [
-            'name.regex' => 'The Client Name must only contain letters, dots, and spaces.',
-        ]);
-
-        if (ClientUser::where('email', $request->email)->exists()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'A client account with this email already exists!'
-            ], 422);
-        }
-
-        // Generate 6-digit OTP (Valid for 5 minutes)
-        $otpCode = (string) rand(100000, 999999);
-        Otp::updateOrCreate(
-            ['email' => $request->email],
-            [
-                'otp_code' => $otpCode,
-                'expires_at' => Carbon::now()->addMinutes(5),
-            ]
-        );
-
-        $projectName = $request->project_title ?: 'Client Project';
-
-        // Send Welcome Email with OTP
-        try {
-            Mail::to($request->email)->send(new WelcomeActivationOtpMail(
-                $request->name,
-                $request->email,
-                'Client Portal',
-                $otpCode,
-                $projectName
-            ));
-
-            return response()->json([
-                'success' => true,
-                'message' => "Verification OTP code sent to {$request->email}!"
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Failed to send OTP email from staff: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Could not send email: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'client_name' => 'required|string|max:100|regex:/^[a-zA-Z\s\.\'-]+$/',
-            'primary_contact' => 'required|string|regex:/^[0-9+\s\-]{7,15}$/',
-            'secondary_contact' => 'nullable|string|regex:/^[0-9+\s\-]{7,15}$/',
-            'client_email' => 'required|email|max:100|unique:client_tbl,client_email|unique:client_users,email',
-            'client_status' => 'required|in:Active,Inactive',
-            'joined_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
-            'project_title' => 'nullable|string|max:255',
-            'address' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
-            'state' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
-            'country' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
-            'otp' => 'required|string|size:6|regex:/^[0-9]{6}$/',
-            'password' => 'required|string|min:6',
-        ], [
-            'client_name.regex' => 'The Client Name must only contain letters, dots, and spaces (no numbers or symbols).',
-            'primary_contact.regex' => 'The Primary Contact must only contain numeric digits (e.g. 9876543210).',
-            'secondary_contact.regex' => 'The Secondary Contact must only contain numeric digits.',
-            'city.regex' => 'City name must only contain letters and spaces.',
-            'state.regex' => 'State name must only contain letters and spaces.',
-            'country.regex' => 'Country name must only contain letters and spaces.',
-            'otp.regex' => 'The OTP code must be a 6-digit number.',
-        ]);
-
-        // Verify OTP
-        $otpRecord = Otp::where('email', $request->client_email)->first();
-        if (!$otpRecord || $otpRecord->otp_code !== $request->otp) {
-            return back()->withInput()->withErrors(['otp' => 'The entered OTP code is invalid. Please verify the code sent to client email.']);
-        }
-
-        if (Carbon::now()->greaterThan($otpRecord->expires_at)) {
-            return back()->withInput()->withErrors(['otp' => 'The OTP code has expired. Please click Resend OTP.']);
-        }
-
-        $joinedDate = $request->filled('joined_date') ? Carbon::parse($request->joined_date) : now();
-        $location = $request->address ?: trim(($request->city ? $request->city : '') . ($request->state ? ', ' . $request->state : ''));
-
-        $client = Client::create([
-            'entity_id' => 1,
-            'client_name' => $request->client_name,
-            'client_company' => $request->project_title ?: $request->client_name,
-            'client_email' => $request->client_email,
-            'primary_contact' => $request->primary_contact,
-            'secondary_contact' => $request->secondary_contact ?? '',
-            'client_location' => $location ?: 'Not Specified',
-            'city' => $request->city ?? '',
-            'state' => $request->state ?? '',
-            'country' => $request->country ?? 'India',
-            'client_gst' => '',
-            'industry' => 'Custom Projects',
-            'company_size' => '1 - 10',
-            'website' => '',
-            'client_status' => $request->client_status,
-            'joined_date' => $joinedDate,
-        ]);
-
-        // Create Project / Service if project_title is provided
-        if ($request->filled('project_title')) {
-            ClientService::create([
-                'client_id' => $client->client_id,
-                'service_name' => $request->project_title,
-                'status' => $request->client_status == 'Active' ? 'Active' : 'Pending',
-                'start_date' => $joinedDate,
-                'end_date' => $request->filled('end_date') ? Carbon::parse($request->end_date) : null,
-                'description' => "Initial project contracted on {$joinedDate->format('d M Y')}.",
-                'assigned_team' => 'Engineering & Development',
-            ]);
-        }
-
-        $plainPassword = $request->password;
-
-        // Create client user
-        $clientUser = ClientUser::create([
-            'client_id' => $client->client_id,
-            'name' => $client->client_name,
-            'email' => $client->client_email,
-            'password' => Hash::make($plainPassword),
-            'role' => 'Admin',
-            'status' => 'Active',
-        ]);
-
-        // Automatically assign this staff member to manage the new client
-        $staff = Auth::guard('staff')->user();
-        $staff->assignedClients()->attach($client->client_id, [
-            'role_in_project' => 'Account Manager / Lead Engineer'
-        ]);
-
-        // Send Final Welcome & Credentials Email
-        try {
-            Mail::to($clientUser->email)->send(new WelcomeClientMail($client, $plainPassword));
-        } catch (\Exception $e) {
-            Log::error('Failed to send welcome credentials email from staff: ' . $e->getMessage());
-        }
-
-        // Delete verified OTP
-        Otp::where('email', $request->client_email)->delete();
-
-        return redirect()->route('staff.clients.index')->with('success', "Client #CL{$client->client_id} created successfully! Verified and login credentials sent.");
+        return view('staff.clients.index', compact('clients', 'allStaff', 'assignedCount'));
     }
 
     public function show(Client $client)
     {
+        $staff = Auth::guard('staff')->user();
+
+        // Security check: staff can only view clients assigned to them
+        if (!$staff->assignedClients()->where('client_tbl.client_id', $client->client_id)->exists()) {
+            return redirect()->route('staff.clients.index')->with('error', 'Unauthorized access: You can only view clients assigned to you.');
+        }
+
         $client->load(['services.teamLeader', 'users', 'assignedStaff']);
         $tickets = \App\Models\SupportTicket::where('client_id', $client->client_id)->latest()->get();
         $documents = \App\Models\ClientDocument::where('client_id', $client->client_id)->latest()->get();
