@@ -555,6 +555,12 @@
                     </a>
                 </li>
                 <li class="menu-item">
+                    <a href="{{ route('staff.reports.index') }}" class="menu-link {{ request()->routeIs('staff.reports.*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="menu-item">
                     <a href="{{ route('staff.settings') }}" class="menu-link {{ request()->routeIs('staff.settings*') ? 'active' : '' }}">
                         <i class="fa-solid fa-gear"></i>
                         <span>My Settings</span>

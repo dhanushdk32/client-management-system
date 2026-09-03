@@ -114,6 +114,11 @@ Route::middleware(['auth:staff'])->prefix('staff')->name('staff.')->group(functi
     Route::get('/tickets/{ticket}', [App\Http\Controllers\StaffTicketController::class, 'show'])->name('tickets.show');
     Route::post('/tickets/{ticket}/reply', [App\Http\Controllers\StaffTicketController::class, 'reply'])->name('tickets.reply');
     
+    // Staff Reports & Exports
+    Route::get('/reports', [App\Http\Controllers\StaffReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export/clients', [App\Http\Controllers\StaffReportController::class, 'exportClients'])->name('reports.export.clients');
+    Route::get('/reports/export/services', [App\Http\Controllers\StaffReportController::class, 'exportServices'])->name('reports.export.services');
+
     // Staff Profile & Password
     Route::get('/settings', [App\Http\Controllers\StaffProfileController::class, 'settings'])->name('settings');
     Route::post('/settings/password', [App\Http\Controllers\StaffProfileController::class, 'updatePassword'])->name('password.update');

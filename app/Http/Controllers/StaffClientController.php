@@ -211,10 +211,11 @@ class StaffClientController extends Controller
 
     public function show(Client $client)
     {
-        $client->load(['services', 'users']);
+        $client->load(['services.teamLeader', 'users', 'assignedStaff']);
         $tickets = \App\Models\SupportTicket::where('client_id', $client->client_id)->latest()->get();
         $documents = \App\Models\ClientDocument::where('client_id', $client->client_id)->latest()->get();
+        $allStaff = \App\Models\StaffMember::pluck('name', 'id')->toArray();
 
-        return view('staff.clients.show', compact('client', 'tickets', 'documents'));
+        return view('staff.clients.show', compact('client', 'tickets', 'documents', 'allStaff'));
     }
 }
