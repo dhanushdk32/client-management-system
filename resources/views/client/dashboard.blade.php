@@ -4,9 +4,9 @@
 @section('page_title', 'Welcome, ' . ($client->client_company ?? 'Client'))
 
 @section('content')
+<!-- Top Metric Stat Cards -->
 <div class="row g-3 mb-4">
-    <!-- Stat Cards -->
-    <div class="col-md-3">
+    <div class="col-md-3 col-6">
         <div class="stat-card-roriri">
             <div>
                 <div class="stat-card-label text-uppercase">My Services</div>
@@ -17,7 +17,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-6">
         <div class="stat-card-roriri">
             <div>
                 <div class="stat-card-label text-uppercase">Documents</div>
@@ -28,7 +28,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-6">
         <div class="stat-card-roriri">
             <div>
                 <div class="stat-card-label text-uppercase">Open Requests</div>
@@ -39,7 +39,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-3 col-6">
         <div class="stat-card-roriri">
             <div>
                 <div class="stat-card-label text-uppercase">Notifications</div>
@@ -52,28 +52,58 @@
     </div>
 </div>
 
-<div class="row mt-2">
-    <!-- My Services List -->
-    <div class="col-md-6 mb-4">
-        <div class="card p-4 h-100">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold mb-0">My Services</h6>
-                <a href="#" class="text-decoration-none small fw-semibold">View All</a>
+<!-- 🌟 Dedicated Assigned Project Team Leader Banner -->
+@if(isset($primaryTeamLeader) && $primaryTeamLeader)
+    <div class="card border-0 shadow-sm mb-4 bg-primary text-white p-4 rounded-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-white text-primary d-flex align-items-center justify-content-center fw-bold shadow" style="width: 52px; height: 52px; font-size: 20px;">
+                    {{ strtoupper(substr($primaryTeamLeader->name, 0, 2)) }}
+                </div>
+                <div>
+                    <span class="badge bg-white bg-opacity-25 text-white rounded-pill px-3 py-1 mb-1 font-monospace" style="font-size: 11px;">
+                        YOUR DEDICATED TEAM LEADER
+                    </span>
+                    <h5 class="fw-bold mb-0 text-white">{{ $primaryTeamLeader->name }}</h5>
+                    <small class="text-white-50">{{ $primaryTeamLeader->designation ?? 'Lead Technical Project Manager' }} &bull; {{ $primaryTeamLeader->department ?? 'Engineering' }}</small>
+                </div>
+            </div>
+            <div>
+                <a href="{{ route('client.tickets.index') }}" class="btn btn-light text-primary fw-bold rounded-pill px-4 shadow-sm">
+                    <i class="fa-solid fa-comment-dots me-1"></i> Start Conversation with Team Lead
+                </a>
+            </div>
+        </div>
+    </div>
+@endif
+
+<div class="row g-4 mb-4">
+    <!-- My Services List with Team Lead Indicators -->
+    <div class="col-md-6">
+        <div class="card p-4 h-100 shadow-sm border-0">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-briefcase me-1 text-primary"></i> My Active Projects & Services</h6>
+                <a href="{{ route('client.services.index') }}" class="text-decoration-none small fw-semibold">View All</a>
             </div>
             <div class="table-responsive">
-                <table class="table table-borderless align-middle">
+                <table class="table table-borderless align-middle mb-0">
                     <tbody>
                         @forelse($recentServices as $service)
                             <tr class="border-bottom">
-                                <td class="fw-medium ps-0">{{ $service->service_name }}</td>
+                                <td class="fw-semibold text-dark ps-0">
+                                    {{ $service->service_name }}
+                                    <small class="text-muted d-block" style="font-size: 11px;">
+                                        <i class="fa-solid fa-user-tie text-primary me-1"></i> Lead: {{ $service->teamLeader->name ?? 'Assigned Engineer' }}
+                                    </small>
+                                </td>
                                 <td class="text-end pe-0">
-                                    <span class="badge {{ $service->status == 'Active' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' }} rounded-pill px-3 py-1">
+                                    <span class="badge {{ $service->status == 'Active' ? 'bg-success-subtle text-success' : 'bg-primary-subtle text-primary' }} rounded-pill px-3 py-1">
                                         {{ $service->status }}
                                     </span>
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="2" class="text-muted text-center py-3">No active services</td></tr>
+                            <tr><td colspan="2" class="text-muted text-center py-4">No active contracted services</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -82,11 +112,11 @@
     </div>
     
     <!-- Recent Notifications -->
-    <div class="col-md-6 mb-4">
-        <div class="card p-4 h-100">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold mb-0">Recent Notifications</h6>
-                <a href="#" class="text-decoration-none small fw-semibold">View All</a>
+    <div class="col-md-6">
+        <div class="card p-4 h-100 shadow-sm border-0">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0 text-dark"><i class="fa-regular fa-bell me-1 text-primary"></i> Recent Notifications</h6>
+                <a href="{{ route('client.notifications.index') }}" class="text-decoration-none small fw-semibold">View All</a>
             </div>
             <div class="notification-list">
                 @forelse($recentNotifications as $notification)
@@ -96,10 +126,10 @@
                         </div>
                         <div class="w-100">
                             <div class="d-flex justify-content-between">
-                                <span class="text-sm fw-medium {{ $notification->is_read ? 'text-muted' : '' }}">{{ $notification->title }}</span>
-                                <span class="text-muted small">{{ \Carbon\Carbon::parse($notification->created_at)->format('d M Y') }}</span>
+                                <span class="text-sm fw-medium {{ $notification->is_read ? 'text-muted' : 'text-dark fw-bold' }}">{{ $notification->title }}</span>
+                                <span class="text-muted small" style="font-size: 11px;">{{ \Carbon\Carbon::parse($notification->created_at)->format('d M Y') }}</span>
                             </div>
-                            <div class="text-muted small mt-1">{{ Str::limit($notification->message, 50) }}</div>
+                            <div class="text-muted small mt-1">{{ Str::limit($notification->message, 60) }}</div>
                         </div>
                     </div>
                 @empty
@@ -111,26 +141,26 @@
 
     <!-- Recent Activity -->
     <div class="col-md-12">
-        <div class="card p-4">
-            <h6 class="fw-bold mb-4">Recent Activity</h6>
+        <div class="card p-4 shadow-sm border-0">
+            <h6 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-clock-rotate-left me-1 text-primary"></i> Recent Platform Activity</h6>
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr>
-                            <th>Action</th>
-                            <th>Module</th>
+                        <tr class="small text-muted">
+                            <th>Activity Description</th>
+                            <th>Category</th>
                             <th>Date & Time</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($recentActivity as $activity)
                             <tr>
-                                <td>{{ $activity->description }}</td>
+                                <td class="fw-semibold text-dark">{{ $activity->description }}</td>
                                 <td><span class="badge bg-light text-dark border">{{ $activity->module }}</span></td>
-                                <td>{{ \Carbon\Carbon::parse($activity->created_at)->format('d M Y h:i A') }}</td>
+                                <td class="small text-muted">{{ \Carbon\Carbon::parse($activity->created_at)->format('d M Y, h:i A') }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="3" class="text-center text-muted py-4">No recent activity.</td></tr>
+                            <tr><td colspan="3" class="text-center text-muted py-4">No recent activity logs recorded.</td></tr>
                         @endforelse
                     </tbody>
                 </table>

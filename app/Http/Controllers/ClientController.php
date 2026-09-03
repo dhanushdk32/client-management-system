@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\ClientService;
 
 class ClientController extends Controller
 {
     public function dashboard()
     {
         $user = Auth::guard('client')->user();
-        $client = $user->client; // Uses relation in ClientUser model
+        $client = $user->client;
 
         if (!$client) {
             abort(404, 'Client not found.');
@@ -37,12 +38,14 @@ class ClientController extends Controller
             ->where('is_read', 0)
             ->count();
 
-        // Recent items
-        $recentServices = DB::table('client_services')
+        // Recent items with team leader
+        $recentServices = ClientService::with('teamLeader')
             ->where('client_id', $client->client_id)
             ->orderBy('created_at', 'desc')
             ->limit(3)
             ->get();
+
+        $primaryTeamLeader = $recentServices->first()?->teamLeader ?? $client->assignedStaff->first();
 
         $recentNotifications = DB::table('notifications')
             ->where('user_id', $user->id)
@@ -64,6 +67,7 @@ class ClientController extends Controller
             'openRequests',
             'unreadNotifications',
             'recentServices',
+            'primaryTeamLeader',
             'recentNotifications',
             'recentActivity'
         ));

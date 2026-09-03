@@ -51,7 +51,7 @@ class ClientTicketController extends Controller
     public function show($id)
     {
         $client_id = Auth::guard('client')->user()->client_id;
-        $ticket = SupportTicket::with('replies')->where('client_id', $client_id)->where('id', $id)->firstOrFail();
+        $ticket = SupportTicket::with(['replies', 'assignedStaff', 'client.assignedStaff'])->where('client_id', $client_id)->where('id', $id)->firstOrFail();
         
         return view('client.tickets.show', compact('ticket'));
     }
