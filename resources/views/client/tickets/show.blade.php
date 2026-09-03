@@ -4,10 +4,17 @@
 @section('page_title', 'Support Conversation')
 
 @section('content')
-<div class="mb-4">
+<div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
     <a href="{{ route('client.tickets.index') }}" class="btn btn-light border rounded-pill px-3 py-1 text-muted small fw-semibold">
         <i class="fa-solid fa-arrow-left me-1"></i> Back to Requests Desk
     </a>
+    <form action="{{ route('client.tickets.destroy', $ticket->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this support request and all its conversation history? This cannot be undone.');">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-semibold">
+            <i class="fa-solid fa-trash-can me-1"></i> Delete Request
+        </button>
+    </form>
 </div>
 
 <div class="row g-4">
@@ -114,9 +121,20 @@
                                             <i class="fa-solid fa-user me-1 text-muted"></i> You
                                         @endif
                                     </span>
-                                    <span class="small text-muted">
-                                        {{ $reply->created_at->format('d M Y, h:i A') }}
-                                    </span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="small text-muted">
+                                            {{ $reply->created_at->format('d M Y, h:i A') }}
+                                        </span>
+                                        @if(!$isStaffOrAdmin && $reply->sender_id == Auth::guard('client')->user()->id)
+                                            <form action="{{ route('client.tickets.replies.destroy', $reply->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this reply?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-link text-danger p-0 text-decoration-none" title="Delete Reply" style="font-size: 11px;">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </div>
                                 <div style="white-space: pre-wrap;">{{ $reply->message }}</div>
 

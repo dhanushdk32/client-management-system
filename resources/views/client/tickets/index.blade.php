@@ -86,9 +86,18 @@
                             </td>
                             <td class="small text-muted">{{ $ticket->updated_at->diffForHumans() }}</td>
                             <td class="text-end">
-                                <a href="{{ route('client.tickets.show', $ticket->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
-                                    Open Chat <i class="fa-solid fa-arrow-right ms-1"></i>
-                                </a>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{{ route('client.tickets.show', $ticket->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+                                        Open Chat <i class="fa-solid fa-arrow-right ms-1"></i>
+                                    </a>
+                                    <form action="{{ route('client.tickets.destroy', $ticket->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this request and its conversation history? This cannot be undone.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle" title="Delete Request" style="width: 32px; height: 32px; padding: 0;">
+                                            <i class="fa-solid fa-trash-can" style="font-size: 12px;"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

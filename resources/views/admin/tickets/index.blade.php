@@ -69,9 +69,18 @@
                             </td>
                             <td class="small text-muted">{{ $ticket->updated_at->diffForHumans() }}</td>
                             <td class="text-end">
-                                <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                    <i class="fa-solid fa-reply"></i> Reply
-                                </a>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        <i class="fa-solid fa-reply"></i> Reply
+                                    </a>
+                                    <form action="{{ route('admin.tickets.destroy', $ticket->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this support ticket and all messages?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle" title="Delete Ticket" style="width: 31px; height: 31px; padding: 0;">
+                                            <i class="fa-solid fa-trash-can" style="font-size: 11px;"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty

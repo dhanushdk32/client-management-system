@@ -17,9 +17,18 @@
             <span class="text-muted small">&bull; Submitted {{ $ticket->created_at->format('M d, Y h:i A') }}</span>
         </div>
     </div>
-    <a href="{{ route('staff.tickets.index') }}" class="btn btn-light border text-muted">
-        <i class="fa-solid fa-arrow-left me-1"></i> Back to Tickets
-    </a>
+    <div class="d-flex gap-2">
+        <a href="{{ route('staff.tickets.index') }}" class="btn btn-light border text-muted">
+            <i class="fa-solid fa-arrow-left me-1"></i> Back to Tickets
+        </a>
+        <form action="{{ route('staff.tickets.destroy', $ticket) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this ticket and all conversation messages?');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-outline-danger">
+                <i class="fa-solid fa-trash-can me-1"></i> Delete Ticket
+            </button>
+        </form>
+    </div>
 </div>
 
 @if(session('success'))
@@ -76,7 +85,18 @@
                         <div class="fw-bold small text-primary">
                             <i class="fa-solid fa-comment-dots me-1"></i> {{ str_contains($reply->message, '[Staff Response') ? 'Support Team Reply' : 'Client Update' }}
                         </div>
-                        <small class="text-muted">{{ $reply->created_at->format('M d, Y h:i A') }}</small>
+                        <div class="d-flex align-items-center gap-2">
+                            <small class="text-muted">{{ $reply->created_at->format('M d, Y h:i A') }}</small>
+                            @if($reply->sender_type === 'Staff' && $reply->sender_id == Auth::guard('staff')->user()->id)
+                                <form action="{{ route('staff.tickets.replies.destroy', $reply->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this response?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-link text-danger p-0 text-decoration-none" title="Delete Reply" style="font-size: 11px;">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                     </div>
                     <div style="white-space: pre-line; line-height: 1.6;">
                         {{ $reply->message }}

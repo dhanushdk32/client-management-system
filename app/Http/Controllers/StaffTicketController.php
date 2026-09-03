@@ -104,4 +104,50 @@ class StaffTicketController extends Controller
 
         return back()->with('success', 'Reply posted and ticket status updated successfully.');
     }
+
+    public function destroy(SupportTicket $ticket)
+    {
+        $staff = Auth::guard('staff')->user();
+        $assignedClientIds = $staff->assignedClients()->pluck('client_tbl.client_id')->toArray();
+
+        if ($ticket->assigned_staff_id != $staff->id && !in_array($ticket->client_id, $assignedClientIds)) {
+            return redirect()->route('staff.tickets.index')->with('error', 'Unauthorized access to this ticket.');
+        }
+
+        // Delete ticket attachment
+        if ($ticket->attachment_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($ticket->attachment_path)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($ticket->attachment_path);
+        }
+
+        // Delete replies attachments
+        foreach ($ticket->replies as $rep) {
+            if ($rep->attachment_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($rep->attachment_path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($rep->attachment_path);
+            }
+        }
+
+        $ticket->replies()->delete();
+        $ticket->delete();
+
+        return redirect()->route('staff.tickets.index')->with('success', 'Support request deleted successfully.');
+    }
+
+    public function destroyReply($id)
+    {
+        $staff = Auth::guard('staff')->user();
+        $reply = TicketReply::where('id', $id)->firstOrFail();
+
+        // Check if this reply was authored by staff
+        if ($reply->sender_type !== 'Staff' || $reply->sender_id != $staff->id) {
+            return back()->with('error', 'You can only delete your own replies.');
+        }
+
+        if ($reply->attachment_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($reply->attachment_path)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($reply->attachment_path);
+        }
+
+        $reply->delete();
+
+        return back()->with('success', 'Reply deleted successfully.');
+    }
 }

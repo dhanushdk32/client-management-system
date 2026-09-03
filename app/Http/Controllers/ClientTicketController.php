@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\SupportTicket;
 use App\Models\TicketReply;
 use App\Models\Client;
@@ -98,5 +99,45 @@ class ClientTicketController extends Controller
         }
 
         return back()->with('success', 'Reply sent successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $user = Auth::guard('client')->user();
+        $ticket = SupportTicket::with('replies')->where('client_id', $user->client_id)->where('id', $id)->firstOrFail();
+
+        // Delete ticket attachment
+        if ($ticket->attachment_path && Storage::disk('public')->exists($ticket->attachment_path)) {
+            Storage::disk('public')->delete($ticket->attachment_path);
+        }
+
+        // Delete replies attachments
+        foreach ($ticket->replies as $rep) {
+            if ($rep->attachment_path && Storage::disk('public')->exists($rep->attachment_path)) {
+                Storage::disk('public')->delete($rep->attachment_path);
+            }
+        }
+
+        $ticket->replies()->delete();
+        $ticket->delete();
+
+        return redirect()->route('client.tickets.index')->with('success', 'Support request and conversation history deleted successfully.');
+    }
+
+    public function destroyReply($id)
+    {
+        $user = Auth::guard('client')->user();
+        $reply = TicketReply::where('id', $id)
+            ->where('sender_type', 'Client')
+            ->where('sender_id', $user->id)
+            ->firstOrFail();
+
+        if ($reply->attachment_path && Storage::disk('public')->exists($reply->attachment_path)) {
+            Storage::disk('public')->delete($reply->attachment_path);
+        }
+
+        $reply->delete();
+
+        return back()->with('success', 'Reply deleted successfully.');
     }
 }

@@ -96,9 +96,18 @@
                         </td>
                         <td>{{ $ticket->created_at->format('M d, Y h:i A') }}</td>
                         <td class="text-end pe-4">
-                            <a href="{{ route('staff.tickets.show', $ticket) }}" class="btn btn-sm btn-primary px-3">
-                                Reply & Manage <i class="fa-solid fa-arrow-right ms-1"></i>
-                            </a>
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{{ route('staff.tickets.show', $ticket) }}" class="btn btn-sm btn-primary px-3">
+                                    Reply & Manage <i class="fa-solid fa-arrow-right ms-1"></i>
+                                </a>
+                                <form action="{{ route('staff.tickets.destroy', $ticket) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this ticket and all conversation messages?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle" title="Delete Ticket" style="width: 31px; height: 31px; padding: 0;">
+                                        <i class="fa-solid fa-trash-can" style="font-size: 11px;"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty

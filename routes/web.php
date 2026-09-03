@@ -76,6 +76,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/tickets/{id}', [App\Http\Controllers\AdminTicketController::class, 'show'])->name('tickets.show');
     Route::put('/tickets/{id}/status', [App\Http\Controllers\AdminTicketController::class, 'update'])->name('tickets.update');
     Route::post('/tickets/{id}/reply', [App\Http\Controllers\AdminTicketController::class, 'reply'])->name('tickets.reply');
+    Route::delete('/tickets/{id}', [App\Http\Controllers\AdminTicketController::class, 'destroy'])->name('tickets.destroy');
+    Route::delete('/tickets/replies/{id}', [App\Http\Controllers\AdminTicketController::class, 'destroyReply'])->name('tickets.replies.destroy');
     
     // Notifications & Logs
     Route::get('/notifications', [App\Http\Controllers\AdminNotificationController::class, 'index'])->name('notifications.index');
@@ -122,6 +124,8 @@ Route::middleware(['auth:staff'])->prefix('staff')->name('staff.')->group(functi
     Route::get('/tickets', [App\Http\Controllers\StaffTicketController::class, 'index'])->name('tickets.index');
     Route::get('/tickets/{ticket}', [App\Http\Controllers\StaffTicketController::class, 'show'])->name('tickets.show');
     Route::post('/tickets/{ticket}/reply', [App\Http\Controllers\StaffTicketController::class, 'reply'])->name('tickets.reply');
+    Route::delete('/tickets/{ticket}', [App\Http\Controllers\StaffTicketController::class, 'destroy'])->name('tickets.destroy');
+    Route::delete('/tickets/replies/{id}', [App\Http\Controllers\StaffTicketController::class, 'destroyReply'])->name('tickets.replies.destroy');
     
     // Staff Reports & Exports
     Route::get('/reports', [App\Http\Controllers\StaffReportController::class, 'index'])->name('reports.index');
@@ -156,6 +160,8 @@ Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(fun
     Route::post('/tickets', [App\Http\Controllers\ClientTicketController::class, 'store'])->name('tickets.store');
     Route::get('/tickets/{id}', [App\Http\Controllers\ClientTicketController::class, 'show'])->name('tickets.show');
     Route::post('/tickets/{id}/reply', [App\Http\Controllers\ClientTicketController::class, 'reply'])->name('tickets.reply');
+    Route::delete('/tickets/{id}', [App\Http\Controllers\ClientTicketController::class, 'destroy'])->name('tickets.destroy');
+    Route::delete('/tickets/replies/{id}', [App\Http\Controllers\ClientTicketController::class, 'destroyReply'])->name('tickets.replies.destroy');
     
     Route::get('/knowledge-base', [App\Http\Controllers\ClientKnowledgeBaseController::class, 'index'])->name('knowledge.index');
     Route::get('/knowledge-base/{slug}', [App\Http\Controllers\ClientKnowledgeBaseController::class, 'show'])->name('knowledge.show');
