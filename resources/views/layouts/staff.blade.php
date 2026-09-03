@@ -549,9 +549,21 @@
                     </a>
                 </li>
                 <li class="menu-item">
+                    <a href="{{ route('staff.services.index') }}" class="menu-link {{ request()->routeIs('staff.services.*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>Services & Projects</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('staff.documents.index') }}" class="menu-link {{ request()->routeIs('staff.documents.*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-file-shield"></i>
+                        <span>Documents Vault</span>
+                    </a>
+                </li>
+                <li class="menu-item">
                     <a href="{{ route('staff.tickets.index') }}" class="menu-link {{ request()->routeIs('staff.tickets.*') ? 'active' : '' }}">
                         <i class="fa-solid fa-ticket"></i>
-                        <span>Support Tickets</span>
+                        <span>Support Desk</span>
                     </a>
                 </li>
                 <li class="menu-item">

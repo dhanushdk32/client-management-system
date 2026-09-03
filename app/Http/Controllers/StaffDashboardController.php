@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SupportTicket;
 use App\Models\Client;
+use App\Models\ClientService;
+use App\Models\ClientDocument;
+use App\Models\ActivityLog;
 
 class StaffDashboardController extends Controller
 {
@@ -17,24 +20,37 @@ class StaffDashboardController extends Controller
         $assignedClients = $staff->assignedClients()->withCount('users')->get();
         $assignedClientIds = $assignedClients->pluck('client_id')->toArray();
 
-        // Get assigned tickets and tickets from assigned clients
-        $assignedTicketsCount = SupportTicket::where('assigned_staff_id', $staff->id)
-            ->whereIn('status', ['Open', 'In Progress'])
-            ->count();
-
-        $resolvedTicketsCount = SupportTicket::where('assigned_staff_id', $staff->id)
-            ->where('status', 'Resolved')
-            ->count();
-
-        $recentTickets = SupportTicket::where(function($q) use ($staff, $assignedClientIds) {
+        $stats = [
+            'total_clients' => Client::count(),
+            'assigned_clients' => $assignedClients->count(),
+            'total_projects' => ClientService::count(),
+            'active_projects' => ClientService::whereIn('status', ['Active', 'In Progress'])->count(),
+            'open_tickets' => SupportTicket::whereIn('status', ['Open', 'In Progress'])->count(),
+            'resolved_tickets' => SupportTicket::where('status', 'Resolved')->count(),
+            'my_tickets' => SupportTicket::where(function($q) use ($staff, $assignedClientIds) {
                 $q->where('assigned_staff_id', $staff->id)
                   ->orWhereIn('client_id', $assignedClientIds);
-            })
-            ->with('client')
+            })->whereIn('status', ['Open', 'In Progress'])->count(),
+            'total_documents' => ClientDocument::count(),
+            'pending_documents' => ClientDocument::where('status', 'Pending')->count(),
+        ];
+
+        // Recent Support Tickets
+        $recentTickets = SupportTicket::with('client')
+            ->latest()
+            ->take(6)
+            ->get();
+
+        // Active Projects
+        $activeProjects = ClientService::with(['client', 'teamLeader'])
+            ->whereIn('status', ['Active', 'In Progress'])
             ->latest()
             ->take(5)
             ->get();
 
-        return view('staff.dashboard', compact('staff', 'assignedClients', 'assignedTicketsCount', 'resolvedTicketsCount', 'recentTickets'));
+        // Recent Activities
+        $recentActivities = ActivityLog::latest()->take(6)->get();
+
+        return view('staff.dashboard', compact('staff', 'stats', 'assignedClients', 'recentTickets', 'activeProjects', 'recentActivities'));
     }
 }

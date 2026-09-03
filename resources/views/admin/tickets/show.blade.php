@@ -77,7 +77,14 @@
                             <div class="p-3 rounded-3 d-inline-block text-start w-100 {{ $reply->sender_type == 'Admin' ? 'bg-primary text-white' : 'bg-light text-dark' }}">
                                 <div class="d-flex justify-content-between mb-2">
                                     <span class="fw-bold {{ $reply->sender_type == 'Admin' ? 'text-white' : 'text-dark' }}">
-                                        {{ $reply->sender_type == 'Admin' ? 'You (Support)' : ($ticket->client->client_company ?? 'Client') }}
+                                        @if(str_contains($reply->message, '[Staff Response'))
+                                            <span class="badge bg-info-subtle text-info border border-info-subtle me-1"><i class="fa-solid fa-user-gear me-1"></i> Staff Reply</span>
+                                        @elseif($reply->sender_type == 'Admin')
+                                            <span class="badge bg-light text-dark me-1"><i class="fa-solid fa-shield-halved me-1 text-primary"></i> Admin (You)</span>
+                                        @else
+                                            <span class="badge bg-secondary-subtle text-secondary border me-1"><i class="fa-solid fa-user me-1"></i> Client</span>
+                                            {{ $ticket->client->client_company ?? 'Client' }}
+                                        @endif
                                     </span>
                                     <span class="small {{ $reply->sender_type == 'Admin' ? 'text-light' : 'text-muted' }} opacity-75">
                                         {{ $reply->created_at->format('d M Y, h:i A') }}

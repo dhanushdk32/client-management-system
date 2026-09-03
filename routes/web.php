@@ -109,6 +109,18 @@ Route::middleware(['auth:staff'])->prefix('staff')->name('staff.')->group(functi
     Route::post('/clients', [App\Http\Controllers\StaffClientController::class, 'store'])->name('clients.store');
     Route::get('/clients/{client}', [App\Http\Controllers\StaffClientController::class, 'show'])->name('clients.show');
     
+    // Services & Projects Management
+    Route::get('/services', [App\Http\Controllers\StaffServiceController::class, 'index'])->name('services.index');
+    Route::get('/services/create', [App\Http\Controllers\StaffServiceController::class, 'create'])->name('services.create');
+    Route::post('/services', [App\Http\Controllers\StaffServiceController::class, 'store'])->name('services.store');
+    Route::get('/services/{service}/edit', [App\Http\Controllers\StaffServiceController::class, 'edit'])->name('services.edit');
+    Route::put('/services/{service}', [App\Http\Controllers\StaffServiceController::class, 'update'])->name('services.update');
+
+    // Document Vault Review
+    Route::get('/documents', [App\Http\Controllers\StaffDocumentController::class, 'index'])->name('documents.index');
+    Route::put('/documents/{id}', [App\Http\Controllers\StaffDocumentController::class, 'update'])->name('documents.update');
+    Route::get('/documents/{id}/download', [App\Http\Controllers\StaffDocumentController::class, 'download'])->name('documents.download');
+
     // Support Ticket Desk
     Route::get('/tickets', [App\Http\Controllers\StaffTicketController::class, 'index'])->name('tickets.index');
     Route::get('/tickets/{ticket}', [App\Http\Controllers\StaffTicketController::class, 'show'])->name('tickets.show');
