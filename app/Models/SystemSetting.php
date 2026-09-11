@@ -72,15 +72,20 @@ class SystemSetting extends Model
     }
 
     /**
-     * Get active brand logo URL with cache busting
+     * Get active brand logo URL with automatic cache busting
      */
     public static function getBrandLogoUrl()
     {
         $customPath = self::get('brand_logo_path');
         if ($customPath && !str_contains(strtolower($customPath), 'roriri')) {
-            return asset('storage/' . $customPath);
+            $fullPath = storage_path('app/public/' . $customPath);
+            if (file_exists($fullPath)) {
+                return asset('storage/' . $customPath . '?v=' . filemtime($fullPath));
+            }
         }
 
-        return asset('images/logo.png?v=2');
+        $logoFile = public_path('images/logo.png');
+        $version = file_exists($logoFile) ? filemtime($logoFile) : time();
+        return asset('images/logo.png?v=' . $version);
     }
 }
