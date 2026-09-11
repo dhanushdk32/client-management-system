@@ -1,4 +1,4 @@
-Password Changed Successfully - {{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}
+Password Changed Successfully - {{ \App\Models\SystemSetting::get('company_name', 'Client Management System') }}
 
 Hello {{ $user->name }},
 
@@ -9,4 +9,4 @@ Login Page: {{ route('login') }}
 If you did NOT authorize this change, please contact our support team immediately or reset your password.
 
 Thank you,
-{{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}
+{{ \App\Models\SystemSetting::get('company_name', 'Client Management System') }}

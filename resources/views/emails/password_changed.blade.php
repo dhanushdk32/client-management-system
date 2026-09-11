@@ -51,7 +51,7 @@
         <!-- Footer -->
         <div style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
             <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-                &copy; {{ date('Y') }} {{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}. All rights reserved.
+                &copy; {{ date('Y') }} {{ \App\Models\SystemSetting::get('company_name', 'Client Management System') }}. All rights reserved.
             </p>
         </div>
     </div>

@@ -29,7 +29,7 @@ class AdminSettingController extends Controller
         ]);
 
         SystemSetting::set('brand_name', $request->brand_name);
-        SystemSetting::set('brand_tagline', $request->brand_tagline ?? 'Software Solution');
+        SystemSetting::set('brand_tagline', $request->brand_tagline ?? '');
         SystemSetting::set('default_theme', $request->default_theme);
 
         if ($request->hasFile('custom_logo')) {

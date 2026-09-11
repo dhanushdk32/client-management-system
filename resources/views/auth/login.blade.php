@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}</title>
+    <title>{{ \App\Models\SystemSetting::get('company_name', 'Client Management System') }}</title>
 
     <!-- Permanent Brand Favicon -->
     <link rel="icon" type="image/png" href="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}">
@@ -183,8 +183,8 @@
     <div class="login-card">
         <!-- Logo & Header -->
         <div class="brand-header">
-            <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}" class="brand-logo-img">
-            <h1 class="brand-title">{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}</h1>
+            <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}" class="brand-logo-img">
+            <h1 class="brand-title">{{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}</h1>
             <p class="brand-subtitle">Unified Portal Login (Admin &bull; Staff &bull; Client)</p>
         </div>
 

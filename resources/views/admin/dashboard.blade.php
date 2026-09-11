@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'RORIRI Dashboard - Admin Console')
+@section('title', 'Dashboard - Admin Console')
 @section('page_title', 'Dashboard')
 
 @section('content')

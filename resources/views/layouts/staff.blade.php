@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RORIRI Software Solutions</title>
+    <title>@yield('title', \App\Models\SystemSetting::get('company_name', 'Client Management System'))</title>
 
-    <!-- Permanent Brand Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('images/roriri_logo.png') }}">
-    <link rel="shortcut icon" type="image/png" href="{{ asset('images/roriri_logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/roriri_logo.png') }}">
+    <!-- Brand Favicon -->
+    <link rel="icon" type="image/png" href="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}">
+    <link rel="shortcut icon" type="image/png" href="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}">
+    <link rel="apple-touch-icon" href="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -482,7 +482,7 @@
 </head>
 <body>
 
-    <!-- RORIRI Topbar -->
+    <!-- Staff Topbar -->
     <header class="roriri-topbar">
         <div class="brand-section" style="width: auto; min-width: 260px;">
             <button class="sidebar-toggle-btn me-2" id="sidebarToggle" title="Toggle Navigation Sidebar">
@@ -490,10 +490,10 @@
             </button>
             <a href="{{ route('staff.dashboard') }}" class="brand-logo">
                 <div class="brand-logo-icon">
-                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}" width="32" height="32" style="border-radius: 50%; object-fit: contain;">
+                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}" width="32" height="32" style="border-radius: 8px; object-fit: contain;">
                 </div>
-                <h1 class="brand-logo-text" style="font-size: 19px; font-weight: 800; color: #0284c7; white-space: nowrap; margin: 0;">
-                    {{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }} <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">{{ \App\Models\SystemSetting::get('brand_tagline', 'Software Solutions') }}</span>
+                <h1 class="brand-logo-text" style="font-size: 18px; font-weight: 800; color: #0284c7; white-space: nowrap; margin: 0;">
+                    {{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}@if(\App\Models\SystemSetting::get('brand_tagline')) <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">{{ \App\Models\SystemSetting::get('brand_tagline') }}</span>@endif
                 </h1>
             </a>
             <span class="badge bg-primary-subtle text-primary border rounded-pill px-3 py-1 fw-semibold ms-2 d-none d-md-inline-block">Staff Console</span>
@@ -533,7 +533,7 @@
 
     <!-- App Container -->
     <div class="app-container">
-        <!-- RORIRI White Sidebar -->
+        <!-- Staff Navigation Sidebar -->
         <aside class="roriri-sidebar">
             <ul class="sidebar-menu">
                 <li class="menu-item">
@@ -593,9 +593,9 @@
         </main>
     </div>
 
-    <!-- RORIRI Footer -->
+    <!-- App Footer -->
     <footer class="roriri-footer">
-        Copyright &copy; {{ date('Y') }} {{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}. All rights reserved.
+        Copyright &copy; {{ date('Y') }} {{ \App\Models\SystemSetting::get('company_name', 'Client Management System') }}. All rights reserved.
     </footer>
 
     <!-- Universal Logout Confirmation Modal -->
@@ -628,7 +628,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function applySavedTheme() {
-            const savedTheme = localStorage.getItem('roriri_theme') || 'light';
+            const savedTheme = localStorage.getItem('app_theme') || localStorage.getItem('roriri_theme') || 'light';
             const themeIcon = document.getElementById('staffThemeIcon');
             
             if (savedTheme === 'dark') {
@@ -657,6 +657,7 @@
                     e.preventDefault();
                     const isDark = document.body.classList.contains('dark-theme');
                     const newTheme = isDark ? 'light' : 'dark';
+                    localStorage.setItem('app_theme', newTheme);
                     localStorage.setItem('roriri_theme', newTheme);
                     applySavedTheme();
                 });

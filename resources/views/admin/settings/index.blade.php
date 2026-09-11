@@ -48,13 +48,13 @@
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold small text-muted">Brand Display Title <span class="text-danger">*</span></label>
-                            <input type="text" name="brand_name" id="inputBrandName" class="form-control bg-light" value="{{ old('brand_name', $settings['brand_name'] ?? 'RORIRI') }}" required placeholder="e.g. RORIRI" oninput="updateLiveBrandPreview()">
+                            <input type="text" name="brand_name" id="inputBrandName" class="form-control bg-light" value="{{ old('brand_name', $settings['brand_name'] ?? 'Client Management System') }}" required placeholder="e.g. Client Management System" oninput="updateLiveBrandPreview()">
                             <div class="form-text small text-muted">Shown on the top navbar across all portals.</div>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label fw-semibold small text-muted">Active Tab Subtitle</label>
-                            <input type="text" name="brand_tagline" id="inputBrandTagline" class="form-control bg-light" value="{{ old('brand_tagline', $settings['brand_tagline'] ?? 'Software Solution') }}" placeholder="e.g. Software Solution" oninput="updateLiveBrandPreview()">
+                            <input type="text" name="brand_tagline" id="inputBrandTagline" class="form-control bg-light" value="{{ old('brand_tagline', $settings['brand_tagline'] ?? '') }}" placeholder="e.g. Portal" oninput="updateLiveBrandPreview()">
                             <div class="form-text small text-muted">Shown in the top workspace tab.</div>
                         </div>
                     </div>
@@ -67,8 +67,8 @@
                                 <img id="livePreviewLogo" src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="Logo" style="width: 28px; height: 28px; object-fit: contain; border-radius: 50%;">
                             </div>
                             <div>
-                                <div class="fw-bold text-white fs-6" id="livePreviewBrandText">{{ $settings['brand_name'] ?? 'RORIRI' }}</div>
-                                <span class="badge bg-primary-subtle text-primary border" style="font-size: 10px;" id="livePreviewTagline">{{ $settings['brand_tagline'] ?? 'Software Solution' }}</span>
+                                <div class="fw-bold text-white fs-6" id="livePreviewBrandText">{{ $settings['brand_name'] ?? 'Client Management System' }}</div>
+                                <span class="badge bg-primary-subtle text-primary border" style="font-size: 10px;" id="livePreviewTagline">{{ $settings['brand_tagline'] ?? '' }}</span>
                             </div>
                         </div>
                         <span class="badge bg-secondary small">Live Preview</span>
@@ -152,7 +152,7 @@
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold small text-muted">Company Legal Name <span class="text-danger">*</span></label>
-                            <input type="text" name="company_name" class="form-control bg-light" value="{{ old('company_name', $settings['company_name'] ?? 'RORIRI Software Solutions Pvt Ltd') }}" required placeholder="e.g. RORIRI Software Solutions">
+                            <input type="text" name="company_name" class="form-control bg-light" value="{{ old('company_name', $settings['company_name'] ?? 'Client Management System') }}" required placeholder="e.g. Client Management System">
                         </div>
 
                         <div class="col-md-6">
@@ -162,7 +162,7 @@
 
                         <div class="col-md-6">
                             <label class="form-label fw-semibold small text-muted">Official Corporate Email <span class="text-danger">*</span></label>
-                            <input type="email" name="company_email" class="form-control bg-light" value="{{ old('company_email', $settings['company_email'] ?? 'contact@roriri.com') }}" required placeholder="contact@roriri.com">
+                            <input type="email" name="company_email" class="form-control bg-light" value="{{ old('company_email', $settings['company_email'] ?? 'contact@clientmanagementsystem.com') }}" required placeholder="contact@clientmanagementsystem.com">
                         </div>
 
                         <div class="col-md-6">
@@ -197,7 +197,7 @@
 
                         <div class="col-md-6">
                             <label class="form-label fw-semibold small text-muted">Official Website URL</label>
-                            <input type="url" name="company_website" class="form-control bg-light" value="{{ old('company_website', $settings['company_website'] ?? 'https://roriri.com') }}" placeholder="https://roriri.com">
+                            <input type="url" name="company_website" class="form-control bg-light" value="{{ old('company_website', $settings['company_website'] ?? '') }}" placeholder="https://example.com">
                         </div>
 
                         <div class="col-md-12">
@@ -333,8 +333,8 @@
         }
     }
     function updateLiveBrandPreview() {
-        const nameVal = document.getElementById('inputBrandName').value || 'RORIRI';
-        const taglineVal = document.getElementById('inputBrandTagline').value || 'Software Solution';
+        const nameVal = document.getElementById('inputBrandName').value || 'Client Management System';
+        const taglineVal = document.getElementById('inputBrandTagline').value || '';
         document.getElementById('livePreviewBrandText').innerText = nameVal;
         document.getElementById('livePreviewTagline').innerText = taglineVal;
     }

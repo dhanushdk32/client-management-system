@@ -10,7 +10,7 @@
         
         <!-- Header Banner -->
         <div style="background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%); padding: 35px 30px; text-align: center; color: #ffffff;">
-            <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #ffffff;">RORIRI Management Portal</h1>
+            <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #ffffff;">Client Management Portal</h1>
             <p style="margin: 8px 0 0 0; font-size: 15px; color: #e0f2fe; opacity: 0.95;">Account Verification Code</p>
         </div>
 
@@ -20,7 +20,7 @@
                 Hello <strong>{{ $name }}</strong>,
             </p>
             <p style="color: #475569; font-size: 15px; line-height: 1.6;">
-                An account is being provisioned for you as <strong>{{ $accountType }}</strong>{{ $companyOrRole ? ' ('.$companyOrRole.')' : '' }} on the RORIRI Portal.
+                An account is being provisioned for you as <strong>{{ $accountType }}</strong>{{ $companyOrRole ? ' ('.$companyOrRole.')' : '' }} on the Client Management Portal.
             </p>
             <p style="color: #475569; font-size: 15px; line-height: 1.6;">
                 Please provide the 6-digit verification OTP code below to complete your account setup:
@@ -44,7 +44,7 @@
         <!-- Footer -->
         <div style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
             <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-                &copy; {{ date('Y') }} RORIRI Management System. All rights reserved.
+                &copy; {{ date('Y') }} Client Management System. All rights reserved.
             </p>
         </div>
     </div>

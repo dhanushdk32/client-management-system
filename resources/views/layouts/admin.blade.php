@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RORIRI Software Solutions</title>
+    <title>@yield('title', \App\Models\SystemSetting::get('company_name', 'Client Management System'))</title>
 
-    <!-- Permanent Brand Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('images/roriri_logo.png') }}">
-    <link rel="shortcut icon" type="image/png" href="{{ asset('images/roriri_logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/roriri_logo.png') }}">
+    <!-- Brand Favicon -->
+    <link rel="icon" type="image/png" href="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}">
+    <link rel="shortcut icon" type="image/png" href="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}">
+    <link rel="apple-touch-icon" href="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -625,15 +625,15 @@
 </head>
 <body>
 
-    <!-- RORIRI Topbar -->
+    <!-- Admin Topbar -->
     <header class="roriri-topbar">
         <div class="brand-section" style="width: auto; min-width: 260px;">
             <a href="{{ route('admin.dashboard') }}" class="brand-logo">
                 <div class="brand-logo-icon">
-                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}" width="32" height="32" style="border-radius: 50%; object-fit: contain;">
+                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}" width="32" height="32" style="border-radius: 8px; object-fit: contain;">
                 </div>
-                <h1 class="brand-logo-text" style="font-size: 19px; font-weight: 800; color: #0284c7; white-space: nowrap; margin: 0;">
-                    {{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }} <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">{{ \App\Models\SystemSetting::get('brand_tagline', 'Software Solutions') }}</span>
+                <h1 class="brand-logo-text" style="font-size: 18px; font-weight: 800; color: #0284c7; white-space: nowrap; margin: 0;">
+                    {{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}@if(\App\Models\SystemSetting::get('brand_tagline')) <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">{{ \App\Models\SystemSetting::get('brand_tagline') }}</span>@endif
                 </h1>
             </a>
             <button class="sidebar-toggle-btn" id="sidebarToggle" title="Toggle Navigation">
@@ -684,7 +684,7 @@
 
     <!-- App Container -->
     <div class="app-container">
-        <!-- RORIRI Clean Sidebar matching Screenshot -->
+        <!-- Clean Navigation Sidebar -->
         <aside class="roriri-sidebar" id="roririSidebar">
             <ul class="sidebar-menu">
                 <!-- Dashboard -->
@@ -781,9 +781,9 @@
             <!-- Active Entity Tab -->
             <div class="active-entity-tab-pill">
                 <div class="active-tab-logo-circle">
-                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'RORIRI') }}">
+                    <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}">
                 </div>
-                <span class="active-tab-text">{{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}</span>
+                <span class="active-tab-text">{{ \App\Models\SystemSetting::get('company_name', 'Client Management System') }}</span>
                 <button type="button" class="active-tab-close" title="Close Tab">&times;</button>
             </div>
 
@@ -791,9 +791,9 @@
         </main>
     </div>
 
-    <!-- RORIRI Footer -->
+    <!-- App Footer -->
     <footer class="roriri-footer">
-        Copyright &copy; {{ date('Y') }} {{ \App\Models\SystemSetting::get('company_name', 'RORIRI Software Solutions') }}. All rights reserved.
+        Copyright &copy; {{ date('Y') }} {{ \App\Models\SystemSetting::get('company_name', 'Client Management System') }}. All rights reserved.
     </footer>
 
     <!-- Universal Logout Confirmation Modal -->
@@ -827,7 +827,7 @@
     <script>
         // Dark Mode Logic with LocalStorage persistence
         function applySavedTheme() {
-            const savedTheme = localStorage.getItem('roriri_theme') || 'light';
+            const savedTheme = localStorage.getItem('app_theme') || localStorage.getItem('roriri_theme') || 'light';
             const themeIcon = document.getElementById('themeIcon');
             
             if (savedTheme === 'dark') {
@@ -862,12 +862,18 @@
                 });
             }
 
+            const savedTheme = localStorage.getItem('app_theme') || localStorage.getItem('roriri_theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+            }
+
             const themeToggleBtn = document.getElementById('themeToggleBtn');
             if (themeToggleBtn) {
                 themeToggleBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const isDark = document.body.classList.contains('dark-theme');
-                    const newTheme = isDark ? 'light' : 'dark';
+                    const isDark = document.body.classList.toggle('dark-theme');
+                    const newTheme = isDark ? 'dark' : 'light';
+                    localStorage.setItem('app_theme', newTheme);
                     localStorage.setItem('roriri_theme', newTheme);
                     applySavedTheme();
                 });

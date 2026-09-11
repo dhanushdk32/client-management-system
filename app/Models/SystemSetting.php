@@ -54,6 +54,6 @@ class SystemSetting extends Model
             return asset('storage/' . $customPath);
         }
 
-        return asset('images/roriri_logo.png');
+        return asset('images/logo.png');
     }
 }
