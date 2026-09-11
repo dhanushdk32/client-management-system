@@ -19,9 +19,12 @@
 
     <style>
         :root {
-            --roriri-blue: #0284c7;
-            --roriri-blue-dark: #0369a1;
-            --roriri-blue-light: #e0f2fe;
+            --roriri-blue: #991b1b;
+            --roriri-blue-dark: #7f1d1d;
+            --roriri-blue-light: #fef2f2;
+            --brand-red: #991b1b;
+            --brand-red-dark: #7f1d1d;
+            --brand-red-light: #fef2f2;
             --sidebar-bg: #ffffff;
             --body-bg: #f8fafc;
             --card-border: #f1f5f9;
@@ -70,7 +73,7 @@
         .brand-logo-text {
             font-size: 22px;
             font-weight: 800;
-            color: #0284c7;
+            color: #991b1b;
             letter-spacing: 0.5px;
             margin: 0;
             font-family: 'Outfit', sans-serif;
@@ -80,7 +83,7 @@
             background: none;
             border: none;
             font-size: 18px;
-            color: #0284c7;
+            color: #991b1b;
             cursor: pointer;
             padding: 6px;
             border-radius: 6px;
@@ -112,11 +115,11 @@
             width: 38px;
             height: 38px;
             border-radius: 50%;
-            background-color: #e0f2fe;
+            background-color: #fef2f2;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #0284c7;
+            color: #991b1b;
             font-weight: 700;
             font-size: 14px;
         }
@@ -280,17 +283,26 @@
         }
 
         .btn-primary {
-            background-color: #0284c7;
-            border-color: #0284c7;
+            background-color: #991b1b;
+            border-color: #991b1b;
         }
 
-        .btn-primary:hover {
-            background-color: #0369a1;
-            border-color: #0369a1;
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+            background-color: #7f1d1d;
+            border-color: #7f1d1d;
         }
 
         .text-primary {
-            color: #0284c7 !important;
+            color: #991b1b !important;
+        }
+
+        .bg-primary-subtle {
+            background-color: #fef2f2 !important;
+            color: #991b1b !important;
+        }
+
+        .border-primary-subtle {
+            border-color: #fecaca !important;
         }
 
         /* Red Logout Button */
@@ -327,7 +339,7 @@
         }
 
         body.dark-theme .brand-logo-text {
-            color: #38bdf8 !important;
+            color: #f87171 !important;
         }
 
         body.dark-theme .topbar-icon-btn,
@@ -342,7 +354,7 @@
         body.dark-theme .sidebar-toggle-btn:hover,
         body.dark-theme #clientThemeToggleBtn:hover {
             background-color: #475569 !important;
-            color: #38bdf8 !important;
+            color: #f87171 !important;
         }
 
         body.dark-theme .user-profile-badge {
@@ -361,12 +373,12 @@
 
         body.dark-theme .menu-link:hover {
             background-color: #334155 !important;
-            color: #38bdf8 !important;
+            color: #f87171 !important;
         }
 
         body.dark-theme .menu-link.active {
-            background-color: rgba(56, 189, 248, 0.15) !important;
-            color: #38bdf8 !important;
+            background-color: rgba(185, 28, 28, 0.25) !important;
+            color: #fca5a5 !important;
         }
 
         body.dark-theme .main-workspace {
@@ -499,7 +511,7 @@
                 <div class="brand-logo-icon">
                     <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}" width="32" height="32" style="border-radius: 8px; object-fit: contain;">
                 </div>
-                <h1 class="brand-logo-text" style="font-size: 18px; font-weight: 800; color: #0284c7; white-space: nowrap; margin: 0;">
+                <h1 class="brand-logo-text" style="font-size: 18px; font-weight: 800; color: #991b1b; white-space: nowrap; margin: 0;">
                     {{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}@if(\App\Models\SystemSetting::get('brand_tagline')) <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">{{ \App\Models\SystemSetting::get('brand_tagline') }}</span>@endif
                 </h1>
             </a>

@@ -272,10 +272,10 @@
                 datasets: [{
                     label: 'Client Enrolments',
                     data: data,
-                    borderColor: '#0284c7',
-                    backgroundColor: 'rgba(2, 132, 199, 0.08)',
+                    borderColor: '#991b1b',
+                    backgroundColor: 'rgba(153, 27, 27, 0.08)',
                     borderWidth: 3,
-                    pointBackgroundColor: '#0284c7',
+                    pointBackgroundColor: '#991b1b',
                     pointRadius: 4,
                     tension: 0.35,
                     fill: true

@@ -7,7 +7,7 @@
 <!-- High-Level Metric Cards -->
 <div class="row g-4 mb-4">
     <div class="col-md-3">
-        <div class="card h-100 border-0 shadow-sm" style="border-left: 4px solid #0284c7 !important;">
+        <div class="card h-100 border-0 shadow-sm" style="border-left: 4px solid #991b1b !important;">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>

@@ -19,8 +19,10 @@
 
     <style>
         :root {
-            --roriri-blue: #0284c7;
-            --roriri-blue-dark: #0369a1;
+            --roriri-blue: #991b1b;
+            --roriri-blue-dark: #7f1d1d;
+            --brand-red: #991b1b;
+            --brand-red-dark: #7f1d1d;
         }
 
         body {
@@ -53,7 +55,7 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #0284c7 0%, #10b981 50%, #f59e0b 100%);
+            background: linear-gradient(90deg, #7f1d1d 0%, #991b1b 50%, #e11d48 100%);
         }
 
         .brand-header {
@@ -76,7 +78,7 @@
             font-family: 'Outfit', sans-serif;
             font-size: 24px;
             font-weight: 800;
-            color: #0284c7;
+            color: #991b1b;
             letter-spacing: 0.5px;
             margin: 0;
         }
@@ -117,8 +119,8 @@
         }
 
         .form-control:focus {
-            border-color: #0284c7;
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+            border-color: #991b1b;
+            box-shadow: 0 0 0 3px rgba(153, 27, 27, 0.15);
         }
 
         .input-group-text {
@@ -129,7 +131,7 @@
         }
 
         .btn-submit {
-            background-color: #0284c7;
+            background: linear-gradient(135deg, #991b1b 0%, #b91c1c 100%);
             border: none;
             color: #ffffff;
             font-weight: 700;
@@ -138,11 +140,11 @@
             border-radius: 10px;
             width: 100%;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+            box-shadow: 0 4px 14px rgba(153, 27, 27, 0.3);
         }
 
         .btn-submit:hover {
-            background-color: #0369a1;
+            background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
             transform: translateY(-1px);
         }
 
@@ -152,7 +154,7 @@
 
         .forgot-link {
             font-size: 13px;
-            color: #0284c7;
+            color: #991b1b;
             text-decoration: none;
             font-weight: 500;
         }

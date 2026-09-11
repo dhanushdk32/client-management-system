@@ -37,7 +37,7 @@
             padding: 50px 40px;
         }
         .auth-right {
-            background-color: #eef2ff;
+            background-color: #fef2f2;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -46,24 +46,24 @@
             text-align: center;
         }
         .logo-icon {
-            color: #2b3a8c;
+            color: #991b1b;
             font-size: 24px;
         }
         .brand-text {
-            color: #2b3a8c;
+            color: #991b1b;
             font-weight: 700;
             font-size: 22px;
             margin-left: 10px;
         }
         .btn-primary {
-            background-color: #3b5998;
-            border-color: #3b5998;
+            background-color: #991b1b;
+            border-color: #991b1b;
             padding: 10px;
             font-weight: 500;
         }
         .btn-primary:hover {
-            background-color: #2b3a8c;
-            border-color: #2b3a8c;
+            background-color: #7f1d1d;
+            border-color: #7f1d1d;
         }
         .form-control {
             padding: 12px;
@@ -72,15 +72,15 @@
             border: 1px solid #e9ecef;
         }
         .form-control:focus {
-            box-shadow: none;
-            border-color: #3b5998;
+            box-shadow: 0 0 0 0.25rem rgba(153, 27, 27, 0.15);
+            border-color: #991b1b;
         }
         a {
             text-decoration: none;
-            color: #3b5998;
+            color: #991b1b;
         }
         a:hover {
-            color: #2b3a8c;
+            color: #7f1d1d;
         }
     </style>
 </head>
