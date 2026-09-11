@@ -27,7 +27,7 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -41,8 +41,8 @@
             max-width: 440px;
             background: #ffffff;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-            border: 1px solid #f1f5f9;
+            box-shadow: 0 10px 35px rgba(127, 29, 29, 0.08), 0 1px 3px rgba(127, 29, 29, 0.04);
+            border: 1px solid #fecaca;
             padding: 36px 32px;
             overflow: hidden;
             position: relative;

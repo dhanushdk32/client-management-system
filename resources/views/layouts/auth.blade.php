@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
-            background-color: #f4f6fb;
+            background-color: #fee2e2;
             font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh;
             display: flex;
@@ -27,7 +27,8 @@
         }
         .auth-card {
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 35px rgba(127, 29, 29, 0.08);
+            border: 1px solid #fecaca;
             overflow: hidden;
             background: #fff;
             max-width: 900px;

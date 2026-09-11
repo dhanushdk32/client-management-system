@@ -28,8 +28,8 @@
             --brand-red-dark: #7f1d1d;
             --brand-red-light: #fef2f2;
             --sidebar-bg: #ffffff;
-            --body-bg: #f8fafc;
-            --card-border: #f1f5f9;
+            --body-bg: #fee2e2;
+            --card-border: #fecaca;
             --text-dark: #1e293b;
             --text-muted: #64748b;
         }
@@ -348,10 +348,10 @@
 
         /* Metric Cards */
         .stat-card-roriri {
-            background: #ffffff;
+            background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
             border-radius: 16px;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 4px 18px rgba(127, 29, 29, 0.22);
             padding: 20px;
             display: flex;
             align-items: center;
@@ -361,24 +361,35 @@
         }
 
         .stat-card-roriri:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(127, 29, 29, 0.35);
         }
 
         .stat-card-label {
             font-size: 13px;
-            font-weight: 500;
-            color: #64748b;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.88) !important;
             margin-bottom: 6px;
         }
 
         .stat-card-value {
             font-size: 24px;
             font-weight: 800;
-            color: #1e293b;
+            color: #ffffff !important;
             font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
             margin: 0;
             letter-spacing: -0.5px;
+        }
+
+        .stat-card-value.text-success,
+        .stat-card-value.text-secondary,
+        .stat-card-value.text-danger,
+        .stat-card-value.text-primary,
+        .stat-card-roriri .text-success,
+        .stat-card-roriri .text-secondary,
+        .stat-card-roriri .text-danger,
+        .stat-card-roriri .text-primary {
+            color: #ffffff !important;
         }
 
         .stat-icon-wrapper {
@@ -392,6 +403,15 @@
             flex-shrink: 0;
         }
 
+        .stat-card-roriri .stat-icon-wrapper {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+
+        .stat-card-roriri .stat-icon-wrapper i {
+            color: #ffffff !important;
+        }
+
         .bg-icon-yellow { background-color: #fffbeb; color: #d97706; }
         .bg-icon-cyan { background-color: #e0f2fe; color: #0284c7; }
         .bg-icon-amber { background-color: #fefce8; color: #ca8a04; }
@@ -403,9 +423,9 @@
         .bg-icon-gray { background-color: #f1f5f9; color: #64748b; }
 
         .card {
-            border: 1px solid #f1f5f9;
+            border: 1px solid var(--card-border);
             border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 4px 20px rgba(127, 29, 29, 0.05);
             background-color: #ffffff;
             margin-bottom: 24px;
         }
