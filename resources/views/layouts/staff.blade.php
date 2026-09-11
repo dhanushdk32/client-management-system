@@ -19,16 +19,16 @@
 
     <style>
         :root {
-            --roriri-blue: #991b1b;
-            --roriri-blue-dark: #7f1d1d;
-            --roriri-blue-light: #fef2f2;
-            --brand-red: #991b1b;
-            --brand-red-dark: #7f1d1d;
-            --brand-red-light: #fef2f2;
-            --sidebar-bg: #ffffff;
-            --body-bg: #fee2e2;
-            --card-border: #fecaca;
-            --text-dark: #1e293b;
+            --roriri-blue: #fb5544;
+            --roriri-blue-dark: #e04333;
+            --roriri-blue-light: #fff1f0;
+            --brand-red: #fb5544;
+            --brand-red-dark: #e04333;
+            --brand-red-light: #fff1f0;
+            --sidebar-bg: #1f0038;
+            --body-bg: #f8fafc;
+            --card-border: #e2e8f0;
+            --text-dark: #1f0038;
             --text-muted: #64748b;
         }
 
@@ -74,7 +74,7 @@
         .brand-logo-text {
             font-size: 22px;
             font-weight: 800;
-            color: #991b1b;
+            color: #1f0038;
             letter-spacing: 0.5px;
             margin: 0;
             font-family: 'Outfit', sans-serif;
@@ -84,18 +84,19 @@
             background: none;
             border: none;
             font-size: 18px;
-            color: #991b1b;
+            color: #1f0038;
             cursor: pointer;
             padding: 6px;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
+            transition: background 0.2s, color 0.2s;
         }
 
         .sidebar-toggle-btn:hover {
             background-color: #f1f5f9;
+            color: #fb5544;
         }
 
         .user-profile-badge {
@@ -184,7 +185,7 @@
             gap: 12px;
             padding: 10px 14px;
             border-radius: 10px;
-            color: #475569;
+            color: #cbd5e1;
             text-decoration: none;
             font-size: 13.5px;
             font-weight: 500;
@@ -192,25 +193,31 @@
         }
 
         .sidebar-menu .menu-link:hover {
-            color: var(--roriri-blue);
-            background-color: #f8fafc;
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.08);
         }
 
         .sidebar-menu .menu-link.active {
-            color: var(--roriri-blue);
-            background-color: var(--roriri-blue-light);
-            font-weight: 600;
+            color: #ffffff;
+            background: linear-gradient(90deg, #fb5544 0%, #e04333 100%);
+            font-weight: 700;
+            box-shadow: 0 4px 14px rgba(251, 85, 68, 0.35);
         }
 
         .sidebar-menu .menu-link i {
             font-size: 16px;
             width: 20px;
             text-align: center;
-            color: #64748b;
+            color: #c4b5fd;
+            transition: color 0.2s;
+        }
+
+        .sidebar-menu .menu-link:hover i {
+            color: #ffffff;
         }
 
         .sidebar-menu .menu-link.active i {
-            color: var(--roriri-blue);
+            color: #ffffff;
         }
 
         .main-workspace {
@@ -223,10 +230,10 @@
 
         /* Metric Cards */
         .stat-card-roriri {
-            background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+            background: #ffffff;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 4px 18px rgba(127, 29, 29, 0.22);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 2px 12px rgba(31, 0, 56, 0.04);
             padding: 20px;
             display: flex;
             align-items: center;
@@ -236,35 +243,24 @@
         }
 
         .stat-card-roriri:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(127, 29, 29, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(31, 0, 56, 0.08);
         }
 
         .stat-card-label {
             font-size: 13px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.88) !important;
+            color: #64748b;
             margin-bottom: 6px;
         }
 
         .stat-card-value {
             font-size: 24px;
             font-weight: 800;
-            color: #ffffff !important;
+            color: #1f0038;
             font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
             margin: 0;
             letter-spacing: -0.5px;
-        }
-
-        .stat-card-value.text-success,
-        .stat-card-value.text-secondary,
-        .stat-card-value.text-danger,
-        .stat-card-value.text-primary,
-        .stat-card-roriri .text-success,
-        .stat-card-roriri .text-secondary,
-        .stat-card-roriri .text-danger,
-        .stat-card-roriri .text-primary {
-            color: #ffffff !important;
         }
 
         .stat-icon-wrapper {
@@ -278,61 +274,58 @@
             flex-shrink: 0;
         }
 
-        .stat-card-roriri .stat-icon-wrapper {
-            background-color: rgba(255, 255, 255, 0.2) !important;
-            color: #ffffff !important;
-        }
-
-        .stat-card-roriri .stat-icon-wrapper i {
-            color: #ffffff !important;
-        }
-
         .bg-icon-yellow { background-color: #fffbeb; color: #d97706; }
         .bg-icon-cyan { background-color: #e0f2fe; color: #0284c7; }
         .bg-icon-amber { background-color: #fefce8; color: #ca8a04; }
         .bg-icon-blue { background-color: #eff6ff; color: #2563eb; }
         .bg-icon-teal { background-color: #f0fdf4; color: #16a34a; }
         .bg-icon-green { background-color: #dcfce7; color: #16a34a; }
-        .bg-icon-red { background-color: #fef2f2; color: #ef4444; }
+        .bg-icon-red { background-color: #fff1f0; color: #fb5544; }
         .bg-icon-purple { background-color: #f5f3ff; color: #7c3aed; }
         .bg-icon-gray { background-color: #f1f5f9; color: #64748b; }
 
         .card {
             border: 1px solid var(--card-border);
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(127, 29, 29, 0.05);
+            box-shadow: 0 2px 12px rgba(31, 0, 56, 0.04);
             background-color: #ffffff;
             margin-bottom: 24px;
         }
 
         .btn-primary {
-            background-color: #991b1b;
-            border-color: #991b1b;
+            background-color: #fb5544;
+            border-color: #fb5544;
+            color: #ffffff;
         }
 
         .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
-            background-color: #7f1d1d;
-            border-color: #7f1d1d;
+            background-color: #e04333;
+            border-color: #e04333;
+            color: #ffffff;
         }
 
         .text-primary {
-            color: #991b1b !important;
+            color: #fb5544 !important;
         }
 
         .bg-primary-subtle {
-            background-color: #fef2f2 !important;
-            color: #991b1b !important;
+            background-color: #fff1f0 !important;
+            color: #fb5544 !important;
         }
 
         .border-primary-subtle {
-            border-color: #fecaca !important;
+            border-color: #fed7d2 !important;
         }
 
-        /* Red Logout Button */
+        .roriri-sidebar .border-top {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Red/Coral Logout Button */
         .sidebar-logout-btn {
-            border: 1.5px solid #ef4444;
-            color: #ef4444;
-            background: #ffffff;
+            border: 1.5px solid rgba(251, 85, 68, 0.35);
+            color: #fb5544;
+            background: rgba(251, 85, 68, 0.08);
             font-weight: 600;
             border-radius: 10px;
             padding: 10px 16px;
@@ -345,9 +338,9 @@
         }
 
         .sidebar-logout-btn:hover {
-            background-color: #fef2f2;
-            color: #dc2626;
-            border-color: #dc2626;
+            background-color: #fb5544;
+            color: #ffffff;
+            border-color: #fb5544;
         }
 
         /* Dark Theme Styles */

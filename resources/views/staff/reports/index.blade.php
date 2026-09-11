@@ -11,9 +11,9 @@
             <div>
                 <div class="stat-card-label">My Assigned Clients</div>
                 <h3 class="stat-card-value">{{ $stats['my_clients'] }}</h3>
-                <span class="badge bg-white text-danger fw-bold small mt-1">Active Portfolio</span>
+                <span class="badge bg-primary-subtle text-primary fw-bold small mt-1">Active Portfolio</span>
             </div>
-            <div class="stat-icon-wrapper">
+            <div class="stat-icon-wrapper bg-icon-red">
                 <i class="fa-solid fa-users"></i>
             </div>
         </div>
@@ -24,9 +24,9 @@
             <div>
                 <div class="stat-card-label">My Projects</div>
                 <h3 class="stat-card-value">{{ $stats['total_projects'] }}</h3>
-                <span class="badge bg-white text-danger fw-bold small mt-1">{{ $stats['active_projects'] }} In Progress</span>
+                <span class="badge bg-primary-subtle text-primary fw-bold small mt-1">{{ $stats['active_projects'] }} In Progress</span>
             </div>
-            <div class="stat-icon-wrapper">
+            <div class="stat-icon-wrapper bg-icon-blue">
                 <i class="fa-solid fa-briefcase"></i>
             </div>
         </div>
@@ -37,9 +37,9 @@
             <div>
                 <div class="stat-card-label">Completed Projects</div>
                 <h3 class="stat-card-value">{{ $stats['completed_projects'] }}</h3>
-                <span class="badge bg-white text-danger fw-bold small mt-1">Delivered</span>
+                <span class="badge bg-primary-subtle text-primary fw-bold small mt-1">Delivered</span>
             </div>
-            <div class="stat-icon-wrapper">
+            <div class="stat-icon-wrapper bg-icon-green">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
         </div>
@@ -50,9 +50,9 @@
             <div>
                 <div class="stat-card-label">Client Inquiries</div>
                 <h3 class="stat-card-value">{{ $stats['open_tickets'] }}</h3>
-                <span class="badge bg-white text-danger fw-bold small mt-1">{{ $stats['resolved_tickets'] }} Resolved</span>
+                <span class="badge bg-primary-subtle text-primary fw-bold small mt-1">{{ $stats['resolved_tickets'] }} Resolved</span>
             </div>
-            <div class="stat-icon-wrapper">
+            <div class="stat-icon-wrapper bg-icon-amber">
                 <i class="fa-solid fa-ticket"></i>
             </div>
         </div>
