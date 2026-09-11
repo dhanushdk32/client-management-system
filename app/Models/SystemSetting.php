@@ -17,7 +17,22 @@ class SystemSetting extends Model
     {
         try {
             $setting = self::where('key', $key)->first();
-            return $setting ? $setting->value : $default;
+            if ($setting && $setting->value !== null) {
+                $val = $setting->value;
+                if (is_string($val) && stripos($val, 'RORIRI') !== false) {
+                    if ($key === 'brand_name' || $key === 'company_name') {
+                        return 'Client Management System';
+                    }
+                    if ($key === 'brand_tagline') {
+                        return '';
+                    }
+                    if ($key === 'company_email') {
+                        return 'contact@clientmanagementsystem.com';
+                    }
+                }
+                return $val;
+            }
+            return $default;
         } catch (\Exception $e) {
             return $default;
         }
@@ -38,22 +53,34 @@ class SystemSetting extends Model
     public static function getAllSettings()
     {
         try {
-            return self::pluck('value', 'key')->toArray();
+            $settings = self::pluck('value', 'key')->toArray();
+            foreach ($settings as $key => $val) {
+                if (is_string($val) && stripos($val, 'RORIRI') !== false) {
+                    if ($key === 'brand_name' || $key === 'company_name') {
+                        $settings[$key] = 'Client Management System';
+                    } elseif ($key === 'brand_tagline') {
+                        $settings[$key] = '';
+                    } elseif ($key === 'company_email') {
+                        $settings[$key] = 'contact@clientmanagementsystem.com';
+                    }
+                }
+            }
+            return $settings;
         } catch (\Exception $e) {
             return [];
         }
     }
 
     /**
-     * Get active brand logo URL
+     * Get active brand logo URL with cache busting
      */
     public static function getBrandLogoUrl()
     {
         $customPath = self::get('brand_logo_path');
-        if ($customPath) {
+        if ($customPath && !str_contains(strtolower($customPath), 'roriri')) {
             return asset('storage/' . $customPath);
         }
 
-        return asset('images/logo.png');
+        return asset('images/logo.png?v=2');
     }
 }
