@@ -19,10 +19,10 @@
 
     <style>
         :root {
-            --roriri-blue: #525f70;
-            --roriri-blue-dark: #3f4a58;
-            --brand-red: #525f70;
-            --brand-red-dark: #3f4a58;
+            --roriri-blue: #475569;
+            --roriri-blue-dark: #334155;
+            --brand-red: #475569;
+            --brand-red-dark: #334155;
         }
 
         body {
@@ -40,8 +40,8 @@
             width: 100%;
             max-width: 440px;
             background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.04);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
             border: 1px solid #e2e8f0;
             padding: 36px 32px;
             overflow: hidden;
@@ -54,8 +54,8 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 5px;
-            background: #525f70;
+            height: 4px;
+            background: #475569;
         }
 
         .brand-header {
@@ -64,22 +64,22 @@
         }
 
         .brand-logo-img {
-            width: 72px;
-            height: 72px;
-            border-radius: 14px;
+            width: 64px;
+            height: 64px;
+            border-radius: 10px;
             object-fit: contain;
             margin-bottom: 12px;
             background: #ffffff;
-            padding: 6px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+            padding: 4px;
+            border: 1px solid #e2e8f0;
         }
 
         .brand-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
-            color: #1e293b;
-            letter-spacing: 0.5px;
+            color: #0f172a;
+            letter-spacing: -0.3px;
             margin: 0;
         }
 
@@ -92,10 +92,10 @@
         .role-hint-pill {
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 8px 12px;
             font-size: 12px;
-            color: #525f70;
+            color: #475569;
             margin-bottom: 22px;
             display: flex;
             align-items: center;
@@ -111,40 +111,41 @@
         }
 
         .form-control {
-            border-radius: 10px;
-            padding: 12px 14px;
-            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
             font-size: 14px;
-            transition: all 0.2s;
+            transition: all 0.15s;
+            color: #0f172a;
         }
 
         .form-control:focus {
-            border-color: #525f70;
-            box-shadow: 0 0 0 3px rgba(82, 95, 112, 0.2);
+            border-color: #475569;
+            box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.15);
         }
 
         .input-group-text {
             background-color: transparent;
-            border-color: #cbd5e1;
+            border-color: #e2e8f0;
             color: #94a3b8;
             cursor: pointer;
         }
 
         .btn-submit {
-            background: #525f70;
+            background: #475569;
             border: none;
             color: #ffffff;
-            font-weight: 700;
-            font-size: 15px;
-            padding: 12px;
-            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 11px;
+            border-radius: 8px;
             width: 100%;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 14px rgba(82, 95, 112, 0.25);
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         }
 
         .btn-submit:hover {
-            background: #3f4a58;
+            background: #334155;
             transform: translateY(-1px);
         }
 
@@ -154,7 +155,7 @@
 
         .forgot-link {
             font-size: 13px;
-            color: #525f70;
+            color: #475569;
             text-decoration: none;
             font-weight: 500;
         }
@@ -178,7 +179,7 @@
             padding: 4px 10px;
             border-radius: 6px;
             background-color: #f1f5f9;
-            color: #525f70;
+            color: #475569;
         }
     </style>
 </head>

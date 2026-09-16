@@ -54,14 +54,14 @@
 
 <!-- 🌟 Dedicated Assigned Project Team Leader Banner -->
 @if(isset($primaryTeamLeader) && $primaryTeamLeader)
-    <div class="card border shadow-sm mb-4 p-4 rounded-4" style="background-color: #f8fafc; border-color: #e2e8f0 !important;">
+    <div class="card border shadow-sm mb-4 p-4 rounded-3" style="background-color: #ffffff; border-color: #e2e8f0 !important;">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div class="d-flex align-items-center gap-3">
-                <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 52px; height: 52px; font-size: 20px; background-color: #525f70;">
+                <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold shadow-xs" style="width: 48px; height: 48px; font-size: 18px; background-color: #475569;">
                     {{ strtoupper(substr($primaryTeamLeader->name, 0, 2)) }}
                 </div>
                 <div>
-                    <span class="badge border rounded-pill px-3 py-1 mb-1 font-monospace" style="background-color: #e2e8f0; color: #525f70; font-size: 11px; border-color: #cbd5e1 !important;">
+                    <span class="badge border rounded-pill px-3 py-1 mb-1 font-monospace" style="background-color: #f1f5f9; color: #475569; font-size: 11px; border-color: #e2e8f0 !important;">
                         YOUR DEDICATED TEAM LEADER
                     </span>
                     <h5 class="fw-bold mb-0 text-dark">{{ $primaryTeamLeader->name }}</h5>
@@ -69,7 +69,7 @@
                 </div>
             </div>
             <div>
-                <a href="{{ route('client.tickets.index') }}" class="btn btn-primary fw-semibold rounded-pill px-4 shadow-sm">
+                <a href="{{ route('client.tickets.index') }}" class="btn btn-primary fw-semibold rounded-2 px-4 shadow-xs">
                     <i class="fa-solid fa-comment-dots me-1"></i> Start Conversation with Team Lead
                 </a>
             </div>
@@ -83,10 +83,10 @@
     $clickableLiveUrl = (!empty($liveWebsiteUrl) && !\Illuminate\Support\Str::startsWith($liveWebsiteUrl, ['http://', 'https://'])) ? 'https://' . $liveWebsiteUrl : $liveWebsiteUrl;
 @endphp
 @if(!empty($clickableLiveUrl))
-    <div class="card border-0 shadow-sm mb-4 bg-white p-3 rounded-4 border-start border-4 border-primary">
+    <div class="card border shadow-sm mb-4 bg-white p-3 rounded-3 border-start border-4 border-primary" style="border-color: #e2e8f0;">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div class="d-flex align-items-center gap-3">
-                <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold shadow-xs" style="width: 48px; height: 48px; font-size: 20px;">
+                <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold shadow-xs" style="width: 44px; height: 44px; font-size: 18px;">
                     <i class="fa-solid fa-globe"></i>
                 </div>
                 <div>
@@ -101,7 +101,7 @@
                 </div>
             </div>
             <div>
-                <a href="{{ $clickableLiveUrl }}" target="_blank" class="btn btn-primary fw-semibold rounded-pill px-4 shadow-sm">
+                <a href="{{ $clickableLiveUrl }}" target="_blank" class="btn btn-primary fw-semibold rounded-2 px-4 shadow-xs">
                     <i class="fa-solid fa-arrow-up-right-from-square me-2"></i> Launch Website
                 </a>
             </div>
@@ -112,7 +112,7 @@
 <div class="row g-4 mb-4">
     <!-- My Services List with Team Lead Indicators -->
     <div class="col-md-6">
-        <div class="card p-4 h-100 shadow-sm border-0">
+        <div class="card p-4 h-100 shadow-sm border rounded-3" style="border-color: #e2e8f0;">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h6 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-briefcase me-1 text-primary"></i> My Active Projects & Services</h6>
                 <a href="{{ route('client.services.index') }}" class="text-decoration-none small fw-semibold">View All</a>

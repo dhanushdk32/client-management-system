@@ -21,16 +21,16 @@
 
     <style>
         :root {
-            --roriri-blue: #525f70;
-            --roriri-blue-dark: #3f4a58;
-            --roriri-blue-light: #f1f5f9;
-            --brand-red: #525f70;
-            --brand-red-dark: #3f4a58;
-            --brand-red-light: #f1f5f9;
-            --sidebar-bg: #525f70;
+            --roriri-blue: #475569;
+            --roriri-blue-dark: #334155;
+            --roriri-blue-light: #f8fafc;
+            --brand-red: #475569;
+            --brand-red-dark: #334155;
+            --brand-red-light: #f8fafc;
+            --sidebar-bg: #ffffff;
             --body-bg: #f8fafc;
             --card-border: #e2e8f0;
-            --text-dark: #1e293b;
+            --text-dark: #0f172a;
             --text-muted: #64748b;
         }
 
@@ -48,8 +48,8 @@
         /* Top Header Navbar */
         .roriri-topbar {
             height: 68px;
-            background-color: #525f70;
-            border-bottom: 1px solid #3f4a58;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -57,7 +57,7 @@
             position: sticky;
             top: 0;
             z-index: 1050;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
         }
 
         .brand-section {
@@ -83,7 +83,7 @@
             align-items: center;
             justify-content: center;
             padding: 4px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+            border: 1px solid #e2e8f0;
             flex-shrink: 0;
         }
 
@@ -94,37 +94,38 @@
         }
 
         .brand-logo-text {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 0.5px;
+            color: #0f172a;
+            letter-spacing: -0.3px;
             margin: 0;
             font-family: 'Outfit', sans-serif;
         }
 
         .sidebar-toggle-btn {
-            background: none;
-            border: none;
-            font-size: 18px;
-            color: #ffffff;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            font-size: 15px;
+            color: #475569;
             cursor: pointer;
-            padding: 6px;
-            border-radius: 6px;
+            padding: 6px 10px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s, color 0.2s;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
         }
 
         .sidebar-toggle-btn:hover {
-            background-color: #3f4a58;
-            color: #ffffff;
+            background-color: #f1f5f9;
+            color: #0f172a;
+            border-color: #cbd5e1;
         }
 
         .topbar-right {
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 14px;
         }
 
         .topbar-icon-btn {
@@ -134,17 +135,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #475569;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             text-decoration: none;
-            transition: all 0.2s ease;
-            font-size: 16px;
+            transition: all 0.15s ease;
+            font-size: 15px;
         }
 
         .topbar-icon-btn:hover {
-            background: #3f4a58;
-            color: #ffffff;
+            background: #f1f5f9;
+            color: #0f172a;
+            border-color: #cbd5e1;
         }
 
         .user-profile-badge {
@@ -154,11 +156,13 @@
             text-decoration: none;
             padding: 4px 8px;
             border-radius: 8px;
-            transition: background 0.2s;
+            border: 1px solid transparent;
+            transition: background 0.15s, border-color 0.15s;
         }
 
         .user-profile-badge:hover {
-            background: #3f4a58;
+            background: #f8fafc;
+            border-color: #e2e8f0;
         }
 
         .user-avatar-circle {
@@ -166,12 +170,12 @@
             height: 38px;
             border-radius: 50%;
             object-fit: cover;
-            background-color: #3f4a58;
+            background-color: #f1f5f9;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #475569;
+            border: 1px solid #e2e8f0;
             font-weight: 700;
             font-size: 14px;
         }
@@ -183,14 +187,14 @@
         }
 
         .user-info-text .user-name {
-            font-size: 14px;
-            font-weight: 700;
-            color: #ffffff;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #0f172a;
         }
 
         .user-info-text .user-role {
             font-size: 12px;
-            color: #cbd5e1;
+            color: #64748b;
         }
 
         /* App Wrapper */
@@ -206,7 +210,7 @@
             min-width: 260px;
             max-width: 260px;
             background-color: var(--sidebar-bg);
-            border-right: 1px solid #3f4a58;
+            border-right: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
             padding: 16px 0;
@@ -237,50 +241,50 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
             overflow-y: auto;
             flex: 1;
         }
 
         .sidebar-menu .menu-item {
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .sidebar-menu .menu-link {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 14px;
-            border-radius: 10px;
-            color: #cbd5e1;
+            padding: 9px 12px;
+            border-radius: 8px;
+            color: #475569;
             text-decoration: none;
             font-size: 13.5px;
             font-weight: 500;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
         }
 
         .sidebar-menu .menu-link:hover {
-            color: #ffffff;
-            background-color: #3f4a58;
+            color: #0f172a;
+            background-color: #f1f5f9;
         }
 
         .sidebar-menu .menu-link.active {
             color: #ffffff;
-            background: #3f4a58;
-            font-weight: 700;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            background: #475569;
+            font-weight: 600;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         }
 
         .sidebar-menu .menu-link i {
-            font-size: 16px;
+            font-size: 15px;
             width: 20px;
             text-align: center;
-            color: #cbd5e1;
-            transition: color 0.2s;
+            color: #64748b;
+            transition: color 0.15s;
         }
 
         .sidebar-menu .menu-link:hover i {
-            color: #ffffff;
+            color: #0f172a;
         }
 
         .sidebar-menu .menu-link.active i {
@@ -288,23 +292,24 @@
         }
 
         .menu-category-header {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #cbd5e1;
-            padding: 14px 14px 6px 14px;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            padding: 14px 12px 6px 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
         }
 
         .menu-category-badge {
-            background-color: #3f4a58;
-            color: #ffffff;
+            background-color: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
             font-size: 10px;
-            font-weight: 800;
-            padding: 2px 5px;
+            font-weight: 700;
+            padding: 2px 6px;
             border-radius: 4px;
             letter-spacing: 0;
         }
@@ -320,27 +325,27 @@
 
         /* Active Entity Tab Header (from Screenshot 2) */
         .active-entity-tab-pill {
-            background-color: #f1f5f9;
+            background-color: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 6px 14px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
             margin-bottom: 24px;
         }
 
         .active-tab-logo-circle {
             width: 22px;
             height: 22px;
-            background-color: #ffffff;
+            background-color: #f1f5f9;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
         }
 
         .active-tab-logo-circle img {
@@ -352,7 +357,7 @@
         .active-tab-text {
             font-size: 13.5px;
             font-weight: 600;
-            color: #1e293b;
+            color: #0f172a;
         }
 
         .active-tab-close {
@@ -360,37 +365,38 @@
             border: none;
             font-size: 15px;
             font-weight: 700;
-            color: #1e293b;
+            color: #64748b;
             cursor: pointer;
             padding: 0 2px;
             line-height: 1;
             display: flex;
             align-items: center;
             opacity: 0.8;
-            transition: opacity 0.2s;
+            transition: opacity 0.2s, color 0.2s;
         }
 
         .active-tab-close:hover {
             opacity: 1;
+            color: #0f172a;
         }
 
         /* Metric Cards */
         .stat-card-roriri {
             background: #ffffff;
-            border-radius: 16px;
+            border-radius: 12px;
             border: 1px solid var(--card-border);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
             padding: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
             height: 100%;
         }
 
         .stat-card-roriri:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
         }
 
         .stat-card-label {
@@ -402,7 +408,7 @@
 
         .stat-card-value {
             font-size: 24px;
-            font-weight: 800;
+            font-weight: 700;
             color: #0f172a;
             font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
             margin: 0;
@@ -410,69 +416,84 @@
         }
 
         .stat-icon-wrapper {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             flex-shrink: 0;
         }
 
         .bg-icon-yellow { background-color: #fffbeb; color: #d97706; }
-        .bg-icon-cyan { background-color: #e0f2fe; color: #0284c7; }
+        .bg-icon-cyan { background-color: #f0f9ff; color: #0284c7; }
         .bg-icon-amber { background-color: #fefce8; color: #ca8a04; }
         .bg-icon-blue { background-color: #eff6ff; color: #2563eb; }
         .bg-icon-teal { background-color: #f0fdf4; color: #16a34a; }
         .bg-icon-green { background-color: #dcfce7; color: #16a34a; }
-        .bg-icon-red { background-color: #f1f5f9; color: #525f70; }
+        .bg-icon-red { background-color: #f1f5f9; color: #475569; }
         .bg-icon-purple { background-color: #f5f3ff; color: #7c3aed; }
         .bg-icon-gray { background-color: #f1f5f9; color: #64748b; }
 
         .card {
             border: 1px solid var(--card-border);
-            border-radius: 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
             background-color: #ffffff;
             margin-bottom: 24px;
         }
 
+        .card-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 20px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
         .btn-primary {
-            background-color: #525f70;
-            border-color: #525f70;
+            background-color: #475569;
+            border-color: #475569;
             color: #ffffff;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         }
 
         .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
-            background-color: #3f4a58;
-            border-color: #3f4a58;
+            background-color: #334155;
+            border-color: #334155;
             color: #ffffff;
         }
 
         .btn-outline-primary {
-            color: #525f70;
-            border-color: #525f70;
+            background-color: #ffffff;
+            color: #475569;
+            border-color: #e2e8f0;
+            border-radius: 8px;
+            font-weight: 500;
         }
 
         .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
-            background-color: #525f70;
-            border-color: #525f70;
-            color: #ffffff;
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: #0f172a;
         }
 
         .text-primary {
-            color: #525f70 !important;
+            color: #475569 !important;
         }
 
         .bg-primary {
-            background-color: #525f70 !important;
+            background-color: #475569 !important;
             color: #ffffff !important;
         }
 
         .bg-primary-subtle {
             background-color: #f1f5f9 !important;
-            color: #3f4a58 !important;
+            color: #475569 !important;
+            border-color: #e2e8f0 !important;
         }
 
         .border-primary-subtle {
@@ -480,38 +501,88 @@
         }
 
         .border-primary {
-            border-color: #525f70 !important;
+            border-color: #475569 !important;
         }
 
         .page-item.active .page-link {
-            background-color: #525f70;
-            border-color: #525f70;
+            background-color: #475569;
+            border-color: #475569;
+            color: #ffffff;
+        }
+
+        .page-link {
+            color: #475569;
+            border-color: #e2e8f0;
+        }
+
+        .page-link:hover {
+            background-color: #f1f5f9;
+            color: #0f172a;
         }
 
         .roriri-sidebar .border-top {
-            border-color: rgba(255, 255, 255, 0.12) !important;
+            border-color: #e2e8f0 !important;
         }
 
-        /* Slate Logout Button */
+        /* Minimal Logout Button */
         .sidebar-logout-btn {
-            border: 1.5px solid rgba(255, 255, 255, 0.25);
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            background: #ffffff;
             font-weight: 600;
-            border-radius: 10px;
-            padding: 10px 16px;
+            border-radius: 8px;
+            padding: 9px 14px;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
         }
 
         .sidebar-logout-btn:hover {
-            background-color: #3f4a58;
-            color: #ffffff;
-            border-color: #3f4a58;
+            background-color: #f8fafc;
+            color: #0f172a;
+            border-color: #cbd5e1;
+        }
+
+        /* Forms */
+        .form-control, .form-select {
+            border-color: #e2e8f0;
+            border-radius: 8px;
+            color: #0f172a;
+            background-color: #ffffff;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #475569;
+            box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.15);
+        }
+
+        .form-label {
+            color: #334155;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        /* Tables */
+        .table {
+            border-color: #e2e8f0;
+        }
+
+        .table thead th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 12.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f8fafc;
         }
 
         /* Dark Theme Styles */
@@ -703,8 +774,8 @@
                 <div class="brand-logo-icon">
                     <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}" width="32" height="32" style="border-radius: 8px; object-fit: contain;">
                 </div>
-                <h1 class="brand-logo-text" style="font-size: 18px; font-weight: 800; color: #ffffff; white-space: nowrap; margin: 0;">
-                    {{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}@if(\App\Models\SystemSetting::get('brand_tagline')) <span style="font-size: 12.5px; font-weight: 600; color: #cbd5e1; letter-spacing: 0;">{{ \App\Models\SystemSetting::get('brand_tagline') }}</span>@endif
+                <h1 class="brand-logo-text" style="font-size: 18px; font-weight: 800; color: #0f172a; white-space: nowrap; margin: 0;">
+                    {{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}@if(\App\Models\SystemSetting::get('brand_tagline')) <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">{{ \App\Models\SystemSetting::get('brand_tagline') }}</span>@endif
                 </h1>
             </a>
             <button class="sidebar-toggle-btn" id="sidebarToggle" title="Toggle Navigation">
