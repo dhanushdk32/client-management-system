@@ -71,6 +71,25 @@
             text-decoration: none;
         }
 
+        .brand-logo-icon {
+            width: 36px;
+            height: 36px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+            flex-shrink: 0;
+        }
+
+        .brand-logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
         .brand-logo-text {
             font-size: 22px;
             font-weight: 800;
