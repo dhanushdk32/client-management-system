@@ -54,22 +54,22 @@
 
 <!-- 🌟 Dedicated Assigned Project Team Leader Banner -->
 @if(isset($primaryTeamLeader) && $primaryTeamLeader)
-    <div class="card border-0 shadow-sm mb-4 bg-primary text-white p-4 rounded-4">
+    <div class="card border shadow-sm mb-4 p-4 rounded-4" style="background-color: #f8fafc; border-color: #e2e8f0 !important;">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div class="d-flex align-items-center gap-3">
-                <div class="rounded-circle bg-white text-primary d-flex align-items-center justify-content-center fw-bold shadow" style="width: 52px; height: 52px; font-size: 20px;">
+                <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 52px; height: 52px; font-size: 20px; background-color: #525f70;">
                     {{ strtoupper(substr($primaryTeamLeader->name, 0, 2)) }}
                 </div>
                 <div>
-                    <span class="badge bg-white bg-opacity-25 text-white rounded-pill px-3 py-1 mb-1 font-monospace" style="font-size: 11px;">
+                    <span class="badge border rounded-pill px-3 py-1 mb-1 font-monospace" style="background-color: #e2e8f0; color: #525f70; font-size: 11px; border-color: #cbd5e1 !important;">
                         YOUR DEDICATED TEAM LEADER
                     </span>
-                    <h5 class="fw-bold mb-0 text-white">{{ $primaryTeamLeader->name }}</h5>
-                    <small class="text-white-50">{{ $primaryTeamLeader->designation ?? 'Lead Technical Project Manager' }} &bull; {{ $primaryTeamLeader->department ?? 'Engineering' }}</small>
+                    <h5 class="fw-bold mb-0 text-dark">{{ $primaryTeamLeader->name }}</h5>
+                    <small class="text-muted">{{ $primaryTeamLeader->designation ?? 'Lead Technical Project Manager' }} &bull; {{ $primaryTeamLeader->department ?? 'Engineering' }}</small>
                 </div>
             </div>
             <div>
-                <a href="{{ route('client.tickets.index') }}" class="btn btn-light text-primary fw-bold rounded-pill px-4 shadow-sm">
+                <a href="{{ route('client.tickets.index') }}" class="btn btn-primary fw-semibold rounded-pill px-4 shadow-sm">
                     <i class="fa-solid fa-comment-dots me-1"></i> Start Conversation with Team Lead
                 </a>
             </div>

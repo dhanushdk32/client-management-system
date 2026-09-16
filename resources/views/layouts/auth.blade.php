@@ -48,7 +48,7 @@
             text-align: center;
         }
         .logo-icon {
-            color: #475569;
+            color: #525f70;
             font-size: 24px;
         }
         .brand-text {
@@ -58,14 +58,14 @@
             margin-left: 10px;
         }
         .btn-primary {
-            background-color: #475569;
-            border-color: #475569;
+            background-color: #525f70;
+            border-color: #525f70;
             padding: 10px;
             font-weight: 500;
         }
         .btn-primary:hover {
-            background-color: #334155;
-            border-color: #334155;
+            background-color: #3f4a58;
+            border-color: #3f4a58;
         }
         .form-control {
             padding: 12px;
@@ -74,15 +74,15 @@
             border: 1px solid #e9ecef;
         }
         .form-control:focus {
-            box-shadow: 0 0 0 0.25rem rgba(71, 85, 105, 0.2);
-            border-color: #475569;
+            box-shadow: 0 0 0 0.25rem rgba(82, 95, 112, 0.2);
+            border-color: #525f70;
         }
         a {
             text-decoration: none;
-            color: #475569;
+            color: #525f70;
         }
         a:hover {
-            color: #334155;
+            color: #3f4a58;
         }
     </style>
 </head>

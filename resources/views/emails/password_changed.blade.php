@@ -9,7 +9,7 @@
     <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
         
         <!-- Header Banner -->
-        <div style="background: #475569; padding: 35px 30px; text-align: center; color: #ffffff;">
+        <div style="background: #525f70; padding: 35px 30px; text-align: center; color: #ffffff;">
             <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: #ffffff;">Password Changed Successfully</h1>
             <p style="margin: 8px 0 0 0; font-size: 14px; color: #cbd5e1; opacity: 0.95;">Security Notification for Your Account</p>
         </div>
@@ -19,7 +19,7 @@
             <p style="color: #334155; font-size: 16px; line-height: 1.6; margin-top: 0;">
                 Hello <strong>{{ $user->name }}</strong>,
             </p>
-            <p style="color: #475569; font-size: 15px; line-height: 1.6;">
+            <p style="color: #525f70; font-size: 15px; line-height: 1.6;">
                 This email is to confirm that the password for your account (<strong>{{ $user->email }}</strong>) was successfully updated on <strong>{{ $changedAt }} (IST)</strong>.
             </p>
 
@@ -35,7 +35,7 @@
 
             <!-- Login Action Button -->
             <div style="text-align: center; margin: 30px 0 25px 0;">
-                <a href="{{ route('login') }}" style="display: inline-block; background-color: #475569; color: #ffffff; padding: 13px 32px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 12px rgba(71, 85, 105, 0.25);">
+                <a href="{{ route('login') }}" style="display: inline-block; background-color: #525f70; color: #ffffff; padding: 13px 32px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 12px rgba(82, 95, 112, 0.25);">
                     Go to Login Page
                 </a>
             </div>

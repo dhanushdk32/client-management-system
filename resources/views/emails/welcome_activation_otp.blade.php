@@ -9,7 +9,7 @@
     <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
         
         <!-- Header Banner -->
-        <div style="background: #475569; padding: 35px 30px; text-align: center; color: #ffffff;">
+        <div style="background: #525f70; padding: 35px 30px; text-align: center; color: #ffffff;">
             <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #ffffff;">Client Management Portal</h1>
             <p style="margin: 8px 0 0 0; font-size: 15px; color: #cbd5e1; opacity: 0.95;">Account Verification Code</p>
         </div>
@@ -19,15 +19,15 @@
             <p style="color: #334155; font-size: 16px; line-height: 1.6; margin-top: 0;">
                 Hello <strong>{{ $name }}</strong>,
             </p>
-            <p style="color: #475569; font-size: 15px; line-height: 1.6;">
+            <p style="color: #525f70; font-size: 15px; line-height: 1.6;">
                 An account is being provisioned for you as <strong>{{ $accountType }}</strong>{{ $companyOrRole ? ' ('.$companyOrRole.')' : '' }} on the Client Management Portal.
             </p>
-            <p style="color: #475569; font-size: 15px; line-height: 1.6;">
+            <p style="color: #525f70; font-size: 15px; line-height: 1.6;">
                 Please provide the 6-digit verification OTP code below to complete your account setup:
             </p>
 
             <!-- OTP Code Box -->
-            <div style="background-color: #f8fafc; border: 2px dashed #475569; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
+            <div style="background-color: #f8fafc; border: 2px dashed #525f70; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
                 <span style="display: block; font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Your 6-Digit Verification Code</span>
                 <span style="font-size: 38px; font-weight: 800; letter-spacing: 8px; color: #334155; font-family: monospace;">{{ $otpCode }}</span>
                 <span style="display: block; font-size: 13px; color: #dc2626; font-weight: 600; margin-top: 10px;">⏰ Valid for 5 minutes only</span>

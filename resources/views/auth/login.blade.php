@@ -19,10 +19,10 @@
 
     <style>
         :root {
-            --roriri-blue: #475569;
-            --roriri-blue-dark: #334155;
-            --brand-red: #475569;
-            --brand-red-dark: #334155;
+            --roriri-blue: #525f70;
+            --roriri-blue-dark: #3f4a58;
+            --brand-red: #525f70;
+            --brand-red-dark: #3f4a58;
         }
 
         body {
@@ -55,7 +55,7 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: #475569;
+            background: #525f70;
         }
 
         .brand-header {
@@ -95,7 +95,7 @@
             border-radius: 10px;
             padding: 8px 12px;
             font-size: 12px;
-            color: #475569;
+            color: #525f70;
             margin-bottom: 22px;
             display: flex;
             align-items: center;
@@ -119,8 +119,8 @@
         }
 
         .form-control:focus {
-            border-color: #475569;
-            box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.2);
+            border-color: #525f70;
+            box-shadow: 0 0 0 3px rgba(82, 95, 112, 0.2);
         }
 
         .input-group-text {
@@ -131,7 +131,7 @@
         }
 
         .btn-submit {
-            background: #475569;
+            background: #525f70;
             border: none;
             color: #ffffff;
             font-weight: 700;
@@ -140,11 +140,11 @@
             border-radius: 10px;
             width: 100%;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 14px rgba(71, 85, 105, 0.25);
+            box-shadow: 0 4px 14px rgba(82, 95, 112, 0.25);
         }
 
         .btn-submit:hover {
-            background: #334155;
+            background: #3f4a58;
             transform: translateY(-1px);
         }
 
@@ -154,7 +154,7 @@
 
         .forgot-link {
             font-size: 13px;
-            color: #475569;
+            color: #525f70;
             text-decoration: none;
             font-weight: 500;
         }
@@ -178,7 +178,7 @@
             padding: 4px 10px;
             border-radius: 6px;
             background-color: #f1f5f9;
-            color: #475569;
+            color: #525f70;
         }
     </style>
 </head>

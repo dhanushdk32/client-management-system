@@ -21,13 +21,13 @@
 
     <style>
         :root {
-            --roriri-blue: #475569;
-            --roriri-blue-dark: #334155;
+            --roriri-blue: #525f70;
+            --roriri-blue-dark: #3f4a58;
             --roriri-blue-light: #f1f5f9;
-            --brand-red: #475569;
-            --brand-red-dark: #334155;
+            --brand-red: #525f70;
+            --brand-red-dark: #3f4a58;
             --brand-red-light: #f1f5f9;
-            --sidebar-bg: #475569;
+            --sidebar-bg: #525f70;
             --body-bg: #f8fafc;
             --card-border: #e2e8f0;
             --text-dark: #1e293b;
@@ -48,8 +48,8 @@
         /* Top Header Navbar */
         .roriri-topbar {
             height: 68px;
-            background-color: #475569;
-            border-bottom: 1px solid #334155;
+            background-color: #525f70;
+            border-bottom: 1px solid #3f4a58;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -57,7 +57,7 @@
             position: sticky;
             top: 0;
             z-index: 1050;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
 
         .brand-section {
@@ -117,7 +117,7 @@
         }
 
         .sidebar-toggle-btn:hover {
-            background-color: #334155;
+            background-color: #3f4a58;
             color: #ffffff;
         }
 
@@ -143,7 +143,7 @@
         }
 
         .topbar-icon-btn:hover {
-            background: #334155;
+            background: #3f4a58;
             color: #ffffff;
         }
 
@@ -158,7 +158,7 @@
         }
 
         .user-profile-badge:hover {
-            background: #334155;
+            background: #3f4a58;
         }
 
         .user-avatar-circle {
@@ -166,7 +166,7 @@
             height: 38px;
             border-radius: 50%;
             object-fit: cover;
-            background-color: #334155;
+            background-color: #3f4a58;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -206,7 +206,7 @@
             min-width: 260px;
             max-width: 260px;
             background-color: var(--sidebar-bg);
-            border-right: 1px solid #334155;
+            border-right: 1px solid #3f4a58;
             display: flex;
             flex-direction: column;
             padding: 16px 0;
@@ -261,12 +261,12 @@
 
         .sidebar-menu .menu-link:hover {
             color: #ffffff;
-            background-color: #334155;
+            background-color: #3f4a58;
         }
 
         .sidebar-menu .menu-link.active {
             color: #ffffff;
-            background: #334155;
+            background: #3f4a58;
             font-weight: 700;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
@@ -300,7 +300,7 @@
         }
 
         .menu-category-badge {
-            background-color: #334155;
+            background-color: #3f4a58;
             color: #ffffff;
             font-size: 10px;
             font-weight: 800;
@@ -426,7 +426,7 @@
         .bg-icon-blue { background-color: #eff6ff; color: #2563eb; }
         .bg-icon-teal { background-color: #f0fdf4; color: #16a34a; }
         .bg-icon-green { background-color: #dcfce7; color: #16a34a; }
-        .bg-icon-red { background-color: #f1f5f9; color: #475569; }
+        .bg-icon-red { background-color: #f1f5f9; color: #525f70; }
         .bg-icon-purple { background-color: #f5f3ff; color: #7c3aed; }
         .bg-icon-gray { background-color: #f1f5f9; color: #64748b; }
 
@@ -439,40 +439,40 @@
         }
 
         .btn-primary {
-            background-color: #475569;
-            border-color: #475569;
+            background-color: #525f70;
+            border-color: #525f70;
             color: #ffffff;
         }
 
         .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
-            background-color: #334155;
-            border-color: #334155;
+            background-color: #3f4a58;
+            border-color: #3f4a58;
             color: #ffffff;
         }
 
         .btn-outline-primary {
-            color: #475569;
-            border-color: #475569;
+            color: #525f70;
+            border-color: #525f70;
         }
 
         .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
-            background-color: #475569;
-            border-color: #475569;
+            background-color: #525f70;
+            border-color: #525f70;
             color: #ffffff;
         }
 
         .text-primary {
-            color: #475569 !important;
+            color: #525f70 !important;
         }
 
         .bg-primary {
-            background-color: #475569 !important;
+            background-color: #525f70 !important;
             color: #ffffff !important;
         }
 
         .bg-primary-subtle {
             background-color: #f1f5f9 !important;
-            color: #334155 !important;
+            color: #3f4a58 !important;
         }
 
         .border-primary-subtle {
@@ -480,12 +480,12 @@
         }
 
         .border-primary {
-            border-color: #475569 !important;
+            border-color: #525f70 !important;
         }
 
         .page-item.active .page-link {
-            background-color: #475569;
-            border-color: #475569;
+            background-color: #525f70;
+            border-color: #525f70;
         }
 
         .roriri-sidebar .border-top {
@@ -509,9 +509,9 @@
         }
 
         .sidebar-logout-btn:hover {
-            background-color: #334155;
+            background-color: #3f4a58;
             color: #ffffff;
-            border-color: #334155;
+            border-color: #3f4a58;
         }
 
         /* Dark Theme Styles */
