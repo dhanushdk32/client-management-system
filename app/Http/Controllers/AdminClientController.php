@@ -111,6 +111,7 @@ class AdminClientController extends Controller
             'joined_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'project_title' => 'nullable|string|max:255',
+            'website' => 'nullable|string|max:500',
             'address' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
             'state' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
@@ -140,6 +141,12 @@ class AdminClientController extends Controller
         $joinedDate = $request->filled('joined_date') ? Carbon::parse($request->joined_date) : now();
         $location = $request->address ?: trim(($request->city ? $request->city : '') . ($request->state ? ', ' . $request->state : ''));
 
+        // Normalize live project website URL
+        $projectUrl = $request->filled('website') ? trim($request->website) : '';
+        if ($projectUrl && !preg_match("~^(?:f|ht)tps?://~i", $projectUrl)) {
+            $projectUrl = "https://" . $projectUrl;
+        }
+
         $client = Client::create([
             'entity_id' => 1,
             'client_name' => $request->client_name,
@@ -154,7 +161,7 @@ class AdminClientController extends Controller
             'client_gst' => '',
             'industry' => 'Custom Projects',
             'company_size' => '1 - 10',
-            'website' => '',
+            'website' => $projectUrl,
             'client_status' => $request->client_status,
             'joined_date' => $joinedDate,
         ]);
@@ -169,6 +176,7 @@ class AdminClientController extends Controller
                 'end_date' => $request->filled('end_date') ? Carbon::parse($request->end_date) : null,
                 'description' => "Initial project contracted on {$joinedDate->format('d M Y')}.",
                 'assigned_team' => 'Engineering & Development',
+                'project_url' => $projectUrl,
             ]);
         }
 
@@ -220,6 +228,7 @@ class AdminClientController extends Controller
             'joined_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'project_title' => 'nullable|string|max:255',
+            'website' => 'nullable|string|max:500',
             'address' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
             'state' => 'nullable|string|max:100|regex:/^[a-zA-Z\s\.\'-]*$/',
@@ -237,6 +246,12 @@ class AdminClientController extends Controller
         $joinedDate = $request->filled('joined_date') ? Carbon::parse($request->joined_date) : $client->joined_date;
         $location = $request->address ?: trim(($request->city ? $request->city : '') . ($request->state ? ', ' . $request->state : ''));
 
+        // Normalize live project website URL
+        $projectUrl = $request->filled('website') ? trim($request->website) : ($client->website ?? '');
+        if ($projectUrl && !preg_match("~^(?:f|ht)tps?://~i", $projectUrl)) {
+            $projectUrl = "https://" . $projectUrl;
+        }
+
         $client->update([
             'client_name' => $request->client_name,
             'client_company' => $request->project_title ?: $request->client_name,
@@ -249,6 +264,7 @@ class AdminClientController extends Controller
             'country' => $request->country ?? $client->country,
             'client_status' => $request->client_status,
             'joined_date' => $joinedDate,
+            'website' => $projectUrl,
         ]);
 
         // Update or create primary project
@@ -259,6 +275,7 @@ class AdminClientController extends Controller
                     'service_name' => $request->project_title,
                     'status' => $request->client_status == 'Active' ? 'Active' : 'Pending',
                     'end_date' => $request->filled('end_date') ? Carbon::parse($request->end_date) : $service->end_date,
+                    'project_url' => $projectUrl,
                 ]);
             } else {
                 ClientService::create([
@@ -269,7 +286,13 @@ class AdminClientController extends Controller
                     'end_date' => $request->filled('end_date') ? Carbon::parse($request->end_date) : null,
                     'description' => "Project contracted on {$joinedDate->format('d M Y')}.",
                     'assigned_team' => 'Engineering & Development',
+                    'project_url' => $projectUrl,
                 ]);
+            }
+        } elseif ($projectUrl) {
+            $service = ClientService::where('client_id', $client->client_id)->first();
+            if ($service) {
+                $service->update(['project_url' => $projectUrl]);
             }
         }
 

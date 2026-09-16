@@ -179,6 +179,25 @@
                         </div>
                     </div>
 
+                    <!-- 🌐 Live Project Website Link -->
+                    @php
+                        $clientProfileUrl = $primaryService->project_url ?: ($client->website ?? '');
+                        $clickableClientProfileUrl = (!empty($clientProfileUrl) && !\Illuminate\Support\Str::startsWith($clientProfileUrl, ['http://', 'https://'])) ? 'https://' . $clientProfileUrl : $clientProfileUrl;
+                    @endphp
+                    @if(!empty($clickableClientProfileUrl))
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-muted">Live Project Website / Web Application</label>
+                            <div class="p-2 px-3 rounded-3 bg-white border d-flex justify-content-between align-items-center">
+                                <div class="text-truncate me-2 small text-dark fw-semibold">
+                                    <i class="fa-solid fa-globe text-primary me-2"></i>{{ $clientProfileUrl }}
+                                </div>
+                                <a href="{{ $clickableClientProfileUrl }}" target="_blank" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold text-nowrap shadow-xs">
+                                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Visit Website
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- Scope Description -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold small text-muted">Project Deliverables & Scope</label>

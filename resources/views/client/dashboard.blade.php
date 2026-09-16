@@ -77,6 +77,38 @@
     </div>
 @endif
 
+<!-- 🌐 Live Project Website Quick Access Banner -->
+@php
+    $liveWebsiteUrl = $client->website ?: ($recentServices->whereNotNull('project_url')->first()?->project_url ?? '');
+    $clickableLiveUrl = (!empty($liveWebsiteUrl) && !\Illuminate\Support\Str::startsWith($liveWebsiteUrl, ['http://', 'https://'])) ? 'https://' . $liveWebsiteUrl : $liveWebsiteUrl;
+@endphp
+@if(!empty($clickableLiveUrl))
+    <div class="card border-0 shadow-sm mb-4 bg-white p-3 rounded-4 border-start border-4 border-primary">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold shadow-xs" style="width: 48px; height: 48px; font-size: 20px;">
+                    <i class="fa-solid fa-globe"></i>
+                </div>
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="badge bg-success text-white rounded-pill px-2 py-0 font-monospace small" style="font-size: 10px;">
+                            <i class="fa-solid fa-circle text-white me-1" style="font-size: 7px;"></i> LIVE PROJECT
+                        </span>
+                        <span class="text-muted small">Official Project Website</span>
+                    </div>
+                    <h6 class="fw-bold mb-0 text-dark">{{ $client->client_company ?: 'Your Project Application' }}</h6>
+                    <small class="text-primary text-truncate d-inline-block font-monospace" style="max-width: 340px;">{{ $liveWebsiteUrl }}</small>
+                </div>
+            </div>
+            <div>
+                <a href="{{ $clickableLiveUrl }}" target="_blank" class="btn btn-primary fw-semibold rounded-pill px-4 shadow-sm">
+                    <i class="fa-solid fa-arrow-up-right-from-square me-2"></i> Launch Website
+                </a>
+            </div>
+        </div>
+    </div>
+@endif
+
 <div class="row g-4 mb-4">
     <!-- My Services List with Team Lead Indicators -->
     <div class="col-md-6">
@@ -97,6 +129,15 @@
                                     </small>
                                 </td>
                                 <td class="text-end pe-0">
+                                    @php
+                                        $rowUrl = $service->project_url ?: ($client->website ?? '');
+                                        $rowClickUrl = (!empty($rowUrl) && !\Illuminate\Support\Str::startsWith($rowUrl, ['http://', 'https://'])) ? 'https://' . $rowUrl : $rowUrl;
+                                    @endphp
+                                    @if(!empty($rowClickUrl))
+                                        <a href="{{ $rowClickUrl }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-2 py-0 me-2" title="Visit Live Project Website">
+                                            <i class="fa-solid fa-globe me-1"></i> Live Site
+                                        </a>
+                                    @endif
                                     <span class="badge {{ $service->status == 'Active' ? 'bg-success-subtle text-success' : 'bg-primary-subtle text-primary' }} rounded-pill px-3 py-1">
                                         {{ $service->status }}
                                     </span>

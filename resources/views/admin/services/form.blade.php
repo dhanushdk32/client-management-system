@@ -93,6 +93,32 @@
                     <label class="form-label fw-semibold small text-muted">Target Delivery / End Date</label>
                     <input type="date" name="end_date" class="form-control bg-light" value="{{ old('end_date', isset($service) && $service->end_date ? $service->end_date->format('Y-m-d') : '') }}">
                 </div>
+
+                <!-- Live Project URL / Website -->
+                <div class="col-md-12">
+                    @php
+                        $srvUrl = old('project_url', $service->project_url ?? ($service->client->website ?? ''));
+                        $clickableSrvUrl = (!empty($srvUrl) && !\Illuminate\Support\Str::startsWith($srvUrl, ['http://', 'https://'])) ? 'https://' . $srvUrl : $srvUrl;
+                    @endphp
+                    <label class="form-label fw-semibold small text-muted d-flex justify-content-between align-items-center">
+                        <span><i class="fa-solid fa-globe text-primary me-1"></i> Live Project URL / Website Link</span>
+                        @if(!empty($clickableSrvUrl))
+                            <a href="{{ $clickableSrvUrl }}" target="_blank" class="badge bg-primary-subtle text-primary border border-primary-subtle text-decoration-none py-1 px-2">
+                                <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Test Live Link
+                            </a>
+                        @endif
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-globe"></i></span>
+                        <input type="text" name="project_url" class="form-control bg-light border-start-0" placeholder="e.g. https://myclientproject.com" value="{{ $srvUrl }}">
+                        @if(!empty($clickableSrvUrl))
+                            <a href="{{ $clickableSrvUrl }}" target="_blank" class="btn btn-outline-primary fw-semibold px-3" title="Visit Live Project">
+                                <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Visit Website
+                            </a>
+                        @endif
+                    </div>
+                    <div class="form-text small text-muted">Upload / paste live website or application URL for this project. The client can click and view this link in their portal.</div>
+                </div>
             </div>
 
             <!-- 2. Technical Team Assignment -->

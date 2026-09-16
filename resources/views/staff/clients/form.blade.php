@@ -81,14 +81,40 @@
                     </datalist>
                 </div>
 
+                <!-- Live Project URL / Website -->
+                <div class="col-md-6">
+                    @php
+                        $currentStaffUrl = old('website', $client->website ?? '');
+                        $clickableStaffUrl = (!empty($currentStaffUrl) && !\Illuminate\Support\Str::startsWith($currentStaffUrl, ['http://', 'https://'])) ? 'https://' . $currentStaffUrl : $currentStaffUrl;
+                    @endphp
+                    <label class="form-label fw-semibold small text-muted d-flex justify-content-between align-items-center">
+                        <span><i class="fa-solid fa-globe text-primary me-1"></i> Live Project URL / Website</span>
+                        @if(!empty($clickableStaffUrl))
+                            <a href="{{ $clickableStaffUrl }}" target="_blank" class="badge bg-primary-subtle text-primary border border-primary-subtle text-decoration-none py-1 px-2">
+                                <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Test Live Link
+                            </a>
+                        @endif
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-globe"></i></span>
+                        <input type="text" name="website" id="staffProjectUrl" class="form-control bg-light border-start-0" placeholder="e.g. https://clientproject.com" value="{{ $currentStaffUrl }}">
+                        @if(!empty($clickableStaffUrl))
+                            <a href="{{ $clickableStaffUrl }}" target="_blank" class="btn btn-outline-primary fw-semibold px-3" title="Visit Live Project">
+                                <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Visit Website
+                            </a>
+                        @endif
+                    </div>
+                    <div class="form-text small text-muted">Upload / paste live website or application URL for the client.</div>
+                </div>
+
                 <!-- Joined Date -->
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Client Joined Date</label>
                     <input type="date" name="joined_date" class="form-control bg-light" value="{{ old('joined_date', date('Y-m-d')) }}">
                 </div>
 
                 <!-- End Date -->
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <label class="form-label fw-semibold small text-muted">Project Target / End Date</label>
                     <input type="date" name="end_date" class="form-control bg-light" value="{{ old('end_date') }}">
                 </div>

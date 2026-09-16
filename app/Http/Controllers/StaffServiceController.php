@@ -74,6 +74,7 @@ class StaffServiceController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'description' => 'nullable|string',
+            'project_url' => 'nullable|string|max:500',
             'team_members' => 'nullable|array',
             'team_members.*' => 'exists:staff_members,id',
         ], [
@@ -86,6 +87,18 @@ class StaffServiceController extends Controller
         unset($data['team_name'], $data['team_leader_id']);
         $data['team_name'] = null;
         $data['team_leader_id'] = null;
+
+        if ($request->filled('project_url')) {
+            $url = trim($request->project_url);
+            if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
+                $url = "https://" . $url;
+            }
+            $data['project_url'] = $url;
+            $clientForUrl = \App\Models\Client::find($request->client_id);
+            if ($clientForUrl && empty($clientForUrl->website)) {
+                $clientForUrl->update(['website' => $url]);
+            }
+        }
 
         $teamSummaryParts = [];
         if ($request->filled('team_members') && is_array($request->team_members)) {
@@ -157,6 +170,7 @@ class StaffServiceController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'description' => 'nullable|string',
+            'project_url' => 'nullable|string|max:500',
             'team_members' => 'nullable|array',
             'team_members.*' => 'exists:staff_members,id',
         ]);
@@ -165,6 +179,18 @@ class StaffServiceController extends Controller
 
         // Strictly protect team_name and team_leader_id - only Admin can assign or alter them
         unset($data['team_name'], $data['team_leader_id']);
+
+        if ($request->filled('project_url')) {
+            $url = trim($request->project_url);
+            if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
+                $url = "https://" . $url;
+            }
+            $data['project_url'] = $url;
+            $clientForUrl = \App\Models\Client::find($service->client_id);
+            if ($clientForUrl && empty($clientForUrl->website)) {
+                $clientForUrl->update(['website' => $url]);
+            }
+        }
 
         $teamSummaryParts = [];
         if (!empty($service->team_name)) {

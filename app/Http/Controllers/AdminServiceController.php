@@ -55,6 +55,7 @@ class AdminServiceController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'description' => 'nullable|string',
+            'project_url' => 'nullable|string|max:500',
             'team_name' => 'nullable|string|max:150',
             'team_leader_id' => 'nullable|exists:staff_members,id',
             'team_members' => 'nullable|array',
@@ -62,6 +63,19 @@ class AdminServiceController extends Controller
         ]);
 
         $data = $request->all();
+
+        if ($request->filled('project_url')) {
+            $url = trim($request->project_url);
+            if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
+                $url = "https://" . $url;
+            }
+            $data['project_url'] = $url;
+            // Also sync to client website if empty
+            $clientForUrl = Client::find($request->client_id);
+            if ($clientForUrl && empty($clientForUrl->website)) {
+                $clientForUrl->update(['website' => $url]);
+            }
+        }
 
         // Compile a human-readable assigned_team summary
         $teamSummaryParts = [];
@@ -140,6 +154,7 @@ class AdminServiceController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'description' => 'nullable|string',
+            'project_url' => 'nullable|string|max:500',
             'team_name' => 'nullable|string|max:150',
             'team_leader_id' => 'nullable|exists:staff_members,id',
             'team_members' => 'nullable|array',
@@ -147,6 +162,19 @@ class AdminServiceController extends Controller
         ]);
 
         $data = $request->all();
+
+        if ($request->filled('project_url')) {
+            $url = trim($request->project_url);
+            if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
+                $url = "https://" . $url;
+            }
+            $data['project_url'] = $url;
+            // Also sync to client website
+            $clientForUrl = Client::find($request->client_id);
+            if ($clientForUrl && empty($clientForUrl->website)) {
+                $clientForUrl->update(['website' => $url]);
+            }
+        }
 
         // Compile a human-readable assigned_team summary
         $teamSummaryParts = [];

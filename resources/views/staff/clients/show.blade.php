@@ -37,6 +37,14 @@
                             <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-1">Inactive</span>
                         @endif
                         <span class="badge bg-light text-secondary border font-monospace">ID: #CL{{ sprintf('%03d', $client->client_id) }}</span>
+                        @if(!empty($client->website))
+                            @php
+                                $staffClientViewUrl = !\Illuminate\Support\Str::startsWith($client->website, ['http://', 'https://']) ? 'https://' . $client->website : $client->website;
+                            @endphp
+                            <a href="{{ $staffClientViewUrl }}" target="_blank" class="badge bg-primary text-white text-decoration-none px-3 py-1 shadow-xs">
+                                <i class="fa-solid fa-globe me-1"></i> Live Project Website <i class="fa-solid fa-arrow-up-right-from-square ms-1" style="font-size: 9px;"></i>
+                            </a>
+                        @endif
                     </div>
                     <div class="text-muted small mt-1">
                         <i class="fa-regular fa-user me-1 text-primary"></i> <strong>Contact Person:</strong> {{ $client->client_name }}

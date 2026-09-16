@@ -68,8 +68,19 @@
                                     <td class="fw-medium">: {{ $client->company_size ?? 'N/A' }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-muted">Website</td>
-                                    <td class="fw-medium">: {{ $client->website ?? 'N/A' }}</td>
+                                    <td class="text-muted">Live Website / Project URL</td>
+                                    <td class="fw-medium">: 
+                                        @if(!empty($client->website))
+                                            @php
+                                                $admClientUrl = !\Illuminate\Support\Str::startsWith($client->website, ['http://', 'https://']) ? 'https://' . $client->website : $client->website;
+                                            @endphp
+                                            <a href="{{ $admClientUrl }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 fw-semibold">
+                                                <i class="fa-solid fa-globe me-1"></i> {{ $client->website }} <i class="fa-solid fa-arrow-up-right-from-square ms-1" style="font-size: 10px;"></i>
+                                            </a>
+                                        @else
+                                            <span class="text-muted">N/A</span>
+                                        @endif
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted">GST Number</td>

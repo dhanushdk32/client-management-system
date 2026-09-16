@@ -134,6 +134,19 @@
                             {{ $service->description ?: 'Ongoing development, deployment, and technical infrastructure support as configured by your dedicated engineering lead.' }}
                         </div>
 
+                        <!-- 🌐 Live Project Website Button -->
+                        @php
+                            $projectLiveUrl = $service->project_url ?: ($service->client->website ?? '');
+                            $clickableProjectLiveUrl = (!empty($projectLiveUrl) && !\Illuminate\Support\Str::startsWith($projectLiveUrl, ['http://', 'https://'])) ? 'https://' . $projectLiveUrl : $projectLiveUrl;
+                        @endphp
+                        @if(!empty($clickableProjectLiveUrl))
+                            <div class="mb-3">
+                                <a href="{{ $clickableProjectLiveUrl }}" target="_blank" class="btn btn-success w-100 rounded-pill fw-semibold shadow-xs">
+                                    <i class="fa-solid fa-globe me-2"></i> Visit Live Project Website <i class="fa-solid fa-arrow-up-right-from-square ms-1" style="font-size: 11px;"></i>
+                                </a>
+                            </div>
+                        @endif
+
                         <!-- Timeline & Full Details -->
                         <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-auto">
                             <div class="small">
@@ -199,6 +212,20 @@
                                 <td class="text-muted">Target Delivery</td>
                                 <td class="fw-semibold">: {{ $service->end_date ? $service->end_date->format('d M Y') : 'N/A' }}</td>
                             </tr>
+                            @php
+                                $modalLiveUrl = $service->project_url ?: ($service->client->website ?? '');
+                                $clickableModalLiveUrl = (!empty($modalLiveUrl) && !\Illuminate\Support\Str::startsWith($modalLiveUrl, ['http://', 'https://'])) ? 'https://' . $modalLiveUrl : $modalLiveUrl;
+                            @endphp
+                            @if(!empty($clickableModalLiveUrl))
+                                <tr>
+                                    <td class="text-muted">Live Website</td>
+                                    <td class="fw-semibold">: 
+                                        <a href="{{ $clickableModalLiveUrl }}" target="_blank" class="badge bg-success-subtle text-success border border-success-subtle text-decoration-none py-1 px-3">
+                                            <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Visit Live Website
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endif
                             <tr>
                                 <td class="text-muted" colspan="2">Detailed Scope Description:</td>
                             </tr>
@@ -209,11 +236,20 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="modal-footer border-top-0 pt-0">
-                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-                        <a href="{{ route('client.tickets.index') }}" class="btn btn-primary rounded-pill px-4">
-                            <i class="fa-solid fa-comment-dots me-1"></i> Message Team Leader
-                        </a>
+                    <div class="modal-footer border-top-0 pt-0 d-flex justify-content-between">
+                        <div>
+                            @if(!empty($clickableModalLiveUrl))
+                                <a href="{{ $clickableModalLiveUrl }}" target="_blank" class="btn btn-success rounded-pill px-4 shadow-sm">
+                                    <i class="fa-solid fa-globe me-1"></i> Open Live Site
+                                </a>
+                            @endif
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                            <a href="{{ route('client.tickets.index') }}" class="btn btn-primary rounded-pill px-4">
+                                <i class="fa-solid fa-comment-dots me-1"></i> Message Team Leader
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

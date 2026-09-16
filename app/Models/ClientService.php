@@ -22,6 +22,7 @@ class ClientService extends Model
         'team_name',
         'team_leader_id',
         'team_members',
+        'project_url',
     ];
 
     protected $casts = [
