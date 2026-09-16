@@ -116,32 +116,46 @@
             </div>
 
             <!-- 2. Technical Team Assignment -->
-            <h6 class="fw-bold mb-3 mt-4 text-secondary border-bottom pb-2">
-                <i class="fa-solid fa-users-gear me-1 text-primary"></i> 2. Technical Team & Squad Allocation
+            <h6 class="fw-bold mb-3 mt-4 text-secondary border-bottom pb-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span><i class="fa-solid fa-users-gear me-1 text-primary"></i> 2. Technical Team & Squad Allocation</span>
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle small fw-normal py-1 px-2">
+                    <i class="fa-solid fa-shield-halved me-1 text-primary"></i> Team Leader & Squad Name assigned by Admin only
+                </span>
             </h6>
 
             <div class="row g-4 mb-4">
-                <!-- Team Name -->
+                <!-- Team Name (Admin Only) -->
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold small text-muted">Team Name</label>
-                    <input type="text" name="team_name" class="form-control bg-light" placeholder="e.g. Alpha Mobile Squad / Core Dev Team" value="{{ old('team_name', $service->team_name ?? '') }}">
-                    <div class="form-text small text-muted">Custom squad name for this client's project.</div>
+                    <label class="form-label fw-semibold small text-muted d-flex justify-content-between align-items-center">
+                        <span>Team Name</span>
+                        <span class="badge bg-secondary-subtle text-secondary small fw-medium">
+                            <i class="fa-solid fa-lock me-1"></i> Admin Managed
+                        </span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-sitemap"></i></span>
+                        <input type="text" class="form-control bg-light text-dark fw-medium border-start-0" 
+                            value="{{ (!empty($service->team_name)) ? $service->team_name : 'Pending Admin Allocation' }}" 
+                            readonly disabled>
+                    </div>
+                    <div class="form-text small text-muted">Custom squad name can only be assigned and configured by the Administrator.</div>
                 </div>
 
-                <!-- Team Leader Selection -->
+                <!-- Team Leader (Admin Only) -->
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold small text-muted">Team Leader <span class="text-danger">*</span></label>
-                    <select name="team_leader_id" class="form-select bg-light">
-                        <option value="">-- Select Team Leader from Staff --</option>
-                        @if(isset($staffMembers))
-                            @foreach($staffMembers as $staff)
-                                <option value="{{ $staff->id }}" {{ (old('team_leader_id', $service->team_leader_id ?? '') == $staff->id) ? 'selected' : '' }}>
-                                    {{ $staff->name }} ({{ $staff->designation }} - {{ $staff->department }})
-                                </option>
-                            @endforeach
-                        @endif
-                    </select>
-                    <div class="form-text small text-muted">The client will have direct communication with this Team Leader in their portal.</div>
+                    <label class="form-label fw-semibold small text-muted d-flex justify-content-between align-items-center">
+                        <span>Team Leader</span>
+                        <span class="badge bg-secondary-subtle text-secondary small fw-medium">
+                            <i class="fa-solid fa-lock me-1"></i> Admin Managed
+                        </span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted border-end-0"><i class="fa-solid fa-user-tie"></i></span>
+                        <input type="text" class="form-control bg-light text-dark fw-medium border-start-0" 
+                            value="{{ (isset($service) && $service->teamLeader) ? $service->teamLeader->name . ' (' . ($service->teamLeader->designation ?? 'Team Lead') . ' - ' . ($service->teamLeader->department ?? 'Engineering') . ')' : 'Pending Admin Allocation' }}" 
+                            readonly disabled>
+                    </div>
+                    <div class="form-text small text-muted">The primary Team Leader is appointed and assigned exclusively by the Administrator.</div>
                 </div>
 
                 <!-- Team Members -->

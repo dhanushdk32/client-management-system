@@ -74,8 +74,6 @@ class StaffServiceController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'description' => 'nullable|string',
-            'team_name' => 'nullable|string|max:150',
-            'team_leader_id' => 'nullable|exists:staff_members,id',
             'team_members' => 'nullable|array',
             'team_members.*' => 'exists:staff_members,id',
         ], [
@@ -84,18 +82,12 @@ class StaffServiceController extends Controller
 
         $data = $request->all();
 
+        // Strictly enforce: Team Name and Team Leader are assigned exclusively by Admin
+        unset($data['team_name'], $data['team_leader_id']);
+        $data['team_name'] = null;
+        $data['team_leader_id'] = null;
+
         $teamSummaryParts = [];
-        if ($request->filled('team_name')) {
-            $teamSummaryParts[] = $request->team_name;
-        }
-
-        if ($request->filled('team_leader_id')) {
-            $leader = StaffMember::find($request->team_leader_id);
-            if ($leader) {
-                $teamSummaryParts[] = "Lead: {$leader->name}";
-            }
-        }
-
         if ($request->filled('team_members') && is_array($request->team_members)) {
             $members = StaffMember::whereIn('id', $request->team_members)->pluck('name')->toArray();
             if (!empty($members)) {
@@ -103,27 +95,18 @@ class StaffServiceController extends Controller
             }
         }
 
-        $data['assigned_team'] = !empty($teamSummaryParts) ? implode(' • ', $teamSummaryParts) : 'Engineering Team';
+        $data['assigned_team'] = !empty($teamSummaryParts) ? implode(' • ', $teamSummaryParts) : 'Engineering Squad (Lead Pending Admin Allocation)';
         $data['progress_percentage'] = $request->input('progress_percentage', 20);
         $data['current_phase'] = $request->input('current_phase', 'Requirements & Scoping');
 
         $service = ClientService::create($data);
 
         // Auto-assign staff members to client
-        $allStaffIds = [];
-        if ($request->filled('team_leader_id')) {
-            $allStaffIds[] = $request->team_leader_id;
-        }
         if ($request->filled('team_members') && is_array($request->team_members)) {
-            $allStaffIds = array_unique(array_merge($allStaffIds, $request->team_members));
-        }
-
-        if (!empty($allStaffIds)) {
             $client = \App\Models\Client::find($request->client_id);
             if ($client) {
-                foreach ($allStaffIds as $staffId) {
-                    $isLeader = ($staffId == $request->team_leader_id);
-                    $role = $isLeader ? 'Team Leader / Project Lead' : 'Project Engineer / Team Member';
+                foreach ($request->team_members as $staffId) {
+                    $role = 'Project Engineer / Team Member';
                     $client->assignedStaff()->syncWithoutDetaching([
                         $staffId => ['role_in_project' => $role]
                     ]);
@@ -139,7 +122,7 @@ class StaffServiceController extends Controller
             'is_read' => 0,
         ]);
 
-        return redirect()->route('staff.services.index')->with('success', "Project '{$service->service_name}' created and team assigned successfully!");
+        return redirect()->route('staff.services.index')->with('success', "Project '{$service->service_name}' created successfully! Team Leader and Squad Name will be allocated by Admin.");
     }
 
     public function edit(ClientService $service)
@@ -174,24 +157,22 @@ class StaffServiceController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
             'description' => 'nullable|string',
-            'team_name' => 'nullable|string|max:150',
-            'team_leader_id' => 'nullable|exists:staff_members,id',
             'team_members' => 'nullable|array',
             'team_members.*' => 'exists:staff_members,id',
         ]);
 
         $data = $request->all();
 
+        // Strictly protect team_name and team_leader_id - only Admin can assign or alter them
+        unset($data['team_name'], $data['team_leader_id']);
+
         $teamSummaryParts = [];
-        if ($request->filled('team_name')) {
-            $teamSummaryParts[] = $request->team_name;
+        if (!empty($service->team_name)) {
+            $teamSummaryParts[] = $service->team_name;
         }
 
-        if ($request->filled('team_leader_id')) {
-            $leader = StaffMember::find($request->team_leader_id);
-            if ($leader) {
-                $teamSummaryParts[] = "Lead: {$leader->name}";
-            }
+        if ($service->team_leader_id && $service->teamLeader) {
+            $teamSummaryParts[] = "Lead: {$service->teamLeader->name}";
         }
 
         if ($request->filled('team_members') && is_array($request->team_members)) {
@@ -201,9 +182,21 @@ class StaffServiceController extends Controller
             }
         }
 
-        $data['assigned_team'] = !empty($teamSummaryParts) ? implode(' • ', $teamSummaryParts) : 'Engineering Team';
+        $data['assigned_team'] = !empty($teamSummaryParts) ? implode(' • ', $teamSummaryParts) : 'Engineering Squad';
 
         $service->update($data);
+
+        // Auto-assign any new staff members to client
+        if ($request->filled('team_members') && is_array($request->team_members)) {
+            $client = \App\Models\Client::find($service->client_id);
+            if ($client) {
+                foreach ($request->team_members as $staffId) {
+                    $client->assignedStaff()->syncWithoutDetaching([
+                        $staffId => ['role_in_project' => 'Project Engineer / Team Member']
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('staff.services.index')->with('success', "Project '{$service->service_name}' updated successfully.");
     }
