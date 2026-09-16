@@ -21,16 +21,16 @@
 
     <style>
         :root {
-            --roriri-blue: #fb5544;
-            --roriri-blue-dark: #e04333;
-            --roriri-blue-light: #fff1f0;
-            --brand-red: #fb5544;
-            --brand-red-dark: #e04333;
-            --brand-red-light: #fff1f0;
-            --sidebar-bg: #1f0038;
+            --roriri-blue: #475569;
+            --roriri-blue-dark: #334155;
+            --roriri-blue-light: #f1f5f9;
+            --brand-red: #475569;
+            --brand-red-dark: #334155;
+            --brand-red-light: #f1f5f9;
+            --sidebar-bg: #475569;
             --body-bg: #f8fafc;
             --card-border: #e2e8f0;
-            --text-dark: #1f0038;
+            --text-dark: #1e293b;
             --text-muted: #64748b;
         }
 
@@ -48,8 +48,8 @@
         /* Top Header Navbar */
         .roriri-topbar {
             height: 68px;
-            background-color: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
+            background-color: #475569;
+            border-bottom: 1px solid #334155;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -57,7 +57,7 @@
             position: sticky;
             top: 0;
             z-index: 1050;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
         .brand-section {
@@ -77,7 +77,7 @@
         .brand-logo-text {
             font-size: 22px;
             font-weight: 800;
-            color: #1f0038;
+            color: #ffffff;
             letter-spacing: 0.5px;
             margin: 0;
             font-family: 'Outfit', sans-serif;
@@ -87,7 +87,7 @@
             background: none;
             border: none;
             font-size: 18px;
-            color: #1f0038;
+            color: #ffffff;
             cursor: pointer;
             padding: 6px;
             border-radius: 6px;
@@ -98,8 +98,8 @@
         }
 
         .sidebar-toggle-btn:hover {
-            background-color: #f1f5f9;
-            color: #fb5544;
+            background-color: #334155;
+            color: #ffffff;
         }
 
         .topbar-right {
@@ -115,17 +115,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #475569;
-            background: #ffffff;
-            border: 1px solid transparent;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             text-decoration: none;
             transition: all 0.2s ease;
             font-size: 16px;
         }
 
         .topbar-icon-btn:hover {
-            background: #fef2f2;
-            color: #991b1b;
+            background: #334155;
+            color: #ffffff;
         }
 
         .user-profile-badge {
@@ -139,7 +139,7 @@
         }
 
         .user-profile-badge:hover {
-            background: #f8fafc;
+            background: #334155;
         }
 
         .user-avatar-circle {
@@ -147,11 +147,12 @@
             height: 38px;
             border-radius: 50%;
             object-fit: cover;
-            background-color: #fef2f2;
+            background-color: #334155;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #991b1b;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             font-weight: 700;
             font-size: 14px;
         }
@@ -165,12 +166,12 @@
         .user-info-text .user-name {
             font-size: 14px;
             font-weight: 700;
-            color: #1e293b;
+            color: #ffffff;
         }
 
         .user-info-text .user-role {
             font-size: 12px;
-            color: #64748b;
+            color: #cbd5e1;
         }
 
         /* App Wrapper */
@@ -186,7 +187,7 @@
             min-width: 260px;
             max-width: 260px;
             background-color: var(--sidebar-bg);
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            border-right: 1px solid #334155;
             display: flex;
             flex-direction: column;
             padding: 16px 0;
@@ -241,21 +242,21 @@
 
         .sidebar-menu .menu-link:hover {
             color: #ffffff;
-            background-color: rgba(255, 255, 255, 0.08);
+            background-color: #334155;
         }
 
         .sidebar-menu .menu-link.active {
             color: #ffffff;
-            background: linear-gradient(90deg, #fb5544 0%, #e04333 100%);
+            background: #334155;
             font-weight: 700;
-            box-shadow: 0 4px 14px rgba(251, 85, 68, 0.35);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .sidebar-menu .menu-link i {
             font-size: 16px;
             width: 20px;
             text-align: center;
-            color: #c4b5fd;
+            color: #cbd5e1;
             transition: color 0.2s;
         }
 
@@ -272,7 +273,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #a78bfa;
+            color: #cbd5e1;
             padding: 14px 14px 6px 14px;
             display: flex;
             align-items: center;
@@ -280,7 +281,7 @@
         }
 
         .menu-category-badge {
-            background-color: #fb5544;
+            background-color: #334155;
             color: #ffffff;
             font-size: 10px;
             font-weight: 800;
@@ -300,7 +301,8 @@
 
         /* Active Entity Tab Header (from Screenshot 2) */
         .active-entity-tab-pill {
-            background-color: #9bd39b;
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
             border-radius: 10px;
             padding: 6px 14px;
             display: inline-flex;
@@ -358,7 +360,7 @@
             background: #ffffff;
             border-radius: 16px;
             border: 1px solid var(--card-border);
-            box-shadow: 0 2px 12px rgba(31, 0, 56, 0.04);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
             padding: 20px;
             display: flex;
             align-items: center;
@@ -369,7 +371,7 @@
 
         .stat-card-roriri:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(31, 0, 56, 0.08);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
         }
 
         .stat-card-label {
@@ -382,7 +384,7 @@
         .stat-card-value {
             font-size: 24px;
             font-weight: 800;
-            color: #1f0038;
+            color: #0f172a;
             font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
             margin: 0;
             letter-spacing: -0.5px;
@@ -405,52 +407,77 @@
         .bg-icon-blue { background-color: #eff6ff; color: #2563eb; }
         .bg-icon-teal { background-color: #f0fdf4; color: #16a34a; }
         .bg-icon-green { background-color: #dcfce7; color: #16a34a; }
-        .bg-icon-red { background-color: #fff1f0; color: #fb5544; }
+        .bg-icon-red { background-color: #f1f5f9; color: #475569; }
         .bg-icon-purple { background-color: #f5f3ff; color: #7c3aed; }
         .bg-icon-gray { background-color: #f1f5f9; color: #64748b; }
 
         .card {
             border: 1px solid var(--card-border);
             border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(31, 0, 56, 0.04);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
             background-color: #ffffff;
             margin-bottom: 24px;
         }
 
         .btn-primary {
-            background-color: #fb5544;
-            border-color: #fb5544;
+            background-color: #475569;
+            border-color: #475569;
             color: #ffffff;
         }
 
         .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
-            background-color: #e04333;
-            border-color: #e04333;
+            background-color: #334155;
+            border-color: #334155;
+            color: #ffffff;
+        }
+
+        .btn-outline-primary {
+            color: #475569;
+            border-color: #475569;
+        }
+
+        .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
+            background-color: #475569;
+            border-color: #475569;
             color: #ffffff;
         }
 
         .text-primary {
-            color: #fb5544 !important;
+            color: #475569 !important;
+        }
+
+        .bg-primary {
+            background-color: #475569 !important;
+            color: #ffffff !important;
         }
 
         .bg-primary-subtle {
-            background-color: #fff1f0 !important;
-            color: #fb5544 !important;
+            background-color: #f1f5f9 !important;
+            color: #334155 !important;
         }
 
         .border-primary-subtle {
-            border-color: #fed7d2 !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        .border-primary {
+            border-color: #475569 !important;
+        }
+
+        .page-item.active .page-link {
+            background-color: #475569;
+            border-color: #475569;
         }
 
         .roriri-sidebar .border-top {
-            border-color: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.12) !important;
         }
 
-        /* Red/Coral Logout Button */
+        /* Slate Logout Button */
         .sidebar-logout-btn {
-            border: 1.5px solid rgba(251, 85, 68, 0.35);
-            color: #fb5544;
-            background: rgba(251, 85, 68, 0.08);
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
             font-weight: 600;
             border-radius: 10px;
             padding: 10px 16px;
@@ -463,9 +490,9 @@
         }
 
         .sidebar-logout-btn:hover {
-            background-color: #fb5544;
+            background-color: #334155;
             color: #ffffff;
-            border-color: #fb5544;
+            border-color: #334155;
         }
 
         /* Dark Theme Styles */
@@ -480,7 +507,7 @@
         }
 
         body.dark-theme .brand-logo-text {
-            color: #f87171;
+            color: #ffffff;
         }
 
         body.dark-theme .topbar-icon-btn,
@@ -493,7 +520,7 @@
         body.dark-theme .topbar-icon-btn:hover,
         body.dark-theme .sidebar-toggle-btn:hover {
             background-color: #475569;
-            color: #f87171;
+            color: #ffffff;
         }
 
         body.dark-theme .user-profile-badge {
@@ -516,12 +543,12 @@
 
         body.dark-theme .menu-link:hover {
             background-color: #334155;
-            color: #f87171;
+            color: #ffffff;
         }
 
         body.dark-theme .menu-link.active {
-            background-color: rgba(185, 28, 28, 0.25);
-            color: #fca5a5;
+            background-color: #475569;
+            color: #ffffff;
         }
 
         body.dark-theme .main-workspace {
@@ -590,7 +617,7 @@
 
         body.dark-theme .dropdown-item:hover {
             background-color: #334155;
-            color: #38bdf8;
+            color: #ffffff;
         }
 
         body.dark-theme .modal-content {
@@ -657,8 +684,8 @@
                 <div class="brand-logo-icon">
                     <img src="{{ \App\Models\SystemSetting::getBrandLogoUrl() }}" alt="{{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}" width="32" height="32" style="border-radius: 8px; object-fit: contain;">
                 </div>
-                <h1 class="brand-logo-text" style="font-size: 18px; font-weight: 800; color: #991b1b; white-space: nowrap; margin: 0;">
-                    {{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}@if(\App\Models\SystemSetting::get('brand_tagline')) <span style="font-size: 12.5px; font-weight: 600; color: #64748b; letter-spacing: 0;">{{ \App\Models\SystemSetting::get('brand_tagline') }}</span>@endif
+                <h1 class="brand-logo-text" style="font-size: 18px; font-weight: 800; color: #ffffff; white-space: nowrap; margin: 0;">
+                    {{ \App\Models\SystemSetting::get('brand_name', 'Client Management System') }}@if(\App\Models\SystemSetting::get('brand_tagline')) <span style="font-size: 12.5px; font-weight: 600; color: #cbd5e1; letter-spacing: 0;">{{ \App\Models\SystemSetting::get('brand_tagline') }}</span>@endif
                 </h1>
             </a>
             <button class="sidebar-toggle-btn" id="sidebarToggle" title="Toggle Navigation">

@@ -27,7 +27,7 @@
         }
         .auth-card {
             border-radius: 15px;
-            box-shadow: 0 10px 35px rgba(31, 0, 56, 0.08);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
             border: 1px solid #e2e8f0;
             overflow: hidden;
             background: #fff;
@@ -38,7 +38,8 @@
             padding: 50px 40px;
         }
         .auth-right {
-            background-color: #fff1f0;
+            background-color: #f8fafc;
+            border-left: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -47,24 +48,24 @@
             text-align: center;
         }
         .logo-icon {
-            color: #fb5544;
+            color: #475569;
             font-size: 24px;
         }
         .brand-text {
-            color: #1f0038;
+            color: #1e293b;
             font-weight: 700;
             font-size: 22px;
             margin-left: 10px;
         }
         .btn-primary {
-            background-color: #fb5544;
-            border-color: #fb5544;
+            background-color: #475569;
+            border-color: #475569;
             padding: 10px;
             font-weight: 500;
         }
         .btn-primary:hover {
-            background-color: #e04333;
-            border-color: #e04333;
+            background-color: #334155;
+            border-color: #334155;
         }
         .form-control {
             padding: 12px;
@@ -73,15 +74,15 @@
             border: 1px solid #e9ecef;
         }
         .form-control:focus {
-            box-shadow: 0 0 0 0.25rem rgba(251, 85, 68, 0.2);
-            border-color: #fb5544;
+            box-shadow: 0 0 0 0.25rem rgba(71, 85, 105, 0.2);
+            border-color: #475569;
         }
         a {
             text-decoration: none;
-            color: #fb5544;
+            color: #475569;
         }
         a:hover {
-            color: #e04333;
+            color: #334155;
         }
     </style>
 </head>

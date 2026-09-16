@@ -19,15 +19,15 @@
 
     <style>
         :root {
-            --roriri-blue: #fb5544;
-            --roriri-blue-dark: #e04333;
-            --brand-red: #fb5544;
-            --brand-red-dark: #e04333;
+            --roriri-blue: #475569;
+            --roriri-blue-dark: #334155;
+            --brand-red: #475569;
+            --brand-red-dark: #334155;
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #ede9fe 100%);
+            background: #f8fafc;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -41,7 +41,7 @@
             max-width: 440px;
             background: #ffffff;
             border-radius: 20px;
-            box-shadow: 0 10px 35px rgba(31, 0, 56, 0.08), 0 1px 3px rgba(31, 0, 56, 0.04);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.04);
             border: 1px solid #e2e8f0;
             padding: 36px 32px;
             overflow: hidden;
@@ -55,7 +55,7 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #1f0038 0%, #fb5544 100%);
+            background: #475569;
         }
 
         .brand-header {
@@ -78,7 +78,7 @@
             font-family: 'Outfit', sans-serif;
             font-size: 24px;
             font-weight: 800;
-            color: #1f0038;
+            color: #1e293b;
             letter-spacing: 0.5px;
             margin: 0;
         }
@@ -119,8 +119,8 @@
         }
 
         .form-control:focus {
-            border-color: #fb5544;
-            box-shadow: 0 0 0 3px rgba(251, 85, 68, 0.2);
+            border-color: #475569;
+            box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.2);
         }
 
         .input-group-text {
@@ -131,7 +131,7 @@
         }
 
         .btn-submit {
-            background: linear-gradient(135deg, #fb5544 0%, #e04333 100%);
+            background: #475569;
             border: none;
             color: #ffffff;
             font-weight: 700;
@@ -140,11 +140,11 @@
             border-radius: 10px;
             width: 100%;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 14px rgba(251, 85, 68, 0.35);
+            box-shadow: 0 4px 14px rgba(71, 85, 105, 0.25);
         }
 
         .btn-submit:hover {
-            background: linear-gradient(135deg, #e04333 0%, #c83222 100%);
+            background: #334155;
             transform: translateY(-1px);
         }
 
@@ -154,7 +154,7 @@
 
         .forgot-link {
             font-size: 13px;
-            color: #fb5544;
+            color: #475569;
             text-decoration: none;
             font-weight: 500;
         }
